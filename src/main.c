@@ -1,3 +1,20 @@
+/*
+ * This file is part of Izumi.
+ * 
+ * Foobar is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,11 +40,12 @@ int main(int argc, char *argv[]) {
     size_t len = 0;
     ssize_t read;
 
-    struct InstructionBlock first_block;
-    first_block.instr_count = 0;
-    first_block.next_block = NULL;
+    // Initialization of the table
+    struct InstructionTable *table = malloc(sizeof(struct InstructionTable));
+    table->level = 0;
+    table->qtty_content = 0;
 
-    struct InstructionBlock *current_block = &first_block;
+    u_int64_t cycle = 0;
 
     while ((read = getline(&line, &len, file)) != -1) {
         char command;
@@ -39,63 +57,80 @@ int main(int argc, char *argv[]) {
 
         switch (command) {
             case 'C':
-                printf("Cycles\n");
+                u_int64_t qtty_cycles;
+
+                if (sscanf(line, "C\t%d", &qtty_cycles) != 1) {
+                    printf("Error: Could not read cycles\n");
+                    return 1;
+                }
+
+                cycle += qtty_cycles;
                 break;
+
             case 'I':
-                printf("Instruction\n");
-                int id_file, id_sim, id_thread;
+                u_int64_t id_file, id_sim, id_thread;
                 if (sscanf(line, "I\t%d\t%d\t%d", &id_file, &id_sim, &id_thread) != 3) {
                     printf("Error: Could not read instruction\n");
                     return 1;
                 }
+                
+                struct Instruction *instr_new = malloc(sizeof(struct Instruction));
+                instr_new->init_cycle = cycle;
+                instr_new->qtty_stages = 0;
+                instr_new->stages = malloc(10 * sizeof(struct Stage));
 
-                struct Instruction *instr = &current_block->instructions[current_block->instr_count];
-                instr->instr_id = id_file;
-                instr->first_stage = NULL;
-                instr->last_stage = NULL;
-
-                if (current_block->instr_count++ == 999)
-                {
-                    struct InstructionBlock *new_block = malloc(sizeof(struct InstructionBlock));
-                    new_block->instr_count = 0;
-                    new_block->next_block = NULL;
-                    current_block->next_block = new_block;
-                    current_block = new_block;
+                if (table->qtty_content == 256) {
+                    // TODO: Implement new levels
+                    printf("Error: Table is full\n");
+                    return 1;
+                } else {
+                    table->qtty_content = id_file;
+                    table->content[table->qtty_content] = instr_new;
+                    // TODO: Implement new levels
+                    table->qtty_content++;
                 }
 
                 break;
             case 'L':
-                printf("Text\n");
                 break;
             case 'S':
-                printf("New stage\n");
-
                 char stage_name[4];
-                int instr_id, stage_id;
+                u_int64_t instr_id, stage_id;
 
-                if (sscanf(line, "S\t%d\t%d\t%s", instr_id, stage_id, stage_name) != 3) {
+                if (sscanf(line, "S\t%d\t%d\t%s", &instr_id, &stage_id, stage_name) != 3) {
                     printf("Error: Could not read stage\n");
                     return 1;
                 }
 
-                struct Stage *stage = malloc(sizeof(struct Stage));
-                stage->name = malloc(4);
-                strcpy(stage->name, stage_name);
-                stage->next_stage = NULL;
+                struct Instruction *instr = table->content[instr_id%256];
 
-                struct Instruction *instr = &current_block->instructions[instr_id%1000];
+                struct Stage *stage = &instr->stages[instr->qtty_stages];
+                instr->qtty_stages++;
 
-                if (instr->first_stage == NULL) {
-                    instr->first_stage = stage;
-                    instr->last_stage = stage;
-                } else {
-                    instr->last_stage->next_stage = stage;
-                    instr->last_stage = stage;
-                }
+                strncpy(stage->name, stage_name, 4);
 
                 break;
             default:
                 break;
+        }
+    }
+
+    fclose(file);
+
+    // print instructions
+
+    for (int i = 0; i < table->qtty_content; i++) {
+        struct Instruction *instr = table->content[i];
+        printf("Instruction %d\n", i);
+
+        if (instr != NULL) {
+            printf("Init cycle: %d\n", instr->init_cycle);
+            printf("Quantity of stages: %d\n", instr->qtty_stages);
+
+            for (int j = 0; j < instr->qtty_stages; j++) {
+                struct Stage *stage = &instr->stages[j];
+                printf("\tStage %d: %s\n", j, stage->name);
+            }
         }
     }
 }
