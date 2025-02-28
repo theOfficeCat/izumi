@@ -16,6 +16,7 @@
  */
 
 #include <sys/types.h>
+#include <stdbool.h>
 
 /*
  * Stage
@@ -44,6 +45,7 @@ struct Instruction {
     u_int64_t init_cycle;
     u_int64_t qtty_stages;
     struct Stage *stages;
+    bool valid;
 };
 
 /*
@@ -53,14 +55,10 @@ struct Instruction {
  * 
  * level: The level of depth of the table.
  * qtty_content: The quantity of content that the table has.
- * content: The content of the table.
- * 
- * If the level is = 0, the content is a pointer to an Instruction struct.
- * If the level is > 0, the content is a pointer to another InstructionTable 
- * struct.
+ * content: An array of 256 instructions.
  */
 struct InstructionTable {
-    u_int64_t level;
     u_int8_t qtty_content;
-    void* content[256];
+    struct Instruction content[256];
 };
+

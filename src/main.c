@@ -40,10 +40,16 @@ int main(int argc, char *argv[]) {
     size_t len = 0;
     ssize_t read;
 
-    // Initialization of the table
-    struct InstructionTable *table = malloc(sizeof(struct InstructionTable));
-    table->level = 0;
-    table->qtty_content = 0;
+    // Initialization of the table array
+
+    struct InstructionTable* tables[4];
+    u_int64_t qtty_tables = 1;
+    tables[0] = malloc(sizeof(struct InstructionTable));
+    tables[0]->qtty_content = 0;
+
+    for (int i = 0; i < 256; i++) {
+        tables[0]->content[i].valid = false;
+    }
 
     u_int64_t cycle = 0;
 
@@ -74,20 +80,21 @@ int main(int argc, char *argv[]) {
                     return 1;
                 }
                 
-                struct Instruction *instr_new = malloc(sizeof(struct Instruction));
-                instr_new->init_cycle = cycle;
-                instr_new->qtty_stages = 0;
-                instr_new->stages = malloc(10 * sizeof(struct Stage));
+                struct Instruction instr_new;
+                instr_new.init_cycle = cycle;
+                instr_new.qtty_stages = 0;
+                instr_new.stages = malloc(10 * sizeof(struct Stage));
+                instr_new.valid = true;
 
-                if (table->qtty_content == 256) {
+                if (tables[0]->qtty_content == 256) {
                     // TODO: Implement new levels
                     printf("Error: Table is full\n");
                     return 1;
                 } else {
-                    table->qtty_content = id_file;
-                    table->content[table->qtty_content] = instr_new;
+                    tables[0]->qtty_content = id_file;
+                    tables[0]->content[tables[0]->qtty_content] = instr_new;
                     // TODO: Implement new levels
-                    table->qtty_content++;
+                    tables[0]->qtty_content++;
                 }
 
                 break;
@@ -102,7 +109,7 @@ int main(int argc, char *argv[]) {
                     return 1;
                 }
 
-                struct Instruction *instr = table->content[instr_id%256];
+                struct Instruction *instr = &tables[0]->content[instr_id%256];
 
                 struct Stage *stage = &instr->stages[instr->qtty_stages];
                 instr->qtty_stages++;
@@ -119,16 +126,16 @@ int main(int argc, char *argv[]) {
 
     // print instructions
 
-    for (int i = 0; i < table->qtty_content; i++) {
-        struct Instruction *instr = table->content[i];
+    for (int i = 0; i < tables[0]->qtty_content; i++) {
+        struct Instruction instr = tables[0]->content[i];
         printf("Instruction %d\n", i);
 
-        if (instr != NULL) {
-            printf("Init cycle: %d\n", instr->init_cycle);
-            printf("Quantity of stages: %d\n", instr->qtty_stages);
+        if (instr.valid) {
+            printf("Init cycle: %d\n", instr.init_cycle);
+            printf("Quantity of stages: %d\n", instr.qtty_stages);
 
-            for (int j = 0; j < instr->qtty_stages; j++) {
-                struct Stage *stage = &instr->stages[j];
+            for (int j = 0; j < instr.qtty_stages; j++) {
+                struct Stage *stage = &instr.stages[j];
                 printf("\tStage %d: %s\n", j, stage->name);
             }
         }
