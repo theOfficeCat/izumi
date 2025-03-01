@@ -25,9 +25,12 @@
  * 
  * name: The name of the stage.
  */
-struct Stage {
+struct Stage_s {
+    u_int64_t cycle;
     char name[4];
 };
+
+typedef struct Stage_s Stage;
 
 /*
  * Instruction
@@ -41,24 +44,41 @@ struct Stage {
  * The stages are stored in an array of Stage structs, which will be resized
  * by 10 elements each time it is full.
  */
-struct Instruction {
-    u_int64_t init_cycle;
+struct Instruction_s {
     u_int64_t qtty_stages;
-    struct Stage *stages;
+    char *data;
+    Stage *stages;
     bool valid;
 };
+
+typedef struct Instruction_s Instruction;
 
 /*
  * InstructionTable
  * 
  * This struct is used to store the instructions that are read from the file.
  * 
- * level: The level of depth of the table.
- * qtty_content: The quantity of content that the table has.
  * content: An array of 256 instructions.
  */
-struct InstructionTable {
-    u_int8_t qtty_content;
-    struct Instruction content[256];
+struct InstructionTable_s {
+    Instruction content[256];
 };
 
+typedef struct InstructionTable_s InstructionTable;
+
+/*
+ * InstructionTableArray
+ * 
+ * This struct is used to store the tables that are read from the file.
+ * 
+ * qtty_tables: The quantity of tables that the array has in usage.
+ * avail_tables: The quantity of tables that are available in the array.
+ * tables: An array of tables.
+ */
+struct InstructionTableArray_s {
+    u_int64_t qtty_tables;
+    u_int64_t avail_tables;
+    InstructionTable* *tables;
+};
+
+typedef struct InstructionTableArray_s InstructionTableArray;
