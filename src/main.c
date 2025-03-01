@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
                 for (int k = 0; k < instr.qtty_stages; k++) {
                     Stage *stage = &instr.stages[k];
-                    printf("\t%s\t on %d\n", stage->name, stage->cycle);
+                    printf("\t%s\t on %lu\n", stage->name, stage->cycle);
                 }
             }
         }

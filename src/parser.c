@@ -37,7 +37,7 @@ int integer_length(u_int64_t number) {
 void cycle_increment(u_int64_t *cycle, char *line) {
     u_int64_t qtty_cycles;
 
-    if (sscanf(line, "C\t%d", &qtty_cycles) != 1) {
+    if (sscanf(line, "C\t%lu", &qtty_cycles) != 1) {
         printf("Error: Could not read cycles\n");
         exit(1);
     }
@@ -49,7 +49,7 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle,
     char *line) {
     u_int64_t id_file, id_sim, id_thread;
 
-    if (sscanf(line, "I\t%ld\t%ld\t%ld", &id_file, &id_sim, &id_thread) != 3) {
+    if (sscanf(line, "I\t%lu\t%lu\t%lu", &id_file, &id_sim, &id_thread) != 3) {
         printf("Error: Could not read instruction\n");
         exit(1);
     }
@@ -92,7 +92,7 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
 
     int chars_read = 0;
 
-        if ((chars_read = sscanf(line, "L\t%ld\t%ld\t", &id, &type)) != 2) {
+        if ((chars_read = sscanf(line, "L\t%lu\t%lu\t", &id, &type)) != 2) {
         printf("Error: Could not read data\n");
         exit(1);
     }
@@ -113,7 +113,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle,
     char stage_name[4];
     u_int64_t instr_id, stage_id;
 
-    if (sscanf(line, "S\t%ld\t%ld\t%s", &instr_id, &stage_id, stage_name) != 3) {
+    if (sscanf(line, "S\t%lu\t%lu\t%s", &instr_id, &stage_id, stage_name) != 3) {
         printf("Error: Could not read stage\n");
         exit(1);
     }
