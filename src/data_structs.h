@@ -15,6 +15,9 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
+#ifndef DATA_STRUCTS_H
+#define DATA_STRUCTS_H
+
 #include <sys/types.h>
 #include <stdbool.h>
 
@@ -82,3 +85,5 @@ struct InstructionTableArray_s {
 };
 
 typedef struct InstructionTableArray_s InstructionTableArray;
+
+#endif
