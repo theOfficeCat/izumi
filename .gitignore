@@ -1,4 +1,4 @@
 *.o
 izumi
 *.out
-output
+output*

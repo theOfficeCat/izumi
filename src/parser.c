@@ -54,13 +54,16 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle,
         exit(1);
     }
 
+    // Create a new instruction
     Instruction instr_new;
     instr_new.qtty_stages = 0;
     instr_new.data = NULL;
     instr_new.stages = malloc(10 * sizeof(Stage));
     instr_new.valid = true;
 
+    // Create table if instruction needs to be in a new one
     if (id_file/256 >= tables_array->qtty_tables) {
+        // Resize the tables array if necessary
         if (id_file/256 >= tables_array->avail_tables) {
             tables_array->avail_tables *= 2;
             tables_array->tables = realloc(tables_array->tables, 
@@ -94,6 +97,7 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
         exit(1);
     }
 
+    // Skip the first part of the line to get only the data
     int init = 5 + integer_length(id) + integer_length(type);
 
     strcpy(data, line + init);
@@ -114,9 +118,11 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle,
         exit(1);
     }
 
+    // Get the instruction
     Instruction *instr = 
         &tables_array->tables[instr_id/256]->content[instr_id%256];
 
+    // Resize the stages array if necessary
     if (instr->qtty_stages % 10 == 0) {
         instr->stages = realloc(instr->stages, 
             (instr->qtty_stages + 10) * sizeof(Stage));
@@ -142,15 +148,13 @@ InstructionTableArray parse_file(char *file_name) {
     size_t len = 0;
     ssize_t read;
 
-    // Initialization of the table array
-
+    // Initialization of the tables array
     InstructionTableArray tables_array;
     tables_array.qtty_tables = 1;
     tables_array.avail_tables = 4;
     tables_array.tables = malloc(4 * sizeof(InstructionTable*));
 
-
-
+    // Initialization of the first table    
     tables_array.tables[0] = malloc(sizeof(InstructionTable));
 
     for (int i = 0; i < 256; i++) {
@@ -163,6 +167,7 @@ InstructionTableArray parse_file(char *file_name) {
 
     u_int64_t cycle = 0;
 
+    // Parse the file
     while ((read = getline(&line, &len, file)) != -1) {
         char command;
 
@@ -190,7 +195,6 @@ InstructionTableArray parse_file(char *file_name) {
     }
 
     fclose(file);
-
 
     return tables_array;
 }

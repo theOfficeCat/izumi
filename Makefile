@@ -1,12 +1,21 @@
-all: main.o parser.o
-	$(CC) $(CFLAGS) -o izumi main.o parser.o
+PROJECT := izumi
+BINARY := izumi
+CC := gcc
+CFLAGS := -Wall -pedantic -g -O0
+LDFLAGS := -lm 
 
-parser.o: src/parser.c
-	$(CC) $(CFLAGS) -c src/parser.c
+SRC := $(wildcard src/*.c)
+HDR := $(wildcard src/*.h)
+OBJ := $(patsubst %.c,%.o,$(SRC))
 
-main.o: src/main.c
-	$(CC) $(CFLAGS) -c src/main.c
+all: $(BINARY)
 
+$(BINARY): $(OBJ)
+	$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS)
+
+%.o: src/%.c $(HDR)
+	$(CC) -c $(CFLAGS) $<
+
+.PHONY: clean
 clean:
-	rm -f izumi *.o
-
+	rm $(BINARY) src/*.o
