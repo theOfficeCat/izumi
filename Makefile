@@ -1,8 +1,8 @@
 PROJECT := izumi
 BINARY := izumi
 CC := gcc
-CFLAGS := -Wall -pedantic -g -O0
-LDFLAGS := -lm 
+CFLAGS := -Wall -pedantic -g -O0 `pkg-config --cflags ncurses`
+LDFLAGS := -lm `pkg-config --libs ncurses`
 
 SRC := $(wildcard src/*.c)
 HDR := $(wildcard src/*.h)

@@ -30,6 +30,7 @@
  */
 struct Stage_s {
     u_int64_t cycle;
+    u_int64_t duration;
     char name[4];
 };
 
@@ -49,7 +50,8 @@ typedef struct Stage_s Stage;
  */
 struct Instruction_s {
     u_int64_t qtty_stages;
-    char *data;
+    char *mem_addr;
+    char *instruction;
     Stage *stages;
     bool valid;
 };

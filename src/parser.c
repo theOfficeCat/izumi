@@ -45,8 +45,7 @@ void cycle_increment(u_int64_t *cycle, char *line) {
     *cycle += qtty_cycles;    
 }
 
-void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, 
-    char *line) {
+void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
     u_int64_t id_file, id_sim, id_thread;
 
     if (sscanf(line, "I\t%lu\t%lu\t%lu", &id_file, &id_sim, &id_thread) != 3) {
@@ -57,7 +56,8 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle,
     // Create a new instruction
     Instruction instr_new;
     instr_new.qtty_stages = 0;
-    instr_new.data = NULL;
+    instr_new.mem_addr = NULL;
+    instr_new.instruction = NULL;
     instr_new.stages = malloc(10 * sizeof(Stage));
     instr_new.valid = true;
 
@@ -66,8 +66,7 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle,
         // Resize the tables array if necessary
         if (id_file/256 >= tables_array->avail_tables) {
             tables_array->avail_tables *= 2;
-            tables_array->tables = realloc(tables_array->tables, 
-                tables_array->avail_tables * sizeof(InstructionTable*));
+            tables_array->tables = realloc(tables_array->tables,tables_array->avail_tables * sizeof(InstructionTable*));
 
             for (int i = tables_array->qtty_tables; i < tables_array->avail_tables; i++) {
                 tables_array->tables[i] = NULL;
@@ -92,24 +91,30 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
 
     int chars_read = 0;
 
-        if ((chars_read = sscanf(line, "L\t%lu\t%lu\t", &id, &type)) != 2) {
+    char mem_addr[19];
+
+    if ((chars_read = sscanf(line, "L\t%lu\t%lu\t%s", &id, &type, mem_addr)) != 3) {
         printf("Error: Could not read data\n");
         exit(1);
     }
 
+    tables_array->tables[id/256]->content[id%256].mem_addr = malloc(19);
+    strcpy(tables_array->tables[id/256]->content[id%256].mem_addr, mem_addr);
+
     // Skip the first part of the line to get only the data
-    int init = 5 + integer_length(id) + integer_length(type);
+    int init = 24 + integer_length(id) + integer_length(type);
 
     strcpy(data, line + init);
 
     Instruction *instruct = &tables_array->tables[id/256]->content[id%256];
 
-    instruct->data = malloc(strlen(data) + 1);
-    strcpy(instruct->data, data);
+    data[strlen(data) - 1] = '\0';
+
+    instruct->instruction = malloc(strlen(data) + 1);
+    strcpy(instruct->instruction, data);
 }
 
-void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, 
-    char *line) {
+void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
     char stage_name[4];
     u_int64_t instr_id, stage_id;
 
@@ -124,8 +129,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle,
 
     // Resize the stages array if necessary
     if (instr->qtty_stages % 10 == 0) {
-        instr->stages = realloc(instr->stages, 
-            (instr->qtty_stages + 10) * sizeof(Stage));
+        instr->stages = realloc(instr->stages, (instr->qtty_stages + 10) * sizeof(Stage));
     }
 
     Stage *stage = &instr->stages[instr->qtty_stages];
@@ -133,6 +137,55 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle,
 
     strncpy(stage->name, stage_name, 4);
     stage->cycle = cycle;
+}
+
+void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
+    u_int64_t instr_id, stage_id;
+
+    char stage_name[4];
+
+    if (sscanf(line, "E\t%lu\t%lu\t%s", &instr_id, &stage_id, stage_name) != 3) {
+        printf("Error: Could not read end stage\n");
+        exit(1);
+    }
+
+    // Get the instruction
+    Instruction *instr = 
+        &tables_array->tables[instr_id/256]->content[instr_id%256];
+
+    // Get the stage
+    Stage *stage = NULL;
+
+    for (int i = 0; i < instr->qtty_stages; i++) {
+        if (strcmp(instr->stages[i].name, stage_name) == 0) {
+            stage = &instr->stages[i];
+            break;
+        }
+    }
+
+    if (stage == NULL) {
+        printf("Error: Could not find stage\n");
+        exit(1);
+    }
+
+    stage->duration = cycle - stage->cycle;
+}
+
+void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
+    u_int64_t instr_id, retire_id, type;
+
+    if (sscanf(line, "R\t%lu\t%lu\t%lu", &instr_id, &retire_id, &type) != 3) {
+        printf("Error: Could not read retire\n");
+        exit(1);
+    }
+
+    // Get the instruction
+    Instruction *instr = &tables_array->tables[instr_id/256]->content[instr_id%256];
+
+    if (type == 0) {
+        Stage *stage = &instr->stages[instr->qtty_stages - 1];
+        stage->duration = cycle - stage->cycle;
+    }    
 }
 
 
@@ -188,6 +241,12 @@ InstructionTableArray parse_file(char *file_name) {
                 break;
             case 'S':
                 new_stage(&tables_array, cycle, line);
+                break;
+            case 'E':
+                end_stage(&tables_array, cycle, line);
+                break;
+            case 'R':
+                retire_instruction(&tables_array, cycle, line);
                 break;
             default:
                 break;
