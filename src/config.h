@@ -15,41 +15,14 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef IZUMI_CONFIG_H
+#define IZUMI_CONFIG_H
 
-#include <ncurses.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-
-#include "data_structs.h"
-#include "config.h"
-
-struct WindowData_s {
-    u_int64_t x;
-    u_int64_t y;
-    u_int64_t width;
-    u_int64_t height;
-    u_int64_t first_instruction;
-    WINDOW *win;
-
-    StatusMenu status_menu;
+enum StatusMenu_e {
+    OPEN,
+    CLOSED
 };
 
-typedef struct WindowData_s WindowData;
-
-void init_window(WindowData *data);
-
-void close_window();
-
-void main_loop(WindowData *data, InstructionTableArray *tables_array);
-
-void render(WindowData *data, InstructionTableArray *tables_array);
-
-void get_window_data(WindowData *data);
-
-void open_menu(WindowData *data);
+typedef enum StatusMenu_e StatusMenu;
 
 #endif

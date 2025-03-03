@@ -59,6 +59,7 @@ void init_window(WindowData *data) {
     get_window_data(data);
     data->win = newwin(data->height, data->width, data->y, data->x);
     data->first_instruction = 0;
+    data->status_menu = CLOSED;
 }
 
 void close_window() {
@@ -79,11 +80,20 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 return;
                 break;
             case KEY_DOWN:
-                data->first_instruction++;
+                if (data->status_menu == CLOSED) {
+                    data->first_instruction++;
+                }
                 break;
             case KEY_UP:
-                if (data->first_instruction > 0) {
+                if (data->status_menu == CLOSED && data->first_instruction > 0) {
                     data->first_instruction--;
+                }
+                break;
+            case 'm':
+                if (data->status_menu == OPEN) {
+                    data->status_menu = CLOSED;
+                } else {
+                    data->status_menu = OPEN;
                 }
                 break;
             default:
@@ -91,6 +101,14 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
         }
         render(data, tables_array);
     }
+}
+
+void open_menu(WindowData *data) {
+    WINDOW *menu_win = newwin(data->height/2, data->width/2, data->height/4, data->width/4);
+
+    box(menu_win, 0, 0);
+
+    wrefresh(menu_win);
 }
 
 void render(WindowData *data, InstructionTableArray *tables_array) {
@@ -105,7 +123,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
     mvwprintw(data->win, 0, 0, title);
 
-    // verical bar on 48 px for instruction info
+    // verical bar on 32 px for instruction info
     mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);
 
     // print instructions data
@@ -175,7 +193,11 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
             }
         }
     }
-
-
     wrefresh(data->win);
+
+    if (data->status_menu == OPEN) {
+        open_menu(data);
+    }
+
+
 }
