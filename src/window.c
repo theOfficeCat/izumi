@@ -156,7 +156,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
                     }
 
                     if (stage->duration > 1) {
-                        for (u_int64_t k = 0; k < stage->duration; k++) {
+                        for (u_int64_t k = 0; k < stage->duration - 1; k++) {
                             if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
                                 wattron(data->win, COLOR_PAIR(8+(j%6)+1));
                                 mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
