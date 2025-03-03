@@ -127,7 +127,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
         if (instr.valid) {
             if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
-                mvwprintw(data->win, 2*i + 1, 1, "%s", instr.mem_addr);
+                mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
             }
             if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
                 mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
