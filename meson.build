@@ -1,7 +1,14 @@
 project('Izumi', 'c',
   license: 'GPL-3.0-or-later',
   license_files: ['LICENSE'],
-  version: run_command('cut', 'src/version.h', '-d ', '-f3').stdout().strip().strip('"'),
+  version: '0.0.1',
+)
+
+conf_data = configuration_data()
+conf_data.set_quoted('VERSION', meson.project_version())
+configure_file(
+  output: 'config.h',
+  configuration: conf_data,
 )
 
 # Find a suitable shell
