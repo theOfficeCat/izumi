@@ -25,7 +25,7 @@
 #include <sys/types.h>
 
 #include "data_structs.h"
-#include "config.h"
+#include "settings.h"
 
 struct WindowData_s {
     u_int64_t x;
@@ -35,7 +35,8 @@ struct WindowData_s {
     u_int64_t first_instruction;
     WINDOW *win;
 
-    StatusMenu status_menu;
+    MenuData menu;
+    WINDOW *menu_win;
 };
 
 typedef struct WindowData_s WindowData;
@@ -51,5 +52,7 @@ void render(WindowData *data, InstructionTableArray *tables_array);
 void get_window_data(WindowData *data);
 
 void open_menu(WindowData *data);
+
+void use_menu(WindowData *data, InstructionTableArray *tables_array);
 
 #endif

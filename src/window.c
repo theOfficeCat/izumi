@@ -23,7 +23,7 @@
 
 #include "window.h"
 #include "version.h"
-#include "config.h"
+#include "settings.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -60,7 +60,9 @@ void init_window(WindowData *data) {
     get_window_data(data);
     data->win = newwin(data->height, data->width, data->y, data->x);
     data->first_instruction = 0;
-    data->status_menu = CLOSED;
+    data->menu.status = CLOSED;
+
+    data->menu_win = newwin(data->height/2, data->width/2, data->height/4, data->width/4);
 }
 
 void close_window() {
@@ -78,20 +80,36 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 
         switch (ch) {
             case 'q':
-                return;
+                if (data->menu.status == OPEN) {
+                    toggle_menu(&data->menu.status);
+                }
+                else {
+                    return;
+                }
                 break;
             case KEY_DOWN:
-                if (data->status_menu == CLOSED) {
+                if (data->menu.status == CLOSED) {
                     data->first_instruction++;
+                }
+                else {
+                    move_down_menu(&data->menu.selected);
                 }
                 break;
             case KEY_UP:
-                if (data->status_menu == CLOSED && data->first_instruction > 0) {
+                if (data->menu.status == CLOSED && data->first_instruction > 0) {
                     data->first_instruction--;
+                }
+                else {
+                    move_up_menu(&data->menu.selected);
+                }
+                break;
+            case '\n': // Enter
+                if (data->menu.status == OPEN) {
+                    use_menu(data, tables_array);
                 }
                 break;
             case 'm':
-                toggle_menu(&data->status_menu);
+                toggle_menu(&data->menu.status);
                 break;
             default:
                 break;
@@ -101,11 +119,30 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 }
 
 void open_menu(WindowData *data) {
-    WINDOW *menu_win = newwin(data->height/2, data->width/2, data->height/4, data->width/4);
 
-    box(menu_win, 0, 0);
+    box(data->menu_win, 0, 0);
 
-    wrefresh(menu_win);
+    mvwprintw(data->menu_win, 1, data->width/4 - 2, "MENU");
+
+    if (data->menu.selected == LOAD_FILE) {
+        wattron(data->menu_win, A_REVERSE);
+        mvwprintw(data->menu_win, 3, 4, "Load file");
+        wattroff(data->menu_win, A_REVERSE);
+    }
+    else {
+        mvwprintw(data->menu_win, 3, 4, "Load file");
+    }
+
+    if (data->menu.selected == QUIT) {
+        wattron(data->menu_win, A_REVERSE);
+        mvwprintw(data->menu_win, 4, 4, "Quit");
+        wattroff(data->menu_win, A_REVERSE);
+    }
+    else {
+        mvwprintw(data->menu_win, 4, 4, "Quit");
+    }
+
+    wrefresh(data->menu_win);
 }
 
 void render(WindowData *data, InstructionTableArray *tables_array) {
@@ -192,7 +229,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
     }
     wrefresh(data->win);
 
-    if (data->status_menu == OPEN) {
+    if (data->menu.status == OPEN) {
         open_menu(data);
     }
 

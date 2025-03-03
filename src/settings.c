@@ -15,7 +15,9 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
-#include "config.h"
+#include "settings.h"
+#include "window.h"
+#include "data_structs.h"
 
 void toggle_menu(StatusMenu *status) {
     if (*status == OPEN) {
@@ -23,5 +25,24 @@ void toggle_menu(StatusMenu *status) {
     }
     else {
         *status = OPEN;
+    }
+}
+
+void move_down_menu(SelectedMenu *selected) {
+    if (*selected == LOAD_FILE) {
+        *selected = QUIT;
+    }
+}
+
+void move_up_menu(SelectedMenu *selected) {
+    if (*selected == QUIT) {
+        *selected = LOAD_FILE;
+    }
+}
+
+void use_menu(WindowData *data, InstructionTableArray *tables_array) {
+    if (data->menu.selected == QUIT) {
+        close_window();
+        exit(0);
     }
 }

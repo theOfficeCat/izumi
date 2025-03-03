@@ -15,8 +15,8 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
-#ifndef IZUMI_CONFIG_H
-#define IZUMI_CONFIG_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 enum StatusMenu_e {
     OPEN,
@@ -25,6 +25,25 @@ enum StatusMenu_e {
 
 typedef enum StatusMenu_e StatusMenu;
 
+enum SelectedMenu_e {
+    LOAD_FILE,
+    QUIT
+};
+
+typedef enum SelectedMenu_e SelectedMenu;
+
+struct MenuData_s {
+    StatusMenu status;
+    SelectedMenu selected;
+};
+
+typedef struct MenuData_s MenuData;
+
+
 void toggle_menu(StatusMenu *status);
+
+void move_down_menu(SelectedMenu *selected);
+
+void move_up_menu(SelectedMenu *selected);
 
 #endif
