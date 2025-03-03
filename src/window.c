@@ -23,6 +23,7 @@
 
 #include "window.h"
 #include "version.h"
+#include "config.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -90,11 +91,7 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 }
                 break;
             case 'm':
-                if (data->status_menu == OPEN) {
-                    data->status_menu = CLOSED;
-                } else {
-                    data->status_menu = OPEN;
-                }
+                toggle_menu(&data->status_menu);
                 break;
             default:
                 break;

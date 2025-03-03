@@ -15,3 +15,13 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
+#include "config.h"
+
+void toggle_menu(StatusMenu *status) {
+    if (*status == OPEN) {
+        *status = CLOSED;
+    }
+    else {
+        *status = OPEN;
+    }
+}

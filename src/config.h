@@ -25,4 +25,6 @@ enum StatusMenu_e {
 
 typedef enum StatusMenu_e StatusMenu;
 
+void toggle_menu(StatusMenu *status);
+
 #endif
