@@ -38,6 +38,21 @@ void init_window(WindowData *data) {
     curs_set(0);
     start_color();
 
+    init_pair(1, COLOR_BLACK, COLOR_BLUE);
+    init_pair(2, COLOR_BLACK, COLOR_RED);
+    init_pair(3, COLOR_BLACK, COLOR_GREEN);
+    init_pair(4, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
+    init_pair(6, COLOR_BLACK, COLOR_CYAN);
+
+    init_pair(9,  COLOR_WHITE, COLOR_BLUE);
+    init_pair(10, COLOR_WHITE, COLOR_RED);
+    init_pair(11, COLOR_WHITE, COLOR_GREEN);
+    init_pair(12, COLOR_WHITE, COLOR_YELLOW);
+    init_pair(13, COLOR_WHITE, COLOR_MAGENTA);
+    init_pair(14, COLOR_WHITE, COLOR_CYAN);
+
+
     data->x = 0;
     data->y = 0;
 
@@ -97,6 +112,15 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
     u_int64_t first_cycle = -1;
 
+    //build grid
+    for (u_int64_t i = 1; i < data->height - 1; i++) {
+        for (u_int64_t j = 0; j < data->width - 1; j++) {
+            if (j >32 && j%3 == 0) {
+                mvwprintw(data->win, i, j, "|");
+            }
+        }
+    }
+
     for (u_int64_t i = 0; i < data->height/2; i++) {
         u_int64_t index = data->first_instruction + i;
         Instruction instr = tables_array->tables[index/256]->content[index%256];
@@ -118,17 +142,35 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
                     }
                     Stage *stage = &instr.stages[j];
 
+                    wattron(data->win, A_BOLD);
+
                     if (33 + 3*(stage->cycle - first_cycle) + 3 < data->width - 1) {
-                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|%s", stage->name);
+                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
+                        wattron(data->win, COLOR_PAIR(j+1));
+                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
+
+                        if (strlen(stage->name) == 1) {
+                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
+                        }
+                        wattroff(data->win, COLOR_PAIR(j+1));
                     }
 
-                    if (stage->duration > 0) {
+                    if (stage->duration > 1) {
                         for (u_int64_t k = 0; k < stage->duration; k++) {
                             if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
-                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), " - ");
+                                wattron(data->win, COLOR_PAIR(8+j+1));
+                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
+                                wattroff(data->win, COLOR_PAIR(8+j+1));
+
+                                wattron(data->win, COLOR_PAIR(j+1));
+                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
+                                wattroff(data->win, COLOR_PAIR(j+1));
+
                             }
                         }
                     }
+
+                    wattroff(data->win, A_BOLD);
                 }
             }
         }

@@ -50,19 +50,20 @@ int main(int argc, char *argv[]) {
 
                     for (int k = 0; k < instr.qtty_stages; k++) {
                         Stage *stage = &instr.stages[k];
-                        printf("\t%s\t on %lu\n", stage->name, stage->cycle);
+                        printf("\t%s\t on %lu\tduration: %lu\n", stage->name, stage->cycle, stage->duration);
                     }
                 }
             }
         }
     }
+    else {
+        WindowData data;
 
-    WindowData data;
+        init_window(&data);
 
-    init_window(&data);
+        main_loop(&data, &tables_array);
 
-    main_loop(&data, &tables_array);
-
-    close_window();
+        close_window();
+    }
 }
 

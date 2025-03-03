@@ -31,7 +31,7 @@ the ncurses frontend
 
 ![Screenshot](.github/screenshot.jpg)
 
-I know it's not the best looking tool, but it's a start (I will add colours eventually).
+I know it's not the best looking tool, but it's a start (now it has colors :D).
 
 ---
 
