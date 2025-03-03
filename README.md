@@ -16,10 +16,35 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 - End of stage (for multiple cycle stages/stalling the pipeline)
 - End of instruction
 
+## Requierments
+
+- ncurses
+- meson (build only)
+- ninja (build only, can be replaced by other meson backends)
+
+## Building
+
+Building with `meson` is recommended:
+
+```bash
+meson setup build
+cd build
+meson compile
+```
+
+But, if the classic `make` sequence is hard-wired in your brain, you can:
+
+```bash
+./configure
+make
+```
+
+In both cases the binary will be found in `build/izumi`.
+
 ## Usage
 
 ```bash
-$ make
+$ cd build # if not done yet
 $ ./izumi <input_file> [-p]
 ```
 

@@ -1,21 +1,37 @@
-PROJECT := izumi
-BINARY := izumi
-CC := gcc
-CFLAGS := -Wall -pedantic -g -O0 `pkg-config --cflags ncurses`
-LDFLAGS := -lm `pkg-config --libs ncurses`
+# This is just a wrapper arround the meson build system
 
-SRC := $(wildcard src/*.c)
-HDR := $(wildcard src/*.h)
-OBJ := $(patsubst %.c,%.o,$(SRC))
 
-all: $(BINARY)
+# Directories
+source_dir = $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+build_dir = $(source_dir)/build
 
-$(BINARY): $(OBJ)
-	$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS)
+# Check if configure was run
+ifeq ($(shell meson configure $(build_dir) >/dev/null 2>&1 || echo fail),fail)
+$(error "Invalid state: Run the configure script ($(source_dir)/configure) before building!")
+endif
 
-%.o: src/%.c $(HDR)
-	$(CC) -c $(CFLAGS) $<
+# Commands
+meson_compile_cmd = meson compile -C $(build_dir)
+meson_test_cmd    = meson test    -C $(build_dir)
+meson_install_cmd = meson install -C $(build_dir)
+meson_clean_cmd   = meson clean   -C $(build_dir)
 
-.PHONY: clean
+# Compilation target
+.PHONY: default
+default:
+	$(meson_compile_cmd) $(MAKECMDGOALS)
+
+# Special targets
+test:
+	$(meson_test_cmd)
+
+install:
+	$(meson_install_cmd)
+
 clean:
-	rm $(BINARY) src/*.o
+	$(meson_compile_cmd) --clean
+
+# Pass remaining targets to 'meson compile'
+%:
+	$(meson_compile_cmd) $@
+

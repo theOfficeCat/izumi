@@ -22,7 +22,7 @@
 #include <sys/types.h>
 
 #include "window.h"
-#include "version.h"
+#include "config.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
