@@ -22,7 +22,7 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 - meson (build only)
 - ninja (build only, can be replaced by other meson backends)
 
-## Building
+## Building (and installing)
 
 Building with `meson` is recommended:
 
@@ -30,6 +30,7 @@ Building with `meson` is recommended:
 meson setup build
 cd build
 meson compile
+meson install
 ```
 
 But, if the classic `make` sequence is hard-wired in your brain, you can:
@@ -37,15 +38,17 @@ But, if the classic `make` sequence is hard-wired in your brain, you can:
 ```bash
 ./configure
 make
+make install
 ```
 
-In both cases the binary will be found in `build/izumi`.
-
+You can also use `nix` (flakes recommended):
+```bash
+nix run github:theOfficeCat/Izumi
+```
 ## Usage
 
 ```bash
-$ cd build # if not done yet
-$ ./izumi <input_file> [-p]
+$ izumi <input_file> [-p]
 ```
 
 - `input_file`: The input file in Onikiri2-Kanata format
