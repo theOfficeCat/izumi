@@ -99,11 +99,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
     box(data->win, 0, 0);
 
-    char title[32];
-
-    sprintf(title, "Izumi v%s", VERSION);
-
-    mvwprintw(data->win, 0, 0, title);
+    mvwprintw(data->win, 0, 0, "Izumi v%s", VERSION);
 
     // verical bar on 48 px for instruction info
     mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);

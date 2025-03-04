@@ -22,8 +22,6 @@ stdenv.mkDerivation {
     ncurses
   ];
 
-  hardeningDisable = [ "format" ];
-
   meta = with lib; {
     description = "An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata";
     homepage = "https://github.com/theOfficeCat/Izumi/";

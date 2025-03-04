@@ -2,6 +2,7 @@ project('Izumi', 'c',
   license: 'GPL-3.0-or-later',
   license_files: ['LICENSE'],
   version: '0.0.1',
+  meson_version: '>= 1.1.0',
 )
 
 conf_data = configuration_data()
