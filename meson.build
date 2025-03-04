@@ -22,4 +22,4 @@ sources = sources_command.stdout().strip().split(' ')
 ncurses = dependency('ncurses')
 
 # Define build targets
-executable('izumi', sources, dependencies: ncurses)
+executable('izumi', sources, dependencies: ncurses, install: true)
