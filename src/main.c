@@ -27,48 +27,15 @@
 #include "files.h"
 
 int main(int argc, char *argv[]) {
-    /*if (argc < 2) {
-        printf("Usage: %s <file name> [-p]\n", argv[0]);
-        return 1;
-    }
-
-    InstructionTableArray tables_array = parse_file(argv[1]);
-
-    bool print = false;
-
-    if ((argc == 3) && (strcmp(argv[2], "-p") == 0)) {
-        print = true;
-    }*/
-
-    bool print = false;
-
     // print instructions
-    if (print) {
-        /*for (int i = 0; i < tables_array.qtty_tables; i++) {
-            for (int j = 0; j < 256; j++) {
-                Instruction instr = tables_array.tables[i]->content[j];
+    InstructionTableArray tables_array;
 
-                if (instr.valid) {
-                    printf("I\t%d\t%s\t%s\n", i*256+j, instr.mem_addr, instr.instruction);
+    WindowData data;
 
-                    for (int k = 0; k < instr.qtty_stages; k++) {
-                        Stage *stage = &instr.stages[k];
-                        printf("\t%s\t on %lu\tduration: %lu\n", stage->name, stage->cycle, stage->duration);
-                    }
-                }
-            }
-        }*/
-    }
-    else {
-        InstructionTableArray tables_array;
+    init_window(&data);
 
-        WindowData data;
+    main_loop(&data, &tables_array);
 
-        init_window(&data);
-
-        main_loop(&data, &tables_array);
-
-        close_window();
-    }
+    close_window();
 }
 
