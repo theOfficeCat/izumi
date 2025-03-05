@@ -15,48 +15,18 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef FILES_H
+#define FILES_H
 
 #include <sys/types.h>
-#include <stdbool.h>
 
-#include "files.h"
-
-enum MenuOpen_e {
-    MAIN,
-    FILES,
-    CLOSED
+struct DirectoryData_s {
+    u_int64_t files_qtty;
+    char **files;
 };
 
-typedef enum MenuOpen_e MenuOpen;
+typedef struct DirectoryData_s DirectoryData;
 
-enum SelectedMenu_e {
-    LOAD_FILE,
-    QUIT
-};
-
-typedef enum SelectedMenu_e SelectedMenu;
-
-struct MenuData_s {
-    SelectedMenu selected;
-};
-
-typedef struct MenuData_s MenuData;
-
-struct FileMenuData_s {
-    DirectoryData directory_data;
-
-    u_int64_t files_index;
-    bool loaded;
-};
-
-typedef struct FileMenuData_s FileMenuData;
-
-//void toggle_menu(MenuOpen *menu, );
-
-void move_down_menu(SelectedMenu *selected);
-
-void move_up_menu(SelectedMenu *selected);
+DirectoryData read_directory(char *path);
 
 #endif

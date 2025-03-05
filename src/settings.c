@@ -18,15 +18,16 @@
 #include "settings.h"
 #include "window.h"
 #include "data_structs.h"
+#include "parser.h"
 
-void toggle_menu(StatusMenu *status) {
+/*void toggle_menu(StatusMenu *status) {
     if (*status == OPEN) {
         *status = CLOSED;
     }
     else {
         *status = OPEN;
     }
-}
+}*/
 
 void move_down_menu(SelectedMenu *selected) {
     if (*selected == LOAD_FILE) {
@@ -41,8 +42,15 @@ void move_up_menu(SelectedMenu *selected) {
 }
 
 void use_menu(WindowData *data, InstructionTableArray *tables_array) {
-    if (data->menu.selected == QUIT) {
+    if (data->main_menu.selected == QUIT) {
         close_window();
         exit(0);
+    }
+    if (data->main_menu.selected == LOAD_FILE) {
+        // Load file
+        //*tables_array = parse_file("test.out");
+        //data->file_menu.loaded = true;
+        data->file_menu.directory_data = read_directory(".");
+        data->menu_data = FILES;
     }
 }

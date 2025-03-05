@@ -24,6 +24,7 @@
 #include "window.h"
 #include "version.h"
 #include "settings.h"
+#include "files.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -60,7 +61,9 @@ void init_window(WindowData *data) {
     get_window_data(data);
     data->win = newwin(data->height, data->width, data->y, data->x);
     data->first_instruction = 0;
-    data->menu.status = CLOSED;
+    data->menu_data = CLOSED;
+    data->main_menu.selected = LOAD_FILE;
+    data->file_menu.loaded = false;
 
     data->menu_win = newwin(data->height/2, data->width/2, data->height/4, data->width/4);
 }
@@ -80,36 +83,41 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 
         switch (ch) {
             case 'q':
-                if (data->menu.status == OPEN) {
-                    toggle_menu(&data->menu.status);
+                if (data->menu_data == MAIN) {
+                    data->menu_data = CLOSED;
                 }
                 else {
                     return;
                 }
                 break;
             case KEY_DOWN:
-                if (data->menu.status == CLOSED) {
+                if (data->menu_data == CLOSED) {
                     data->first_instruction++;
                 }
                 else {
-                    move_down_menu(&data->menu.selected);
+                    move_down_menu(&data->main_menu.selected);
                 }
                 break;
             case KEY_UP:
-                if (data->menu.status == CLOSED && data->first_instruction > 0) {
+                if (data->menu_data == CLOSED && data->first_instruction > 0) {
                     data->first_instruction--;
                 }
                 else {
-                    move_up_menu(&data->menu.selected);
+                    move_up_menu(&data->main_menu.selected);
                 }
                 break;
             case '\n': // Enter
-                if (data->menu.status == OPEN) {
+                if (data->menu_data == MAIN) {
                     use_menu(data, tables_array);
                 }
                 break;
             case 'm':
-                toggle_menu(&data->menu.status);
+                if (data->menu_data == CLOSED) {
+                    data->menu_data = MAIN;
+                }
+                else {
+                    data->menu_data = CLOSED;
+                }
                 break;
             default:
                 break;
@@ -119,29 +127,38 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 }
 
 void open_menu(WindowData *data) {
+    werase(data->menu_win);
 
     box(data->menu_win, 0, 0);
 
     mvwprintw(data->menu_win, 1, data->width/4 - 2, "MENU");
 
-    if (data->menu.selected == LOAD_FILE) {
-        wattron(data->menu_win, A_REVERSE);
-        mvwprintw(data->menu_win, 3, 4, "Load file");
-        wattroff(data->menu_win, A_REVERSE);
-    }
-    else {
-        mvwprintw(data->menu_win, 3, 4, "Load file");
-    }
+    if (data->menu_data == MAIN) {
+        if (data->main_menu.selected == LOAD_FILE) {
+            wattron(data->menu_win, A_REVERSE);
+            mvwprintw(data->menu_win, 3, 4, "Load file");
+            wattroff(data->menu_win, A_REVERSE);
+        }
+        else {
+            mvwprintw(data->menu_win, 3, 4, "Load file");
+        }
 
-    if (data->menu.selected == QUIT) {
-        wattron(data->menu_win, A_REVERSE);
-        mvwprintw(data->menu_win, 4, 4, "Quit");
-        wattroff(data->menu_win, A_REVERSE);
+        if (data->main_menu.selected == QUIT) {
+            wattron(data->menu_win, A_REVERSE);
+            mvwprintw(data->menu_win, 4, 4, "Quit");
+            wattroff(data->menu_win, A_REVERSE);
+        }
+        else {
+            mvwprintw(data->menu_win, 4, 4, "Quit");
+        }
     }
-    else {
-        mvwprintw(data->menu_win, 4, 4, "Quit");
+    else if (data->menu_data == FILES) {
+        for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
+            if (i < data->height/2 - 4) {
+                mvwprintw(data->menu_win, i+2, 4, data->file_menu.directory_data.files[i]);
+            }
+        }
     }
-
     wrefresh(data->menu_win);
 }
 
@@ -160,76 +177,79 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
     // verical bar on 32 px for instruction info
     mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);
 
-    // print instructions data
+    if (data->file_menu.loaded) {
+        // print instructions data
 
-    u_int64_t first_cycle = -1;
+        u_int64_t first_cycle = -1;
 
-    //build grid
-    for (u_int64_t i = 1; i < data->height - 1; i++) {
-        for (u_int64_t j = 0; j < data->width - 1; j++) {
-            if (j >32 && j%3 == 0) {
-                mvwprintw(data->win, i, j, "|");
+        //build grid
+        for (u_int64_t i = 1; i < data->height - 1; i++) {
+            for (u_int64_t j = 0; j < data->width - 1; j++) {
+                if (j >32 && j%3 == 0) {
+                    mvwprintw(data->win, i, j, "|");
+                }
             }
         }
-    }
 
-    for (u_int64_t i = 0; i < data->height/2; i++) {
-        u_int64_t index = data->first_instruction + i;
-        Instruction instr = tables_array->tables[index/256]->content[index%256];
+        for (u_int64_t i = 0; i < data->height/2; i++) {
+            u_int64_t index = data->first_instruction + i;
+            Instruction instr = tables_array->tables[index/256]->content[index%256];
 
-        if (instr.valid) {
-            if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
-                mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
-            }
-            if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
-                mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
+            if (instr.valid) {
+                if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
+                    mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
+                }
+                if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
+                    mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
 
 
-            }
+                }
 
-            if ((2*i + 2) < data->height - 1) {
-                for (u_int64_t j = 0; j < instr.qtty_stages; j++) {
-                    if (instr.stages[j].cycle < first_cycle) {
-                        first_cycle = instr.stages[j].cycle;
-                    }
-                    Stage *stage = &instr.stages[j];
-
-                    wattron(data->win, A_BOLD);
-
-                    if (33 + 3*(stage->cycle - first_cycle) + 3 < data->width - 1) {
-                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
-                        wattron(data->win, COLOR_PAIR((j%6)+1));
-                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
-
-                        if (strlen(stage->name) == 1) {
-                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
+                if ((2*i + 2) < data->height - 1) {
+                    for (u_int64_t j = 0; j < instr.qtty_stages; j++) {
+                        if (instr.stages[j].cycle < first_cycle) {
+                            first_cycle = instr.stages[j].cycle;
                         }
-                        wattroff(data->win, COLOR_PAIR((j%6)+1));
-                    }
+                        Stage *stage = &instr.stages[j];
 
-                    if (stage->duration > 1) {
-                        for (u_int64_t k = 0; k < stage->duration - 1; k++) {
-                            if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
-                                wattron(data->win, COLOR_PAIR(8+(j%6)+1));
-                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
-                                wattroff(data->win, COLOR_PAIR(8+(j%6)+1));
+                        wattron(data->win, A_BOLD);
 
-                                wattron(data->win, COLOR_PAIR((j%6)+1));
-                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
-                                wattroff(data->win, COLOR_PAIR((j%6)+1));
+                        if (33 + 3*(stage->cycle - first_cycle) + 3 < data->width - 1) {
+                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
+                            wattron(data->win, COLOR_PAIR((j%6)+1));
+                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
 
+                            if (strlen(stage->name) == 1) {
+                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
+                            }
+                            wattroff(data->win, COLOR_PAIR((j%6)+1));
+                        }
+
+                        if (stage->duration > 1) {
+                            for (u_int64_t k = 0; k < stage->duration - 1; k++) {
+                                if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
+                                    wattron(data->win, COLOR_PAIR(8+(j%6)+1));
+                                    mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
+                                    wattroff(data->win, COLOR_PAIR(8+(j%6)+1));
+
+                                    wattron(data->win, COLOR_PAIR((j%6)+1));
+                                    mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
+                                    wattroff(data->win, COLOR_PAIR((j%6)+1));
+
+                                }
                             }
                         }
-                    }
 
-                    wattroff(data->win, A_BOLD);
+                        wattroff(data->win, A_BOLD);
+                    }
                 }
             }
         }
     }
+
     wrefresh(data->win);
 
-    if (data->menu.status == OPEN) {
+    if (data->menu_data == MAIN || data->menu_data == FILES) {
         open_menu(data);
     }
 

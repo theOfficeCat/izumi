@@ -24,9 +24,10 @@
 #include "data_structs.h"
 #include "parser.h"
 #include "window.h"
+#include "files.h"
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
+    /*if (argc < 2) {
         printf("Usage: %s <file name> [-p]\n", argv[0]);
         return 1;
     }
@@ -37,11 +38,13 @@ int main(int argc, char *argv[]) {
 
     if ((argc == 3) && (strcmp(argv[2], "-p") == 0)) {
         print = true;
-    }
+    }*/
+
+    bool print = false;
 
     // print instructions
     if (print) {
-        for (int i = 0; i < tables_array.qtty_tables; i++) {
+        /*for (int i = 0; i < tables_array.qtty_tables; i++) {
             for (int j = 0; j < 256; j++) {
                 Instruction instr = tables_array.tables[i]->content[j];
 
@@ -54,9 +57,12 @@ int main(int argc, char *argv[]) {
                     }
                 }
             }
-        }
+        }*/
     }
     else {
+        InstructionTableArray tables_array;
+
+
         WindowData data;
 
         init_window(&data);

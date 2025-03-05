@@ -35,7 +35,10 @@ struct WindowData_s {
     u_int64_t first_instruction;
     WINDOW *win;
 
-    MenuData menu;
+    MenuOpen menu_data;
+    MenuData main_menu;
+    FileMenuData file_menu;
+
     WINDOW *menu_win;
 };
 
