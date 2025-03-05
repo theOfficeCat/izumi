@@ -20,12 +20,16 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 
 ```bash
 $ make
-$ ./izumi <input_file> [-p]
+$ ./izumi
 ```
 
-- `input_file`: The input file in Onikiri2-Kanata format
-- `-p`: Print the data of the pipeline to the terminal before visualizing with
-the ncurses frontend
+### Commands
+
+- `q`: Quit
+- `m`: Open menu
+- `Key Up`: Move up
+- `Key Down`: Move down
+- `Enter`: Select
 
 ## Screenshot
 
