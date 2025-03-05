@@ -1,7 +1,6 @@
 { lib
 , stdenv
 , meson
-, pkg-config
 , ninja
 , ncurses
 }:
@@ -14,7 +13,6 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     meson
-    pkg-config
     ninja
   ];
 
