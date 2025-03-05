@@ -29,15 +29,15 @@
     }
 }*/
 
-void move_down_menu(SelectedMenu *selected) {
-    if (*selected == LOAD_FILE) {
-        *selected = QUIT;
+void move_down_menu(MenuData *menu) {
+    if (menu->selected == LOAD_FILE) {
+        menu->selected = QUIT;
     }
 }
 
-void move_up_menu(SelectedMenu *selected) {
-    if (*selected == QUIT) {
-        *selected = LOAD_FILE;
+void move_up_menu(MenuData *menu) {
+    if (menu->selected == QUIT) {
+        menu->selected = LOAD_FILE;
     }
 }
 

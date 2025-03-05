@@ -25,6 +25,7 @@
 #include "version.h"
 #include "settings.h"
 #include "files.h"
+#include "parser.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -94,21 +95,37 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 if (data->menu_data == CLOSED) {
                     data->first_instruction++;
                 }
-                else {
-                    move_down_menu(&data->main_menu.selected);
+                else if (data->menu_data == MAIN) {
+                    move_down_menu(&data->main_menu);
+                }
+                else if (data->menu_data == FILES) {
+                    if (data->file_menu.files_index < data->file_menu.directory_data.files_qtty - 1) {
+                        data->file_menu.files_index++;
+                    }
                 }
                 break;
             case KEY_UP:
                 if (data->menu_data == CLOSED && data->first_instruction > 0) {
                     data->first_instruction--;
                 }
-                else {
-                    move_up_menu(&data->main_menu.selected);
+                else if (data->menu_data == MAIN) {
+                    move_up_menu(&data->main_menu);
+                }
+                else if (data->menu_data == FILES) {
+                    if (data->file_menu.files_index > 0) {
+                        data->file_menu.files_index--;
+                    }
                 }
                 break;
             case '\n': // Enter
                 if (data->menu_data == MAIN) {
                     use_menu(data, tables_array);
+                }
+                else if (data->menu_data == FILES) {
+                    char *file_name = data->file_menu.directory_data.files[data->file_menu.files_index];
+                    *tables_array = parse_file(file_name);
+                    data->file_menu.loaded = true;
+                    data->menu_data = CLOSED;
                 }
                 break;
             case 'm':
@@ -155,7 +172,14 @@ void open_menu(WindowData *data) {
     else if (data->menu_data == FILES) {
         for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
             if (i < data->height/2 - 4) {
-                mvwprintw(data->menu_win, i+2, 4, data->file_menu.directory_data.files[i]);
+                if (data->file_menu.files_index == i) {
+                    wattron(data->menu_win, A_REVERSE);
+                    mvwprintw(data->menu_win, i+2, 4, data->file_menu.directory_data.files[i]);
+                    wattroff(data->menu_win, A_REVERSE);
+                }
+                else {
+                    mvwprintw(data->menu_win, i+2, 4, data->file_menu.directory_data.files[i]);
+                }
             }
         }
     }
@@ -190,6 +214,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
                 }
             }
         }
+
 
         for (u_int64_t i = 0; i < data->height/2; i++) {
             u_int64_t index = data->first_instruction + i;
@@ -243,6 +268,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
                         wattroff(data->win, A_BOLD);
                     }
                 }
+
             }
         }
     }

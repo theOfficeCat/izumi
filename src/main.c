@@ -62,7 +62,6 @@ int main(int argc, char *argv[]) {
     else {
         InstructionTableArray tables_array;
 
-
         WindowData data;
 
         init_window(&data);

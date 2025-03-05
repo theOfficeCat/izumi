@@ -23,6 +23,7 @@
 
 #include "files.h"
 
+
 enum MenuOpen_e {
     MAIN,
     FILES,
@@ -55,8 +56,8 @@ typedef struct FileMenuData_s FileMenuData;
 
 //void toggle_menu(MenuOpen *menu, );
 
-void move_down_menu(SelectedMenu *selected);
+void move_down_menu(MenuData *menu);
 
-void move_up_menu(SelectedMenu *selected);
+void move_up_menu(MenuData *menu);
 
 #endif
