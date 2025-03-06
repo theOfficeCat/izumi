@@ -174,11 +174,11 @@ void open_menu(WindowData *data) {
             if (i < data->height/2 - 4) {
                 if (data->file_menu.files_index == i) {
                     wattron(data->menu_win, A_REVERSE);
-                    mvwprintw(data->menu_win, i+2, 4, data->file_menu.directory_data.files[i]);
+                    mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
                     wattroff(data->menu_win, A_REVERSE);
                 }
                 else {
-                    mvwprintw(data->menu_win, i+2, 4, data->file_menu.directory_data.files[i]);
+                    mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
                 }
             }
         }
