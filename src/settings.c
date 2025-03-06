@@ -51,6 +51,7 @@ void use_menu(WindowData *data, InstructionTableArray *tables_array) {
         //*tables_array = parse_file("test.out");
         //data->file_menu.loaded = true;
         data->file_menu.directory_data = read_directory(".");
+        data->file_menu.files_index = 0;
         data->menu_data = FILES;
     }
 }
