@@ -22,10 +22,10 @@
 #include <sys/types.h>
 
 #include "window.h"
-#include "version.h"
 #include "settings.h"
 #include "files.h"
 #include "parser.h"
+#include "config.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -236,11 +236,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
     box(data->win, 0, 0);
 
-    char title[32];
-
-    sprintf(title, "Izumi v%s", VERSION);
-
-    mvwprintw(data->win, 0, 0, title);
+    mvwprintw(data->win, 0, 0, "Izumi v%s", VERSION);
 
     // verical bar on 32 px for instruction info
     mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);

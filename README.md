@@ -16,6 +16,35 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 - End of stage (for multiple cycle stages/stalling the pipeline)
 - End of instruction
 
+## Requierments
+
+- ncurses
+- meson (build only)
+- ninja (build only, can be replaced by other meson backends)
+
+## Building (and installing)
+
+Building with `meson` is recommended:
+
+```bash
+meson setup build
+cd build
+meson compile
+meson install
+```
+
+But, if the classic `make` sequence is hard-wired in your brain, you can:
+
+```bash
+./configure
+make
+make install
+```
+
+You can also use `nix` (flakes recommended):
+```bash
+nix run github:theOfficeCat/Izumi
+```
 ## Usage
 
 ```bash

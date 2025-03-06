@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# Get directories
+source_dir="$(dirname "$0")"
+source_dir="$(realpath "${source_dir}")"
+build_dir="${source_dir}/build"
+
+# Configure
+meson setup --reconfigure "$@" "${build_dir}" "${source_dir}"
