@@ -59,8 +59,6 @@ DirectoryData read_directory(char *path) {
 
     qsort(directory_data.files, directory_data.files_qtty, sizeof(char*), compare_strings);
 
-    fprintf(stderr, "-------------------\n");
-
     for (u_int64_t i = 0; i < directory_data.files_qtty; i++) {
         struct stat s;
 
@@ -70,8 +68,6 @@ DirectoryData read_directory(char *path) {
         strcat(path_to_file, directory_data.files[i]);
 
         stat(path_to_file, &s);
-
-        fprintf(stderr, "%s\n", path_to_file);
 
         directory_data.is_directory[i] = S_ISDIR(s.st_mode);
     }
