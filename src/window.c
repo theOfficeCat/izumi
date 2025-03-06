@@ -106,6 +106,7 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     move_down_menu(&data->main_menu);
                 }
                 else if (data->menu_data == FILES) {
+                    // Moves down on the files menu and updates the init_index
                     if (data->file_menu.files_index < data->file_menu.directory_data.files_qtty - 1) {
                         data->file_menu.files_index++;
 
@@ -123,6 +124,7 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     move_up_menu(&data->main_menu);
                 }
                 else if (data->menu_data == FILES) {
+                    // Moves up on the files menu and updates the init_index
                     if (data->file_menu.files_index > 0) {
                         data->file_menu.files_index--;
 
@@ -168,6 +170,7 @@ void open_menu(WindowData *data) {
 
     mvwprintw(data->menu_win, 1, data->width/4 - 2, "MENU");
 
+    // Print menu options, highlighting the selected one
     if (data->menu_data == MAIN) {
         if (data->main_menu.selected == LOAD_FILE) {
             wattron(data->menu_win, A_REVERSE);
@@ -188,7 +191,7 @@ void open_menu(WindowData *data) {
         }
     }
     else if (data->menu_data == FILES) {
-
+        // Print the files in the directory, highlighting the selected one
         for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
             if (i < data->height/2 - 4) {
                 u_int64_t files_index = i + data->file_menu.init_index;
@@ -217,15 +220,15 @@ void open_menu(WindowData *data) {
                 }
             }
         }
-        if (data->file_menu.directory_data.files_qtty > data->height/2 - 4) {
+
+        // Print the scroll indicators
+        if (data->file_menu.directory_data.files_qtty > data->height/2 - 4 && data->file_menu.init_index + data->height/2 - 4 < data->file_menu.directory_data.files_qtty) {
             mvwprintw(data->menu_win, data->height/2 - 2, data->width/2 - 4, "v");
         }
         if (data->file_menu.init_index > 0) {
             mvwprintw(data->menu_win, 2, data->width/2 - 4, "^");
         }
     }
-
-
 
     wrefresh(data->menu_win);
 }
@@ -255,21 +258,21 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
             }
         }
 
-
+        // print instructions
         for (u_int64_t i = 0; i < data->height/2; i++) {
             u_int64_t index = data->first_instruction + i;
             Instruction instr = tables_array->tables[index/256]->content[index%256];
 
+            // memory address and instruction
             if (instr.valid) {
                 if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
                     mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
                 }
                 if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
                     mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
-
-
                 }
 
+                // stages
                 if ((2*i + 2) < data->height - 1) {
                     for (u_int64_t j = 0; j < instr.qtty_stages; j++) {
                         if (instr.stages[j].cycle < first_cycle) {
@@ -290,6 +293,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
                             wattroff(data->win, COLOR_PAIR((j%6)+1));
                         }
 
+                        // extra cycles
                         if (stage->duration > 1) {
                             for (u_int64_t k = 0; k < stage->duration - 1; k++) {
                                 if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
@@ -318,6 +322,4 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
     if (data->menu_data == MAIN || data->menu_data == FILES) {
         open_menu(data);
     }
-
-
 }

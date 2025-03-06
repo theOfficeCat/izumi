@@ -34,6 +34,7 @@ int compare_strings(const void *a, const void *b) {
 DirectoryData read_directory(char *path) {
     DirectoryData directory_data;
 
+    // Initialize the directory data
     directory_data.files = malloc(10 * sizeof(char*));
     directory_data.is_directory = malloc(10 * sizeof(bool));
     directory_data.files_qtty = 0;
@@ -41,6 +42,7 @@ DirectoryData read_directory(char *path) {
     DIR *dir;
     struct dirent *ent;
 
+    // Read directory files and store them in the directory data
     dir = opendir(path);
     if (dir) {
         while ((ent = readdir(dir)) != NULL) {
@@ -57,8 +59,10 @@ DirectoryData read_directory(char *path) {
         closedir(dir);
     }
 
+    // Sort the files
     qsort(directory_data.files, directory_data.files_qtty, sizeof(char*), compare_strings);
 
+    // Check if the files are directories
     for (u_int64_t i = 0; i < directory_data.files_qtty; i++) {
         struct stat s;
 
@@ -76,6 +80,7 @@ DirectoryData read_directory(char *path) {
 }
 
 FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array) {
+    // If the file is a directory, change the path to it and read the directory
     if (directory_data->is_directory[index]) {
         char *new_path = malloc(strlen(*path) + strlen(directory_data->files[index]) + 2);
         strcpy(new_path, *path);
@@ -97,6 +102,7 @@ FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, 
 
         return DIRECTORY_READ;
     }
+    // If the file is not a directory, parse it
     else {
         char *full_path = malloc(strlen(*path) + strlen(directory_data->files[index]) + 2);
         strcpy(full_path, *path);

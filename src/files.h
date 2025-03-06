@@ -23,6 +23,15 @@
 
 #include "data_structs.h"
 
+/*
+ * DirectoryData
+ * 
+ * This struct is used to store the data of a directory.
+ * 
+ * files_qtty: The quantity of files in the directory.
+ * files: The names of the files in the directory.
+ * is_directory: An array of booleans that indicates if the file is a directory.
+ */
 struct DirectoryData_s {
     u_int64_t files_qtty;
     char **files;
@@ -31,6 +40,14 @@ struct DirectoryData_s {
 
 typedef struct DirectoryData_s DirectoryData;
 
+/*
+ * FileUsage
+ * 
+ * This enum is used to store the usage of a file.
+ * 
+ * FILE_READ: The selected element is a file to read.
+ * DIRECTORY_READ: The selected element is a directory to read.
+ */
 enum FileUsage_e {
     FILE_READ,
     DIRECTORY_READ
@@ -38,8 +55,25 @@ enum FileUsage_e {
 
 typedef enum FileUsage_e FileUsage;
 
+/*
+ * This function reads the files in a directory.
+ *
+ * path: The path of the directory.
+ * 
+ * Returns: The data of the directory.
+ */
 DirectoryData read_directory(char *path);
 
+/*
+ * This function uses a file or directory.
+ * 
+ * directory_data: The data of the directory.
+ * index: The index of the selected file.
+ * path: The path of the directory.
+ * tables_array: The array of tables.
+ * 
+ * Returns: The kind of element read.
+ */
 FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array);
 
 #endif
