@@ -55,6 +55,13 @@ void init_window(WindowData *data) {
     init_pair(13, COLOR_WHITE, COLOR_MAGENTA);
     init_pair(14, COLOR_WHITE, COLOR_CYAN);
 
+    init_pair(17, COLOR_BLUE, COLOR_BLACK);
+    init_pair(18, COLOR_RED, COLOR_BLACK);
+    init_pair(19, COLOR_GREEN, COLOR_BLACK);
+    init_pair(20, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(21, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(22, COLOR_CYAN, COLOR_BLACK);
+
 
     data->x = 0;
     data->y = 0;
@@ -122,10 +129,10 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     use_menu(data, tables_array);
                 }
                 else if (data->menu_data == FILES) {
-                    char *file_name = data->file_menu.directory_data.files[data->file_menu.files_index];
-                    *tables_array = parse_file(file_name);
-                    data->file_menu.loaded = true;
-                    data->menu_data = CLOSED;
+                    if (use_file(&data->file_menu.directory_data, data->file_menu.files_index, &data->file_menu.path, tables_array) == FILE_READ) {
+                        data->file_menu.loaded = true;
+                        data->menu_data = CLOSED;
+                    }
                 }
                 break;
             case 'm':
@@ -170,18 +177,35 @@ void open_menu(WindowData *data) {
         }
     }
     else if (data->menu_data == FILES) {
+
         for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
             if (i < data->height/2 - 4) {
                 if (data->file_menu.files_index == i) {
                     wattron(data->menu_win, A_REVERSE);
-                    mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+
+                    if (data->file_menu.directory_data.is_directory[i]) {
+                        wattron(data->menu_win, COLOR_PAIR(17));
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                        wattroff(data->menu_win, COLOR_PAIR(17));
+                    }
+                    else {
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                    }
                     wattroff(data->menu_win, A_REVERSE);
                 }
                 else {
-                    mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                    if (data->file_menu.directory_data.is_directory[i]) {
+                        wattron(data->menu_win, COLOR_PAIR(17));
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                        wattroff(data->menu_win, COLOR_PAIR(17));
+                    }
+                    else {
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                    }
                 }
             }
         }
+
     }
     wrefresh(data->menu_win);
 }

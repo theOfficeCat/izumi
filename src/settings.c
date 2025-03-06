@@ -20,14 +20,6 @@
 #include "data_structs.h"
 #include "parser.h"
 
-/*void toggle_menu(StatusMenu *status) {
-    if (*status == OPEN) {
-        *status = CLOSED;
-    }
-    else {
-        *status = OPEN;
-    }
-}*/
 
 void move_down_menu(MenuData *menu) {
     if (menu->selected == LOAD_FILE) {
@@ -47,10 +39,10 @@ void use_menu(WindowData *data, InstructionTableArray *tables_array) {
         exit(0);
     }
     if (data->main_menu.selected == LOAD_FILE) {
-        // Load file
-        //*tables_array = parse_file("test.out");
-        //data->file_menu.loaded = true;
-        data->file_menu.directory_data = read_directory(".");
+        char *init_path = ".";
+        data->file_menu.path = malloc(strlen(init_path));
+        strcpy(data->file_menu.path, init_path);
+        data->file_menu.directory_data = read_directory(data->file_menu.path);
         data->file_menu.files_index = 0;
         data->menu_data = FILES;
     }

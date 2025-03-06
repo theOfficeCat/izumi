@@ -19,14 +19,27 @@
 #define FILES_H
 
 #include <sys/types.h>
+#include <stdbool.h>
+
+#include "data_structs.h"
 
 struct DirectoryData_s {
     u_int64_t files_qtty;
     char **files;
+    bool *is_directory;
 };
 
 typedef struct DirectoryData_s DirectoryData;
 
+enum FileUsage_e {
+    FILE_READ,
+    DIRECTORY_READ
+};
+
+typedef enum FileUsage_e FileUsage;
+
 DirectoryData read_directory(char *path);
+
+FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array);
 
 #endif

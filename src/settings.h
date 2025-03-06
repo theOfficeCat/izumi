@@ -50,6 +50,7 @@ struct FileMenuData_s {
 
     u_int64_t files_index;
     bool loaded;
+    char *path;
 };
 
 typedef struct FileMenuData_s FileMenuData;
