@@ -15,27 +15,31 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ifndef FILES_H
+#define FILES_H
+
 #include <sys/types.h>
+#include <stdbool.h>
 
 #include "data_structs.h"
-#include "parser.h"
-#include "window.h"
-#include "files.h"
 
-int main(int argc, char *argv[]) {
-    // print instructions
-    InstructionTableArray tables_array;
+struct DirectoryData_s {
+    u_int64_t files_qtty;
+    char **files;
+    bool *is_directory;
+};
 
-    WindowData data;
+typedef struct DirectoryData_s DirectoryData;
 
-    init_window(&data);
+enum FileUsage_e {
+    FILE_READ,
+    DIRECTORY_READ
+};
 
-    main_loop(&data, &tables_array);
+typedef enum FileUsage_e FileUsage;
 
-    close_window();
-}
+DirectoryData read_directory(char *path);
 
+FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array);
+
+#endif

@@ -60,7 +60,8 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char 
     instr_new.instruction = NULL;
     instr_new.stages = malloc(10 * sizeof(Stage));
     instr_new.valid = true;
-
+    instr_new.finished = false;
+    
     // Create table if instruction needs to be in a new one
     if (id_file/256 >= tables_array->qtty_tables) {
         // Resize the tables array if necessary
@@ -137,6 +138,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
 
     strncpy(stage->name, stage_name, 4);
     stage->cycle = cycle;
+    stage ->duration = 0;
 }
 
 void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
@@ -179,11 +181,15 @@ void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, ch
         exit(1);
     }
 
+
     // Get the instruction
     Instruction *instr = &tables_array->tables[instr_id/256]->content[instr_id%256];
 
-    Stage *stage = &instr->stages[instr->qtty_stages - 1];
-    stage->duration = cycle - stage->cycle;
+    if (!instr->finished) {
+        Stage *stage = &instr->stages[instr->qtty_stages - 1];
+        stage->duration = cycle - stage->cycle;
+        instr->finished = true;
+    }
 }
 
 

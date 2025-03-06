@@ -54,6 +54,7 @@ struct Instruction_s {
     char *instruction;
     Stage *stages;
     bool valid;
+    bool finished;
 };
 
 typedef struct Instruction_s Instruction;

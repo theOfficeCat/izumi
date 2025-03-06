@@ -15,27 +15,50 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>. 
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-#include "data_structs.h"
-#include "parser.h"
-#include "window.h"
+#include <sys/types.h>
+#include <stdbool.h>
+
 #include "files.h"
 
-int main(int argc, char *argv[]) {
-    // print instructions
-    InstructionTableArray tables_array;
 
-    WindowData data;
+enum MenuOpen_e {
+    MAIN,
+    FILES,
+    CLOSED
+};
 
-    init_window(&data);
+typedef enum MenuOpen_e MenuOpen;
 
-    main_loop(&data, &tables_array);
+enum SelectedMenu_e {
+    LOAD_FILE,
+    QUIT
+};
 
-    close_window();
-}
+typedef enum SelectedMenu_e SelectedMenu;
 
+struct MenuData_s {
+    SelectedMenu selected;
+};
+
+typedef struct MenuData_s MenuData;
+
+struct FileMenuData_s {
+    DirectoryData directory_data;
+    u_int64_t init_index;
+    u_int64_t files_index;
+    bool loaded;
+    char *path;
+};
+
+typedef struct FileMenuData_s FileMenuData;
+
+//void toggle_menu(MenuOpen *menu, );
+
+void move_down_menu(MenuData *menu);
+
+void move_up_menu(MenuData *menu);
+
+#endif

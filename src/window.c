@@ -22,6 +22,9 @@
 #include <sys/types.h>
 
 #include "window.h"
+#include "settings.h"
+#include "files.h"
+#include "parser.h"
 #include "config.h"
 
 void get_window_data(WindowData *data) {
@@ -52,6 +55,13 @@ void init_window(WindowData *data) {
     init_pair(13, COLOR_WHITE, COLOR_MAGENTA);
     init_pair(14, COLOR_WHITE, COLOR_CYAN);
 
+    init_pair(17, COLOR_BLUE, COLOR_BLACK);
+    init_pair(18, COLOR_RED, COLOR_BLACK);
+    init_pair(19, COLOR_GREEN, COLOR_BLACK);
+    init_pair(20, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(21, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(22, COLOR_CYAN, COLOR_BLACK);
+
 
     data->x = 0;
     data->y = 0;
@@ -59,6 +69,11 @@ void init_window(WindowData *data) {
     get_window_data(data);
     data->win = newwin(data->height, data->width, data->y, data->x);
     data->first_instruction = 0;
+    data->menu_data = CLOSED;
+    data->main_menu.selected = LOAD_FILE;
+    data->file_menu.loaded = false;
+
+    data->menu_win = newwin(data->height/2, data->width/2, data->height/4, data->width/4);
 }
 
 void close_window() {
@@ -76,14 +91,67 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 
         switch (ch) {
             case 'q':
-                return;
+                if (data->menu_data == MAIN) {
+                    data->menu_data = CLOSED;
+                }
+                else {
+                    return;
+                }
                 break;
             case KEY_DOWN:
-                data->first_instruction++;
+                if (data->menu_data == CLOSED) {
+                    data->first_instruction++;
+                }
+                else if (data->menu_data == MAIN) {
+                    move_down_menu(&data->main_menu);
+                }
+                else if (data->menu_data == FILES) {
+                    if (data->file_menu.files_index < data->file_menu.directory_data.files_qtty - 1) {
+                        data->file_menu.files_index++;
+
+                        if (data->file_menu.init_index < data->file_menu.directory_data.files_qtty && data->file_menu.files_index == data->file_menu.init_index + data->height/2 - 4) {
+                            data->file_menu.init_index++;
+                        }
+                    }
+                }
                 break;
             case KEY_UP:
-                if (data->first_instruction > 0) {
+                if (data->menu_data == CLOSED && data->first_instruction > 0) {
                     data->first_instruction--;
+                }
+                else if (data->menu_data == MAIN) {
+                    move_up_menu(&data->main_menu);
+                }
+                else if (data->menu_data == FILES) {
+                    if (data->file_menu.files_index > 0) {
+                        data->file_menu.files_index--;
+
+                        if (data->file_menu.init_index > 0 && data->file_menu.files_index == data->file_menu.init_index) {
+                            data->file_menu.init_index--;
+                        }
+                    }
+                }
+                break;
+            case '\n': // Enter
+                if (data->menu_data == MAIN) {
+                    use_menu(data, tables_array);
+                }
+                else if (data->menu_data == FILES) {
+                    if (use_file(&data->file_menu.directory_data, data->file_menu.files_index, &data->file_menu.path, tables_array) == FILE_READ) {
+                        data->file_menu.loaded = true;
+                        data->menu_data = CLOSED;
+                    }
+
+                    data->file_menu.files_index = 0;
+                    data->file_menu.init_index = 0;
+                }
+                break;
+            case 'm':
+                if (data->menu_data == CLOSED) {
+                    data->menu_data = MAIN;
+                }
+                else {
+                    data->menu_data = CLOSED;
                 }
                 break;
             default:
@@ -91,6 +159,75 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
         }
         render(data, tables_array);
     }
+}
+
+void open_menu(WindowData *data) {
+    werase(data->menu_win);
+
+    box(data->menu_win, 0, 0);
+
+    mvwprintw(data->menu_win, 1, data->width/4 - 2, "MENU");
+
+    if (data->menu_data == MAIN) {
+        if (data->main_menu.selected == LOAD_FILE) {
+            wattron(data->menu_win, A_REVERSE);
+            mvwprintw(data->menu_win, 3, 4, "Load file");
+            wattroff(data->menu_win, A_REVERSE);
+        }
+        else {
+            mvwprintw(data->menu_win, 3, 4, "Load file");
+        }
+
+        if (data->main_menu.selected == QUIT) {
+            wattron(data->menu_win, A_REVERSE);
+            mvwprintw(data->menu_win, 4, 4, "Quit");
+            wattroff(data->menu_win, A_REVERSE);
+        }
+        else {
+            mvwprintw(data->menu_win, 4, 4, "Quit");
+        }
+    }
+    else if (data->menu_data == FILES) {
+
+        for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
+            if (i < data->height/2 - 4) {
+                u_int64_t files_index = i + data->file_menu.init_index;
+                if (data->file_menu.files_index == files_index) {
+                    wattron(data->menu_win, A_REVERSE);
+
+                    if (data->file_menu.directory_data.is_directory[files_index]) {
+                        wattron(data->menu_win, COLOR_PAIR(17));
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
+                        wattroff(data->menu_win, COLOR_PAIR(17));
+                    }
+                    else {
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
+                    }
+                    wattroff(data->menu_win, A_REVERSE);
+                }
+                else {
+                    if (data->file_menu.directory_data.is_directory[files_index]) {
+                        wattron(data->menu_win, COLOR_PAIR(17));
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
+                        wattroff(data->menu_win, COLOR_PAIR(17));
+                    }
+                    else {
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
+                    }
+                }
+            }
+        }
+        if (data->file_menu.directory_data.files_qtty > data->height/2 - 4) {
+            mvwprintw(data->menu_win, data->height/2 - 2, data->width/2 - 4, "v");
+        }
+        if (data->file_menu.init_index > 0) {
+            mvwprintw(data->menu_win, 2, data->width/2 - 4, "^");
+        }
+    }
+
+
+
+    wrefresh(data->menu_win);
 }
 
 void render(WindowData *data, InstructionTableArray *tables_array) {
@@ -101,77 +238,86 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
     mvwprintw(data->win, 0, 0, "Izumi v%s", VERSION);
 
-    // verical bar on 48 px for instruction info
+    // verical bar on 32 px for instruction info
     mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);
 
-    // print instructions data
+    if (data->file_menu.loaded) {
+        // print instructions data
 
-    u_int64_t first_cycle = -1;
+        u_int64_t first_cycle = -1;
 
-    //build grid
-    for (u_int64_t i = 1; i < data->height - 1; i++) {
-        for (u_int64_t j = 0; j < data->width - 1; j++) {
-            if (j >32 && j%3 == 0) {
-                mvwprintw(data->win, i, j, "|");
-            }
-        }
-    }
-
-    for (u_int64_t i = 0; i < data->height/2; i++) {
-        u_int64_t index = data->first_instruction + i;
-        Instruction instr = tables_array->tables[index/256]->content[index%256];
-
-        if (instr.valid) {
-            if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
-                mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
-            }
-            if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
-                mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
-
-
-            }
-
-            if ((2*i + 2) < data->height - 1) {
-                for (u_int64_t j = 0; j < instr.qtty_stages; j++) {
-                    if (instr.stages[j].cycle < first_cycle) {
-                        first_cycle = instr.stages[j].cycle;
-                    }
-                    Stage *stage = &instr.stages[j];
-
-                    wattron(data->win, A_BOLD);
-
-                    if (33 + 3*(stage->cycle - first_cycle) + 3 < data->width - 1) {
-                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
-                        wattron(data->win, COLOR_PAIR((j%6)+1));
-                        mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
-
-                        if (strlen(stage->name) == 1) {
-                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
-                        }
-                        wattroff(data->win, COLOR_PAIR((j%6)+1));
-                    }
-
-                    if (stage->duration > 1) {
-                        for (u_int64_t k = 0; k < stage->duration - 1; k++) {
-                            if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
-                                wattron(data->win, COLOR_PAIR(8+(j%6)+1));
-                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
-                                wattroff(data->win, COLOR_PAIR(8+(j%6)+1));
-
-                                wattron(data->win, COLOR_PAIR((j%6)+1));
-                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
-                                wattroff(data->win, COLOR_PAIR((j%6)+1));
-
-                            }
-                        }
-                    }
-
-                    wattroff(data->win, A_BOLD);
+        //build grid
+        for (u_int64_t i = 1; i < data->height - 1; i++) {
+            for (u_int64_t j = 0; j < data->width - 1; j++) {
+                if (j >32 && j%3 == 0) {
+                    mvwprintw(data->win, i, j, "|");
                 }
             }
         }
+
+
+        for (u_int64_t i = 0; i < data->height/2; i++) {
+            u_int64_t index = data->first_instruction + i;
+            Instruction instr = tables_array->tables[index/256]->content[index%256];
+
+            if (instr.valid) {
+                if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
+                    mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
+                }
+                if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
+                    mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
+
+
+                }
+
+                if ((2*i + 2) < data->height - 1) {
+                    for (u_int64_t j = 0; j < instr.qtty_stages; j++) {
+                        if (instr.stages[j].cycle < first_cycle) {
+                            first_cycle = instr.stages[j].cycle;
+                        }
+                        Stage *stage = &instr.stages[j];
+
+                        wattron(data->win, A_BOLD);
+
+                        if (33 + 3*(stage->cycle - first_cycle) + 3 < data->width - 1) {
+                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
+                            wattron(data->win, COLOR_PAIR((j%6)+1));
+                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
+
+                            if (strlen(stage->name) == 1) {
+                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
+                            }
+                            wattroff(data->win, COLOR_PAIR((j%6)+1));
+                        }
+
+                        if (stage->duration > 1) {
+                            for (u_int64_t k = 0; k < stage->duration - 1; k++) {
+                                if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
+                                    wattron(data->win, COLOR_PAIR(8+(j%6)+1));
+                                    mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
+                                    wattroff(data->win, COLOR_PAIR(8+(j%6)+1));
+
+                                    wattron(data->win, COLOR_PAIR((j%6)+1));
+                                    mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
+                                    wattroff(data->win, COLOR_PAIR((j%6)+1));
+
+                                }
+                            }
+                        }
+
+                        wattroff(data->win, A_BOLD);
+                    }
+                }
+
+            }
+        }
+    }
+
+    wrefresh(data->win);
+
+    if (data->menu_data == MAIN || data->menu_data == FILES) {
+        open_menu(data);
     }
 
 
-    wrefresh(data->win);
 }
