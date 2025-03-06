@@ -47,7 +47,7 @@ typedef struct MenuData_s MenuData;
 
 struct FileMenuData_s {
     DirectoryData directory_data;
-
+    u_int64_t init_index;
     u_int64_t files_index;
     bool loaded;
     char *path;

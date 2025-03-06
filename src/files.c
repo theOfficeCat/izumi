@@ -59,9 +59,19 @@ DirectoryData read_directory(char *path) {
 
     qsort(directory_data.files, directory_data.files_qtty, sizeof(char*), compare_strings);
 
+    fprintf(stderr, "-------------------\n");
+
     for (u_int64_t i = 0; i < directory_data.files_qtty; i++) {
         struct stat s;
-        stat(directory_data.files[i], &s);
+
+        char *path_to_file = malloc(strlen(path) + strlen(directory_data.files[i]) + 2);
+        strcpy(path_to_file, path);
+        strcat(path_to_file, "/");
+        strcat(path_to_file, directory_data.files[i]);
+
+        stat(path_to_file, &s);
+
+        fprintf(stderr, "%s\n", path_to_file);
 
         directory_data.is_directory[i] = S_ISDIR(s.st_mode);
     }
@@ -75,6 +85,12 @@ FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, 
         strcpy(new_path, *path);
         strcat(new_path, "/");
         strcat(new_path, directory_data->files[index]);
+
+        free(directory_data->is_directory);
+        for (u_int64_t i = 0; i < directory_data->files_qtty; i++) {
+            free(directory_data->files[i]);
+        }
+        free(directory_data->files);
 
         *directory_data = read_directory(new_path);
 

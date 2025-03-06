@@ -44,6 +44,7 @@ void use_menu(WindowData *data, InstructionTableArray *tables_array) {
         strcpy(data->file_menu.path, init_path);
         data->file_menu.directory_data = read_directory(data->file_menu.path);
         data->file_menu.files_index = 0;
+        data->file_menu.init_index = 0;
         data->menu_data = FILES;
     }
 }

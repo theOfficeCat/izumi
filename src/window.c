@@ -108,6 +108,10 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 else if (data->menu_data == FILES) {
                     if (data->file_menu.files_index < data->file_menu.directory_data.files_qtty - 1) {
                         data->file_menu.files_index++;
+
+                        if (data->file_menu.init_index < data->file_menu.directory_data.files_qtty && data->file_menu.files_index == data->file_menu.init_index + data->height/2 - 4) {
+                            data->file_menu.init_index++;
+                        }
                     }
                 }
                 break;
@@ -121,6 +125,10 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 else if (data->menu_data == FILES) {
                     if (data->file_menu.files_index > 0) {
                         data->file_menu.files_index--;
+
+                        if (data->file_menu.init_index > 0 && data->file_menu.files_index == data->file_menu.init_index) {
+                            data->file_menu.init_index--;
+                        }
                     }
                 }
                 break;
@@ -133,6 +141,9 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                         data->file_menu.loaded = true;
                         data->menu_data = CLOSED;
                     }
+
+                    data->file_menu.files_index = 0;
+                    data->file_menu.init_index = 0;
                 }
                 break;
             case 'm':
@@ -180,33 +191,42 @@ void open_menu(WindowData *data) {
 
         for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
             if (i < data->height/2 - 4) {
-                if (data->file_menu.files_index == i) {
+                u_int64_t files_index = i + data->file_menu.init_index;
+                if (data->file_menu.files_index == files_index) {
                     wattron(data->menu_win, A_REVERSE);
 
-                    if (data->file_menu.directory_data.is_directory[i]) {
+                    if (data->file_menu.directory_data.is_directory[files_index]) {
                         wattron(data->menu_win, COLOR_PAIR(17));
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
                         wattroff(data->menu_win, COLOR_PAIR(17));
                     }
                     else {
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
                     }
                     wattroff(data->menu_win, A_REVERSE);
                 }
                 else {
-                    if (data->file_menu.directory_data.is_directory[i]) {
+                    if (data->file_menu.directory_data.is_directory[files_index]) {
                         wattron(data->menu_win, COLOR_PAIR(17));
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
                         wattroff(data->menu_win, COLOR_PAIR(17));
                     }
                     else {
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[i]);
+                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
                     }
                 }
             }
         }
-
+        if (data->file_menu.directory_data.files_qtty > data->height/2 - 4) {
+            mvwprintw(data->menu_win, data->height/2 - 2, data->width/2 - 4, "v");
+        }
+        if (data->file_menu.init_index > 0) {
+            mvwprintw(data->menu_win, 2, data->width/2 - 4, "^");
+        }
     }
+
+
+
     wrefresh(data->menu_win);
 }
 
