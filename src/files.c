@@ -79,26 +79,30 @@ DirectoryData read_directory(char *path) {
     return directory_data;
 }
 
+void use_directory(DirectoryData *directory_data, char **path, char *add_path) {
+    char *new_path = malloc(strlen(*path) + strlen(add_path) + 2);
+    strcpy(new_path, *path);
+    strcat(new_path, "/");
+    strcat(new_path, add_path);
+
+    free(directory_data->is_directory);
+    for (u_int64_t i = 0; i < directory_data->files_qtty; i++) {
+        free(directory_data->files[i]);
+    }
+    free(directory_data->files);
+
+    *directory_data = read_directory(new_path);
+
+    free(*path);
+
+    *path = realpath(new_path, NULL);
+    free(new_path);
+}
+
 FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array) {
     // If the file is a directory, change the path to it and read the directory
     if (directory_data->is_directory[index]) {
-        char *new_path = malloc(strlen(*path) + strlen(directory_data->files[index]) + 2);
-        strcpy(new_path, *path);
-        strcat(new_path, "/");
-        strcat(new_path, directory_data->files[index]);
-
-        free(directory_data->is_directory);
-        for (u_int64_t i = 0; i < directory_data->files_qtty; i++) {
-            free(directory_data->files[i]);
-        }
-        free(directory_data->files);
-
-        *directory_data = read_directory(new_path);
-
-        free(*path);
-
-        *path = realpath(new_path, NULL);
-        free(new_path);
+        use_directory(directory_data, path, directory_data->files[index]);
 
         return DIRECTORY_READ;
     }

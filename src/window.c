@@ -134,6 +134,11 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     }
                 }
                 break;
+            case KEY_LEFT:
+                if (data->menu_data == FILES) {
+                    use_directory(&data->file_menu.directory_data, &data->file_menu.path, "..");
+                }
+                break;
             case '\n': // Enter
                 if (data->menu_data == MAIN) {
                     use_menu(data, tables_array);

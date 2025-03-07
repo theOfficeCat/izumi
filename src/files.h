@@ -76,4 +76,13 @@ DirectoryData read_directory(char *path);
  */
 FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array);
 
+/*
+ * This function changes the directory when finding files.
+ *
+ * directory_data: The data of the directory.
+ * path: The path of the directory.
+ * add_path: Part to add to the path.
+ */
+void use_directory(DirectoryData *directory_data, char **path, char *add_path);
+
 #endif
