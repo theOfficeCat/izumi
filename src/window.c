@@ -137,6 +137,17 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
             case KEY_LEFT:
                 if (data->menu_data == FILES) {
                     use_directory(&data->file_menu.directory_data, &data->file_menu.path, "..");
+
+                    data->file_menu.files_index = 0;
+                    data->file_menu.init_index = 0;
+                }
+                break;
+            case KEY_RIGHT:
+                if (data->menu_data == FILES) {
+                    use_directory(&data->file_menu.directory_data, &data->file_menu.path, data->file_menu.directory_data.files[data->file_menu.files_index]);
+
+                    data->file_menu.files_index = 0;
+                    data->file_menu.init_index = 0;
                 }
                 break;
             case '\n': // Enter
