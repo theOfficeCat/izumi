@@ -55,18 +55,13 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char 
 
     // Create a new instruction
     Instruction instr_new;
-    instr_new.qtty_stages = 0;
-    instr_new.mem_addr = NULL;
-    instr_new.instruction = NULL;
-    instr_new.stages = malloc(10 * sizeof(Stage));
-    instr_new.valid = true;
-    instr_new.finished = false;
+    init_Instruction(&instr_new);
     
     // Create table if instruction needs to be in a new one
     if (id_file/256 >= tables_array->qtty_tables) {
         // Resize the tables array if necessary
         if (id_file/256 >= tables_array->avail_tables) {
-            increse_InstructionTableArray(tables_array);
+            increase_InstructionTableArray(tables_array);
         }
 
         tables_array->tables[id_file/256] = malloc(sizeof(InstructionTable));
@@ -118,8 +113,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     }
 
     // Get the instruction
-    Instruction *instr = 
-        &tables_array->tables[instr_id/256]->content[instr_id%256];
+    Instruction *instr = &tables_array->tables[instr_id/256]->content[instr_id%256];
 
     // Resize the stages array if necessary
     if (instr->qtty_stages % 10 == 0) {
@@ -145,8 +139,7 @@ void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     }
 
     // Get the instruction
-    Instruction *instr = 
-        &tables_array->tables[instr_id/256]->content[instr_id%256];
+    Instruction *instr = &tables_array->tables[instr_id/256]->content[instr_id%256];
 
     // Get the stage
     Stage *stage = NULL;

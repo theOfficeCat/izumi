@@ -108,14 +108,21 @@ void init_InstructionTable(InstructionTable *table);
  *
  * array: The InstructionTableArray to be increased.
  */
-void increse_InstructionTableArray(InstructionTableArray *array);
+void increase_InstructionTableArray(InstructionTableArray *array);
+
+/*
+ * This function initializes the Instruction.
+ *
+ * instruction: The Instruction to be initialized.
+ */
+void init_Instruction(Instruction *instruction);
 
 /*
  * This function frees the memory allocated for the InstructionTableArray.
  *
  * array: The InstructionTableArray to be freed.
  */
-void free_InstructionTableArray(InstructionTableArraAy *array);
+void free_InstructionTableArray(InstructionTableArray *array);
 
 /*
  * This function frees the memory allocated for the InstructionTable.

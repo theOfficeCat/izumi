@@ -1,4 +1,25 @@
+/*
+ * This file is part of Izumi.
+ * 
+ * Izumi is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ */
+
+#include <stdlib.h>
+
 #include "data_structs.h"
+#include "files.h"
+
 
 void init_InstructionTableArray(InstructionTableArray *array) {
     array->qtty_tables = 1;
@@ -20,7 +41,7 @@ void init_InstructionTable(InstructionTable *table) {
     }
 }
 
-void increse_InstructionTableArray(InstructionTableArray *array) {
+void increase_InstructionTableArray(InstructionTableArray *array) {
     array->tables = realloc(array->tables, 2 * array->avail_tables * sizeof(InstructionTable*));
 
     for (int i = array->avail_tables; i < 2 * array->avail_tables; i++) {
@@ -28,6 +49,15 @@ void increse_InstructionTableArray(InstructionTableArray *array) {
     }
 
     array->avail_tables *= 2;
+}
+
+void init_Instruction(Instruction *instruction) {
+    instruction->qtty_stages = 0;
+    instruction->mem_addr = NULL;
+    instruction->instruction = NULL;
+    instruction->stages = malloc(10 * sizeof(Stage));
+    instruction->valid = true;
+    instruction->finished = false;
 }
 
 void free_InstructionTableArray(InstructionTableArray *array) {
@@ -47,14 +77,7 @@ void free_InstructionTable(InstructionTable *table) {
 }
 
 void free_Instruction(Instruction *instruction) {
-    for (u_int64_t i = 0; i < instruction->qtty_stages; i++) {
-        free_Stage(&instruction->stages[i]);
-    }
     free(instruction->stages);
     free(instruction->mem_addr);
     free(instruction->instruction);
-}
-
-void free_Stage(Stage *stage) {
-    free(stage->name);
 }
