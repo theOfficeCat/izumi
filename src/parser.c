@@ -66,19 +66,12 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char 
     if (id_file/256 >= tables_array->qtty_tables) {
         // Resize the tables array if necessary
         if (id_file/256 >= tables_array->avail_tables) {
-            tables_array->avail_tables *= 2;
-            tables_array->tables = realloc(tables_array->tables,tables_array->avail_tables * sizeof(InstructionTable*));
-
-            for (int i = tables_array->qtty_tables; i < tables_array->avail_tables; i++) {
-                tables_array->tables[i] = NULL;
-            }
+            increse_InstructionTableArray(tables_array);
         }
 
         tables_array->tables[id_file/256] = malloc(sizeof(InstructionTable));
 
-        for (int i = 0; i < 256; i++) {
-            tables_array->tables[id_file/256]->content[i].valid = false;
-        }
+        init_InstructionTable(tables_array->tables[id_file/256]);
 
         tables_array->qtty_tables = id_file/256 + 1;
     }
@@ -207,20 +200,8 @@ InstructionTableArray parse_file(char *file_name) {
 
     // Initialization of the tables array
     InstructionTableArray tables_array;
-    tables_array.qtty_tables = 1;
-    tables_array.avail_tables = 4;
-    tables_array.tables = malloc(4 * sizeof(InstructionTable*));
 
-    // Initialization of the first table    
-    tables_array.tables[0] = malloc(sizeof(InstructionTable));
-
-    for (int i = 0; i < 256; i++) {
-        tables_array.tables[0]->content[i].valid = false;
-    }
-
-    for (int i = 1; i < 4; i++) {
-        tables_array.tables[i] = NULL;
-    }
+    init_InstructionTableArray(&tables_array);
 
     u_int64_t cycle = 0;
 

@@ -89,4 +89,53 @@ struct InstructionTableArray_s {
 
 typedef struct InstructionTableArray_s InstructionTableArray;
 
+/*
+ * This function initializes the InstructionTableArray.
+ *
+ * array: The InstructionTableArray to be initialized.
+ */
+void init_InstructionTableArray(InstructionTableArray *array);
+
+/*
+ * This function initializes the InstructionTable.
+ *
+ * table: The InstructionTable to be initialized.
+ */
+void init_InstructionTable(InstructionTable *table);
+
+/*
+ * This function increases the size of the InstructionTableArray.
+ *
+ * array: The InstructionTableArray to be increased.
+ */
+void increse_InstructionTableArray(InstructionTableArray *array);
+
+/*
+ * This function frees the memory allocated for the InstructionTableArray.
+ *
+ * array: The InstructionTableArray to be freed.
+ */
+void free_InstructionTableArray(InstructionTableArraAy *array);
+
+/*
+ * This function frees the memory allocated for the InstructionTable.
+ *
+ * table: The InstructionTable to be freed.
+ */
+void free_InstructionTable(InstructionTable *table);
+
+/*
+ * This function frees the memory allocated for the Instruction.
+ *
+ * instruction: The Instruction to be freed.
+ */
+void free_Instruction(Instruction *instruction);
+
+/*
+ * This function frees the memory allocated for the Stage.
+ *
+ * stage: The Stage to be freed.
+ */
+void free_Stage(Stage *stage);
+
 #endif
