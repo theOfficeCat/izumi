@@ -22,14 +22,14 @@
 
 
 void move_down_menu(MenuData *menu) {
-    if (menu->selected == LOAD_FILE) {
-        menu->selected = QUIT;
+    if (menu->selected != MENU_QTTY-1) {
+        menu->selected = (menu->selected + 1);
     }
 }
 
 void move_up_menu(MenuData *menu) {
-    if (menu->selected == QUIT) {
-        menu->selected = LOAD_FILE;
+    if (menu->selected != 0) {
+        menu->selected = (menu->selected - 1);
     }
 }
 
