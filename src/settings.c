@@ -38,7 +38,7 @@ void use_menu(WindowData *data, InstructionTableArray *tables_array) {
         close_window();
         exit(0);
     }
-    if (data->main_menu.selected == LOAD_FILE) {
+    else if (data->main_menu.selected == LOAD_FILE) {
         char *init_path = ".";
         data->file_menu.path = malloc(strlen(init_path));
         strcpy(data->file_menu.path, init_path);
@@ -46,5 +46,10 @@ void use_menu(WindowData *data, InstructionTableArray *tables_array) {
         data->file_menu.files_index = 0;
         data->file_menu.init_index = 0;
         data->menu_data = FILES;
+    }
+    else if (data->main_menu.selected == CLOSE_FILE) {
+        free_InstructionTableArray(tables_array);
+        data->file_menu.loaded = false;
+        data->menu_data = CLOSED;
     }
 }
