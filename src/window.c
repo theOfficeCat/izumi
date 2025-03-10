@@ -158,6 +158,7 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     if (use_file(&data->file_menu.directory_data, data->file_menu.files_index, &data->file_menu.path, tables_array) == FILE_READ) {
                         data->file_menu.loaded = true;
                         data->menu_data = CLOSED;
+                        data->first_instruction = 0;
                     }
 
                     data->file_menu.files_index = 0;

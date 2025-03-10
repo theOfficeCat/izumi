@@ -61,11 +61,13 @@ void init_Instruction(Instruction *instruction) {
 }
 
 void free_InstructionTableArray(InstructionTableArray *array) {
-    for (u_int64_t i = 0; i < array->qtty_tables; i++) {
-        free_InstructionTable(array->tables[i]);
+    if (array->tables == NULL) {
+        for (u_int64_t i = 0; i < array->qtty_tables; i++) {
+            free_InstructionTable(array->tables[i]);
+        }
+        free(array->tables);
+        free(array);
     }
-    free(array->tables);
-    free(array);
 }
 
 void free_InstructionTable(InstructionTable *table) {
