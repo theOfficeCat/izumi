@@ -113,6 +113,8 @@ FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, 
         strcat(full_path, "/");
         strcat(full_path, directory_data->files[index]);
 
+        free_InstructionTableArray(tables_array);
+
         *tables_array = parse_file(full_path);
 
         return FILE_READ;
