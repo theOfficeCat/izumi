@@ -27,6 +27,12 @@
 #include "parser.h"
 #include "config.h"
 
+char *menus[MENU_QTTY] = {
+    "Load file",
+    "Close file",
+    "Quit"
+};
+
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
     data->height = getmaxy(stdscr);
@@ -189,22 +195,15 @@ void open_menu(WindowData *data) {
 
     // Print menu options, highlighting the selected one
     if (data->menu_data == MAIN) {
-        if (data->main_menu.selected == LOAD_FILE) {
-            wattron(data->menu_win, A_REVERSE);
-            mvwprintw(data->menu_win, 3, 4, "Load file");
-            wattroff(data->menu_win, A_REVERSE);
-        }
-        else {
-            mvwprintw(data->menu_win, 3, 4, "Load file");
-        }
-
-        if (data->main_menu.selected == QUIT) {
-            wattron(data->menu_win, A_REVERSE);
-            mvwprintw(data->menu_win, 4, 4, "Quit");
-            wattroff(data->menu_win, A_REVERSE);
-        }
-        else {
-            mvwprintw(data->menu_win, 4, 4, "Quit");
+        for (u_int64_t i = 0; i < MENU_QTTY; i++) {
+            if (i == data->main_menu.selected) {
+                wattron(data->menu_win, A_REVERSE);
+                mvwprintw(data->menu_win, i+2, 4, "%s", menus[i]);
+                wattroff(data->menu_win, A_REVERSE);
+            }
+            else {
+                mvwprintw(data->menu_win, i+2, 4, "%s", menus[i]);
+            }
         }
     }
     else if (data->menu_data == FILES) {

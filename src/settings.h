@@ -50,7 +50,9 @@ typedef enum MenuOpen_e MenuOpen;
  */
 enum SelectedMenu_e {
     LOAD_FILE,
-    QUIT
+    CLOSE_FILE,
+    QUIT,
+    MENU_QTTY // The quantity of menu options, due to the last option index is the quantity of options
 };
 
 typedef enum SelectedMenu_e SelectedMenu;
