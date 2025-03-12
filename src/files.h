@@ -23,66 +23,19 @@
 
 #include "data_structs.h"
 
-/*
- * DirectoryData
- * 
- * This struct is used to store the data of a directory.
- * 
- * files_qtty: The quantity of files in the directory.
- * files: The names of the files in the directory.
- * is_directory: An array of booleans that indicates if the file is a directory.
- */
-struct DirectoryData_s {
-    u_int64_t files_qtty;
-    char **files;
-    bool *is_directory;
+struct FileData_s {
+    bool exists;
+    bool is_file;
 };
 
-typedef struct DirectoryData_s DirectoryData;
+typedef struct FileData_s FileData;
 
 /*
- * FileUsage
- * 
- * This enum is used to store the usage of a file.
- * 
- * FILE_READ: The selected element is a file to read.
- * DIRECTORY_READ: The selected element is a directory to read.
- */
-enum FileUsage_e {
-    FILE_READ,
-    DIRECTORY_READ
-};
-
-typedef enum FileUsage_e FileUsage;
-
-/*
- * This function reads the files in a directory.
+ * This function checks if a file exists and if it is a file.
  *
- * path: The path of the directory.
+ * path: The path of the file.
  * 
- * Returns: The data of the directory.
  */
-DirectoryData read_directory(char *path);
-
-/*
- * This function uses a file or directory.
- * 
- * directory_data: The data of the directory.
- * index: The index of the selected file.
- * path: The path of the directory.
- * tables_array: The array of tables.
- * 
- * Returns: The kind of element read.
- */
-FileUsage use_file(DirectoryData *directory_data, u_int64_t index, char **path, InstructionTableArray *tables_array);
-
-/*
- * This function changes the directory when finding files.
- *
- * directory_data: The data of the directory.
- * path: The path of the directory.
- * add_path: Part to add to the path.
- */
-void use_directory(DirectoryData *directory_data, char **path, char *add_path);
+FileData check_file(char *path);
 
 #endif

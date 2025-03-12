@@ -25,7 +25,6 @@
 #include <sys/types.h>
 
 #include "data_structs.h"
-#include "settings.h"
 
 /*
  * WindowData
@@ -55,11 +54,15 @@ struct WindowData_s {
 
     WINDOW *win;
 
-    MenuOpen menu_data;
-    MenuData main_menu;
-    FileMenuData file_menu;
+    //MenuOpen menu_data;
+    bool command_mode;
+
+    bool file_loaded;
 
     WINDOW *menu_win;
+
+    char *command;
+    u_int64_t command_size;
 };
 
 typedef struct WindowData_s WindowData;
@@ -105,14 +108,6 @@ void get_window_data(WindowData *data);
  * menu: The menu data.
  */
 void open_menu(WindowData *data);
-
-/*
- * This function moves down the menu.
- * 
- * menu: The menu data.
- */
-void use_menu(WindowData *data, InstructionTableArray *tables_array);
-
 
 
 #endif
