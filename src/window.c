@@ -20,12 +20,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include<linux/limits.h>
 
 #include "window.h"
 #include "files.h"
 #include "parser.h"
 #include "config.h"
+#include "commands.h"
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -114,34 +114,15 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 if (strcmp(command, ":q") == 0 || strcmp(command, ":quit") == 0) {
                     close_window();
                     exit(0);
-
                 }
                 else if (strcmp(command, ":open") == 0) {
-                    char * path = malloc(PATH_MAX);
-                    sscanf(data->command, "%64s %s", command, path);
-
-                    path = realpath(path, NULL);
-
-                    FileData file_data = check_file(path);
-
-                    if (file_data.exists && file_data.is_file) {
-                        fprintf(stderr, "Opening file %s\n", path);
-                        free_InstructionTableArray(tables_array);
-                        *tables_array = parse_file(path);
-                        data->file_loaded = true;
-                    }
-                    else {
-                        fprintf(stderr, "Error: Could not open file %s\n", path);
-                    }
-
-                    free(path);
-                    path = NULL;
- 
+                    open_file(data, command, tables_array);
                 }
                 data->command_mode = false;
                 free(data->command);
                 data->command = NULL;
                 data->command_size = 0;
+
             }
             else {
                 data->command = realloc(data->command, data->command_size + 2);
