@@ -73,6 +73,8 @@ void init_window(WindowData *data) {
     data->command_mode = false;
     data->command = NULL;
     data->file_loaded = false;
+    data->last_pc = malloc(19);
+    data->last_pc_index = -1;
 
     data->menu_win = newwin(3, data->width, data->height-3, 0);
 }
@@ -91,8 +93,6 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
         ch = getch();
 
         if (data->command_mode) {
-            fprintf(stderr, "Command: %s\n", data->command);
-
             if (ch == 27) {
                 data->command_mode = false;
                 free(data->command);
@@ -109,14 +109,20 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 char command[64];
                 sscanf(data->command, "%64s", command);
 
-                fprintf(stderr, "Command detected: %s, size %d\n", command, strlen(command));
-
                 if (strcmp(command, ":q") == 0 || strcmp(command, ":quit") == 0) {
                     close_window();
                     exit(0);
                 }
                 else if (strcmp(command, ":open") == 0) {
                     open_file(data, command, tables_array);
+                }
+                else if (strcmp(command, ":fpc") == 0) {
+                    char *pc = NULL;
+                    data->first_instruction = find_pc(data->command, tables_array, data->first_instruction + 1, &pc, DOWN);
+
+                    strcpy(data->last_pc, pc);
+
+                    data->last_pc_index = data->first_instruction;
                 }
                 data->command_mode = false;
                 free(data->command);
@@ -161,6 +167,24 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     strcpy(data->command, comm);
                 }
                 break;
+            case 'n':
+                if (data->last_pc_index != -1) {
+                    char dummy_command[24] = ":fpc ";
+                    strcat(dummy_command, data->last_pc);
+
+                    data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index + 1, &data->last_pc, DOWN);
+                    data->last_pc_index = data->first_instruction;
+                }
+                break;
+            case 'N':
+                if (data->last_pc_index != -1) {
+                    char dummy_command[24] = ":fpc ";
+                    strcat(dummy_command, data->last_pc);
+
+                    data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index - 1, &data->last_pc, UP);
+                    data->last_pc_index = data->first_instruction;
+                }
+                break;
             default:
                 break;
         }
@@ -173,7 +197,7 @@ void open_menu(WindowData *data) {
 
     box(data->menu_win, 0, 0);  
 
-    wbkgd(data->menu_win, COLOR_PAIR(16));
+    //wbkgd(data->menu_win, COLOR_PAIR(16));
 
     mvwprintw(data->menu_win, 1, 1, "%s", data->command);
 

@@ -29,4 +29,13 @@
  */
 void open_file(WindowData *data, char *command, InstructionTableArray *tables_array);
 
+enum Direction_e {
+    UP,
+    DOWN
+};
+
+typedef enum Direction_e Direction;
+
+u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **pc, Direction direction);
+
 #endif
