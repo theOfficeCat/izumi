@@ -63,6 +63,9 @@ struct WindowData_s {
 
     char *command;
     u_int64_t command_size;
+
+    char *last_pc;
+    u_int64_t last_pc_index;
 };
 
 typedef struct WindowData_s WindowData;
