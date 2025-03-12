@@ -18,9 +18,9 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 
 ## Requierments
 
-- ncurses
-- meson (build only)
-- ninja (build only, can be replaced by other meson backends)
+- `ncurses`
+- `meson` (build only) *[version >=1.2.0]*
+- `ninja` (build only, can be replaced by other meson backends)
 
 ## Building (and installing)
 
@@ -32,6 +32,8 @@ cd build
 meson compile
 meson install
 ```
+> [!IMPORTANT]  
+> meson needs to be available as root for `meson install`
 
 But, if the classic `make` sequence is hard-wired in your brain, you can:
 
