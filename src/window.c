@@ -20,18 +20,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include<linux/limits.h>
 
 #include "window.h"
-#include "settings.h"
 #include "files.h"
 #include "parser.h"
 #include "config.h"
-
-char *menus[MENU_QTTY] = {
-    "Load file",
-    "Close file",
-    "Quit"
-};
 
 void get_window_data(WindowData *data) {
     data->width = getmaxx(stdscr);
@@ -61,6 +55,7 @@ void init_window(WindowData *data) {
     init_pair(13, COLOR_WHITE, COLOR_MAGENTA);
     init_pair(14, COLOR_WHITE, COLOR_CYAN);
 
+    init_pair(16, COLOR_WHITE, COLOR_BLACK);
     init_pair(17, COLOR_BLUE, COLOR_BLACK);
     init_pair(18, COLOR_RED, COLOR_BLACK);
     init_pair(19, COLOR_GREEN, COLOR_BLACK);
@@ -75,11 +70,11 @@ void init_window(WindowData *data) {
     get_window_data(data);
     data->win = newwin(data->height, data->width, data->y, data->x);
     data->first_instruction = 0;
-    data->menu_data = CLOSED;
-    data->main_menu.selected = LOAD_FILE;
-    data->file_menu.loaded = false;
+    data->command_mode = false;
+    data->command = NULL;
+    data->file_loaded = false;
 
-    data->menu_win = newwin(data->height/2, data->width/2, data->height/4, data->width/4);
+    data->menu_win = newwin(3, data->width, data->height-3, 0);
 }
 
 void close_window() {
@@ -95,88 +90,94 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 
         ch = getch();
 
+        if (data->command_mode) {
+            fprintf(stderr, "Command: %s\n", data->command);
+
+            if (ch == 27) {
+                data->command_mode = false;
+                free(data->command);
+                data->command = NULL;
+                data->command_size = 0;
+            }
+            else if (ch == KEY_BACKSPACE) {
+                if (data->command_size > 1) {
+                    data->command[data->command_size - 1] = '\0';
+                    data->command_size--;
+                }
+            }
+            else if (ch == '\n') {
+                char command[64];
+                sscanf(data->command, "%64s", command);
+
+                fprintf(stderr, "Command detected: %s, size %d\n", command, strlen(command));
+
+                if (strcmp(command, ":q") == 0 || strcmp(command, ":quit") == 0) {
+                    close_window();
+                    exit(0);
+
+                }
+                else if (strcmp(command, ":open") == 0) {
+                    char * path = malloc(PATH_MAX);
+                    sscanf(data->command, "%64s %s", command, path);
+
+                    path = realpath(path, NULL);
+
+                    FileData file_data = check_file(path);
+
+                    if (file_data.exists && file_data.is_file) {
+                        fprintf(stderr, "Opening file %s\n", path);
+                        free_InstructionTableArray(tables_array);
+                        *tables_array = parse_file(path);
+                        data->file_loaded = true;
+                    }
+                    else {
+                        fprintf(stderr, "Error: Could not open file %s\n", path);
+                    }
+
+                    free(path);
+                    path = NULL;
+ 
+                }
+                data->command_mode = false;
+                free(data->command);
+                data->command = NULL;
+                data->command_size = 0;
+            }
+            else {
+                data->command = realloc(data->command, data->command_size + 2);
+                data->command_size++;
+                data->command[data->command_size - 1] = ch;
+                data->command[data->command_size] = '\0';
+            }
+
+        }
+
         switch (ch) {
             case 'q':
-                if (data->menu_data == MAIN) {
-                    data->menu_data = CLOSED;
-                }
-                else {
-                    return;
-                }
                 break;
             case KEY_DOWN:
-                if (data->menu_data == CLOSED) {
-                    data->first_instruction++;
-                }
-                else if (data->menu_data == MAIN) {
-                    move_down_menu(&data->main_menu);
-                }
-                else if (data->menu_data == FILES) {
-                    // Moves down on the files menu and updates the init_index
-                    if (data->file_menu.files_index < data->file_menu.directory_data.files_qtty - 1) {
-                        data->file_menu.files_index++;
-
-                        if (data->file_menu.init_index < data->file_menu.directory_data.files_qtty && data->file_menu.files_index == data->file_menu.init_index + data->height/2 - 4) {
-                            data->file_menu.init_index++;
-                        }
-                    }
-                }
+            case 'j':
+                data->first_instruction++;
                 break;
             case KEY_UP:
-                if (data->menu_data == CLOSED && data->first_instruction > 0) {
+            case 'k':
+                if (data->first_instruction > 0) {
                     data->first_instruction--;
-                }
-                else if (data->menu_data == MAIN) {
-                    move_up_menu(&data->main_menu);
-                }
-                else if (data->menu_data == FILES) {
-                    // Moves up on the files menu and updates the init_index
-                    if (data->file_menu.files_index > 0) {
-                        data->file_menu.files_index--;
-
-                        if (data->file_menu.init_index > 0 && data->file_menu.files_index == data->file_menu.init_index) {
-                            data->file_menu.init_index--;
-                        }
-                    }
                 }
                 break;
             case KEY_LEFT:
-                if (data->menu_data == FILES) {
-                    use_directory(&data->file_menu.directory_data, &data->file_menu.path, "..");
-
-                    data->file_menu.files_index = 0;
-                    data->file_menu.init_index = 0;
-                }
                 break;
             case KEY_RIGHT:
-                if (data->menu_data == FILES) {
-                    use_directory(&data->file_menu.directory_data, &data->file_menu.path, data->file_menu.directory_data.files[data->file_menu.files_index]);
-
-                    data->file_menu.files_index = 0;
-                    data->file_menu.init_index = 0;
-                }
                 break;
             case '\n': // Enter
-                if (data->menu_data == MAIN) {
-                    use_menu(data, tables_array);
-                }
-                else if (data->menu_data == FILES) {
-                    if (use_file(&data->file_menu.directory_data, data->file_menu.files_index, &data->file_menu.path, tables_array) == FILE_READ) {
-                        data->file_menu.loaded = true;
-                        data->menu_data = CLOSED;
-                        data->first_instruction = 0;
-                    }
-
-                    data->file_menu.files_index = 0;
-                    data->file_menu.init_index = 0;
-                }
                 break;
-            case 'm':
-                if (data->menu_data == CLOSED) {
-                    data->menu_data = MAIN;
-                }
-                else {
-                    data->menu_data = CLOSED;
+            case ':':
+                if (!data->command_mode) {
+                    data->command_mode = true;
+                    char *comm = ":";
+                    data->command_size = 1;
+                    data->command = malloc(data->command_size + 1);
+                    strcpy(data->command, comm);
                 }
                 break;
             default:
@@ -189,62 +190,11 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 void open_menu(WindowData *data) {
     werase(data->menu_win);
 
-    box(data->menu_win, 0, 0);
+    box(data->menu_win, 0, 0);  
 
-    mvwprintw(data->menu_win, 1, data->width/4 - 2, "MENU");
+    wbkgd(data->menu_win, COLOR_PAIR(16));
 
-    // Print menu options, highlighting the selected one
-    if (data->menu_data == MAIN) {
-        for (u_int64_t i = 0; i < MENU_QTTY; i++) {
-            if (i == data->main_menu.selected) {
-                wattron(data->menu_win, A_REVERSE);
-                mvwprintw(data->menu_win, i+2, 4, "%s", menus[i]);
-                wattroff(data->menu_win, A_REVERSE);
-            }
-            else {
-                mvwprintw(data->menu_win, i+2, 4, "%s", menus[i]);
-            }
-        }
-    }
-    else if (data->menu_data == FILES) {
-        // Print the files in the directory, highlighting the selected one
-        for (u_int64_t i = 0; i < data->file_menu.directory_data.files_qtty; ++i) {
-            if (i < data->height/2 - 4) {
-                u_int64_t files_index = i + data->file_menu.init_index;
-                if (data->file_menu.files_index == files_index) {
-                    wattron(data->menu_win, A_REVERSE);
-
-                    if (data->file_menu.directory_data.is_directory[files_index]) {
-                        wattron(data->menu_win, COLOR_PAIR(17));
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
-                        wattroff(data->menu_win, COLOR_PAIR(17));
-                    }
-                    else {
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
-                    }
-                    wattroff(data->menu_win, A_REVERSE);
-                }
-                else {
-                    if (data->file_menu.directory_data.is_directory[files_index]) {
-                        wattron(data->menu_win, COLOR_PAIR(17));
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
-                        wattroff(data->menu_win, COLOR_PAIR(17));
-                    }
-                    else {
-                        mvwprintw(data->menu_win, i+2, 4, "%s", data->file_menu.directory_data.files[files_index]);
-                    }
-                }
-            }
-        }
-
-        // Print the scroll indicators
-        if (data->file_menu.directory_data.files_qtty > data->height/2 - 4 && data->file_menu.init_index + data->height/2 - 4 < data->file_menu.directory_data.files_qtty) {
-            mvwprintw(data->menu_win, data->height/2 - 2, data->width/2 - 4, "v");
-        }
-        if (data->file_menu.init_index > 0) {
-            mvwprintw(data->menu_win, 2, data->width/2 - 4, "^");
-        }
-    }
+    mvwprintw(data->menu_win, 1, 1, "%s", data->command);
 
     wrefresh(data->menu_win);
 }
@@ -260,7 +210,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
     // verical bar on 32 px for instruction info
     mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);
 
-    if (data->file_menu.loaded) {
+    if (data->file_loaded) {
         // print instructions data
 
         u_int64_t first_cycle = -1;
@@ -335,7 +285,7 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
 
     wrefresh(data->win);
 
-    if (data->menu_data == MAIN || data->menu_data == FILES) {
+    if (data->command_mode) {
         open_menu(data);
     }
 }
