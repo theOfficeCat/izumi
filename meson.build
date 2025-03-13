@@ -3,6 +3,9 @@ project('Izumi', 'c',
   license_files: ['LICENSE'],
   version: '0.0.1',
   meson_version: '>=1.2.0',
+  default_options: [
+    'b_sanitize=address, undefined',
+    ],
 )
 
 fs = import('fs')
