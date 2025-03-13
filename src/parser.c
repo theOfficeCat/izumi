@@ -151,12 +151,10 @@ void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
         }
     }
 
-    if (stage == NULL) {
-        printf("Error: Could not find stage\n");
-        exit(1);
+    if (stage != NULL) {
+        stage->duration = cycle - stage->cycle;
     }
 
-    stage->duration = cycle - stage->cycle;
 }
 
 void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
