@@ -56,11 +56,24 @@ $ ./izumi
 
 ### Commands
 
-- `q`: Quit
-- `m`: Open menu
-- `Key Up`: Move up
-- `Key Down`: Move down
-- `Enter`: Select
+| Command | Description |
+|---------|-------------|
+| `:q`    | Quit        |
+| `:quit` | Quit        |
+| `:open (path)`    | Open a file |
+| `:fpc 0x(address)` | Search and go to the first appearance of the address |
+| `:finst (instruction)` | Search and go to the first appearance of the instruction |
+
+### Keybindings
+
+| Key | Description |
+|-----|-------------|
+| `n` | Next appearance of the last search |
+| `N` | Previous appearance of the last search |
+| `j` | Move down |
+| `KEY_DOWN` | Move down |
+| `k` | Move up |
+| `KEY_UP` | Move up |
 
 ## Screenshot
 
