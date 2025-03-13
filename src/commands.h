@@ -18,7 +18,9 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "window.h"
+#include <stdbool.h>
+
+#include "data_structs.h"
 
 /*
  * This function is used to open a file.
@@ -27,7 +29,7 @@
  * command: The command to be executed.
  * tables_array: The array of instruction tables.
  */
-void open_file(WindowData *data, char *command, InstructionTableArray *tables_array);
+bool open_file(char *user_command, char *command, InstructionTableArray *tables_array);
 
 enum Direction_e {
     UP,
@@ -36,6 +38,16 @@ enum Direction_e {
 
 typedef enum Direction_e Direction;
 
+enum SearchMode_e {
+    PC,
+    INST,
+    NONE
+};
+
+typedef enum SearchMode_e SearchMode;
+
 u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **pc, Direction direction);
+
+u_int64_t find_inst(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **inst, Direction direction);
 
 #endif

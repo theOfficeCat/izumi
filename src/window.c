@@ -76,6 +76,11 @@ void init_window(WindowData *data) {
     data->last_pc = malloc(19);
     data->last_pc_index = -1;
 
+    data->last_inst = malloc(64);
+    data->last_inst_index = -1;
+
+    data->search_mode = NONE;
+
     data->menu_win = newwin(3, data->width, data->height-3, 0);
 }
 
@@ -114,7 +119,9 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     exit(0);
                 }
                 else if (strcmp(command, ":open") == 0) {
-                    open_file(data, command, tables_array);
+                    if (open_file(data->command, command, tables_array)) {
+                        data->file_loaded = true;
+                    }
                 }
                 else if (strcmp(command, ":fpc") == 0) {
                     char *pc = NULL;
@@ -123,6 +130,18 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                     strcpy(data->last_pc, pc);
 
                     data->last_pc_index = data->first_instruction;
+
+                    data->search_mode = PC;
+                }
+                else if (strcmp(command, ":finst") == 0) {
+                    char *inst = NULL;
+                    data->first_instruction = find_inst(data->command, tables_array, data->first_instruction + 1, &inst, DOWN);
+
+                    strcpy(data->last_inst, inst);
+
+                    data->last_inst_index = data->first_instruction;
+
+                    data->search_mode = INST;
                 }
                 data->command_mode = false;
                 free(data->command);
@@ -168,21 +187,43 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 }
                 break;
             case 'n':
-                if (data->last_pc_index != -1) {
-                    char dummy_command[24] = ":fpc ";
-                    strcat(dummy_command, data->last_pc);
+                if (data->search_mode == PC) {
+                    if (data->last_pc_index != -1) {
+                        char dummy_command[24] = ":fpc ";
+                        strcat(dummy_command, data->last_pc);
 
-                    data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index + 1, &data->last_pc, DOWN);
-                    data->last_pc_index = data->first_instruction;
+                        data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index + 1, &data->last_pc, DOWN);
+                        data->last_pc_index = data->first_instruction;
+                    }
+                }
+                else if (data->search_mode == INST) {
+                    if (data->last_inst_index != -1) {
+                        char dummy_command[128] = ":finst ";
+                        strcat(dummy_command, data->last_inst);
+
+                        data->first_instruction = find_inst(dummy_command, tables_array, data->last_inst_index + 1, &data->last_inst, DOWN);
+                        data->last_inst_index = data->first_instruction;
+                    }
                 }
                 break;
             case 'N':
-                if (data->last_pc_index != -1) {
-                    char dummy_command[24] = ":fpc ";
-                    strcat(dummy_command, data->last_pc);
+                if (data->search_mode == PC) {
+                    if (data->last_pc_index != -1) {
+                        char dummy_command[24] = ":fpc ";
+                        strcat(dummy_command, data->last_pc);
 
-                    data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index - 1, &data->last_pc, UP);
-                    data->last_pc_index = data->first_instruction;
+                        data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index - 1, &data->last_pc, UP);
+                        data->last_pc_index = data->first_instruction;
+                    }
+                }
+                else if (data->search_mode == INST) {
+                    if (data->last_inst_index != -1) {
+                        char dummy_command[128] = ":finst ";
+                        strcat(dummy_command, data->last_inst);
+
+                        data->first_instruction = find_inst(dummy_command, tables_array, data->last_inst_index - 1, &data->last_inst, UP);
+                        data->last_inst_index = data->first_instruction;
+                    }
                 }
                 break;
             default:
