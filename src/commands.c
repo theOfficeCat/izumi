@@ -80,7 +80,7 @@ u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t 
                     j = index_to_start%256;
                 }
                 else {
-                    j = 256;
+                    j = 255;
                 }
 
                 for (; j != UINT64_MAX; --j) {
