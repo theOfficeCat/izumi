@@ -45,6 +45,17 @@
  * file_menu: The file menu data.
  * 
  * menu_win: The menu window.
+ * 
+ * command: The command that the user is typing.
+ * command_size: The size of the command.
+ * 
+ * last_pc: The last PC searched.
+ * last_pc_index: The index of the last PC searched.
+ * 
+ * last_inst: The last instruction searched.
+ * last_inst_index: The index of the last instruction searched.
+ * 
+ * search_mode: The mode of the search.
  */
 struct WindowData_s {
     u_int64_t x;

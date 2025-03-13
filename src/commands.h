@@ -31,6 +31,11 @@
  */
 bool open_file(char *user_command, char *command, InstructionTableArray *tables_array);
 
+/*
+ * Direction
+ *
+ * This enum is used to define the direction of the search.
+ */
 enum Direction_e {
     UP,
     DOWN
@@ -38,6 +43,11 @@ enum Direction_e {
 
 typedef enum Direction_e Direction;
 
+/*
+ * SearchMode
+ *
+ * This enum is used to define the kind of element searched.
+ */
 enum SearchMode_e {
     PC,
     INST,
@@ -46,8 +56,26 @@ enum SearchMode_e {
 
 typedef enum SearchMode_e SearchMode;
 
+/*
+ * This function is used to find the next time the PC of the command appears.
+ * 
+ * command: The command to be executed.
+ * tables_array: The array of instruction tables.
+ * index_to_start: The index to start the search.
+ * pc: The PC to be found.
+ * direction: The direction of the search.
+ */
 u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **pc, Direction direction);
 
+/*
+ * This function is used to find the next time the instruction of the command appears.
+ * 
+ * command: The command to be executed.
+ * tables_array: The array of instruction tables.
+ * index_to_start: The index to start the search.
+ * inst: The instruction to be found.
+ * direction: The direction of the search.
+ */
 u_int64_t find_inst(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **inst, Direction direction);
 
 #endif
