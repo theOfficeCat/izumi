@@ -29,6 +29,9 @@
 int main(int argc, char *argv[]) {
     // print instructions
     InstructionTableArray tables_array;
+    tables_array.tables = NULL;
+    tables_array.avail_tables = 0;
+    tables_array.qtty_tables = 0;
 
     WindowData data;
 
