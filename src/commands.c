@@ -32,16 +32,25 @@ bool open_file(char *user_command, char *command, InstructionTableArray *tables_
 
     path = realpath(path, NULL);
 
-    FileData file_data = check_file(path);
+    if (path == NULL) {
+        printf("Error: Could not open file %s\n", path);
+        return false;}
+    else {
+        FileData file_data = check_file(path);
 
-    if (file_data.exists && file_data.is_file) {
-        free_InstructionTableArray(tables_array);
-        *tables_array = parse_file(path);
+        if (file_data.exists && file_data.is_file) {
+            read_file(path, tables_array);
+        }
+        else {
+            printf("Error: Could not open file %s\n", path);
+            return false;
+        }
     }
 
     free(path);
     path = NULL;
 
+    return true;
 }
 
 

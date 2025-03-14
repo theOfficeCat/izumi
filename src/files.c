@@ -42,3 +42,12 @@ FileData check_file(char *path) {
 
     return file_data;
 }
+
+void read_file(char *path, InstructionTableArray *tables_array) {
+    FileData file_data = check_file(path);
+
+    if (file_data.exists && file_data.is_file) {
+        free_InstructionTableArray(tables_array);
+        *tables_array = parse_file(path);
+    }
+}

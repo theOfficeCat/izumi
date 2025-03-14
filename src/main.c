@@ -20,6 +20,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <linux/limits.h>
 
 #include "data_structs.h"
 #include "parser.h"
@@ -36,6 +37,25 @@ int main(int argc, char *argv[]) {
     WindowData data;
 
     init_window(&data);
+
+    if (argc > 1) {
+        fprintf(stderr, "%s\n", argv[1]);
+
+        char *path = malloc(PATH_MAX);
+        path = realpath(argv[1], NULL);
+
+        fprintf(stderr, "%s\n", path);
+
+        FileData file_data = check_file(path);
+
+        if (file_data.exists && file_data.is_file) {
+            read_file(argv[1], &tables_array);
+            data.file_loaded = true;
+        }
+
+        free(path);
+        path = NULL;
+    }
 
     main_loop(&data, &tables_array);
 
