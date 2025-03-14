@@ -1,18 +1,18 @@
 /*
  * This file is part of Izumi.
- * 
+ *
  * Izumi is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
- * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -34,9 +34,13 @@ int main(int argc, char *argv[]) {
     tables_array.avail_tables = 0;
     tables_array.qtty_tables = 0;
 
-    WindowData data;
+    ApplicationData app_data;
 
-    init_window(&data);
+    init_application(&app_data);
+
+    WindowData win_data;
+
+    init_window(&win_data);
 
     if (argc > 1) {
         char *path = malloc(PATH_MAX);
@@ -46,15 +50,17 @@ int main(int argc, char *argv[]) {
 
         if (file_data.exists && file_data.is_file) {
             read_file(argv[1], &tables_array);
-            data.file_loaded = true;
+            win_data.file_loaded = true;
         }
 
         free(path);
         path = NULL;
     }
 
-    main_loop(&data, &tables_array);
+
+    add_window(&app_data, &win_data);
+
+    main_loop(&app_data, &win_data, &tables_array);
 
     close_window();
 }
-

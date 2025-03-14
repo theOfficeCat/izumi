@@ -66,15 +66,7 @@ struct WindowData_s {
 
     WINDOW *win;
 
-    //MenuOpen menu_data;
-    bool command_mode;
-
     bool file_loaded;
-
-    WINDOW *menu_win;
-
-    char *command;
-    u_int64_t command_size;
 
     char *last_pc;
     u_int64_t last_pc_index;
@@ -87,12 +79,27 @@ struct WindowData_s {
 
 typedef struct WindowData_s WindowData;
 
+struct ApplicationData_s {
+    WindowData *windows;
+    u_int64_t windows_qtty;
+    u_int64_t window_focused;
+
+    WINDOW *menu_win;
+
+    char *command;
+    u_int64_t command_size;
+
+    bool command_mode;
+};
+
+typedef struct ApplicationData_s ApplicationData;
+
 /*
  * This function initializes the window.
  * 
  * data: The window data.
  */
-void init_window(WindowData *data);
+void init_window(WindowData *win_data);
 
 /*
  * This function closes the window.
@@ -100,12 +107,27 @@ void init_window(WindowData *data);
 void close_window();
 
 /*
+ * This function initializes the application.
+ * 
+ * app_data: The application data.
+ */
+void init_application(ApplicationData *app_data);
+
+/*
+ * This function adds a window to the application.
+ * 
+ * app_data: The application data.
+ * win_data: The window data.
+ */
+void add_window(ApplicationData *app_data, WindowData *win_data);
+
+/*
  * This function is the main loop of the program.
  * 
  * data: The window data.
  * tables_array: The array of tables.
  */
-void main_loop(WindowData *data, InstructionTableArray *tables_array);
+void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTableArray *tables_array);
 
 /*
  * This function renders the window.
@@ -113,21 +135,21 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array);
  * data: The window data.
  * tables_array: The array of tables.
  */
-void render(WindowData *data, InstructionTableArray *tables_array);
+void render(ApplicationData *app_data, WindowData *win_data, InstructionTableArray *tables_array);
 
 /*
  * This function gets the window data.
  * 
  * data: The window data.
  */
-void get_window_data(WindowData *data);
+void get_window_data(WindowData *win_data);
 
 /*
  * This function moves down the menu.
  * 
  * menu: The menu data.
  */
-void open_menu(WindowData *data);
+void open_menu(ApplicationData *app_data);
 
 
 #endif
