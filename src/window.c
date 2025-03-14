@@ -27,12 +27,33 @@
 #include "config.h"
 #include "commands.h"
 
-void get_window_data(WindowData *data) {
-    data->width = getmaxx(stdscr);
-    data->height = getmaxy(stdscr);
+void get_window_data(WindowData *win_data) {
+    win_data->width = getmaxx(stdscr);
+    win_data->height = getmaxy(stdscr);
 }
 
-void init_window(WindowData *data) {
+void init_window(WindowData *win_data) {
+    win_data->x = 0;
+    win_data->y = 0;
+
+    get_window_data(win_data);
+    win_data->win = newwin(win_data->height, win_data->width, win_data->y, win_data->x);
+    win_data->first_instruction = 0;
+    win_data->file_loaded = false;
+    win_data->last_pc = malloc(19);
+    win_data->last_pc_index = -1;
+
+    win_data->last_inst = malloc(64);
+    win_data->last_inst_index = -1;
+
+    win_data->search_mode = NONE;
+}
+
+void close_window() {
+    endwin();
+}
+
+void init_application(ApplicationData *app_data) {
     initscr();
     cbreak();
     noecho();
@@ -63,97 +84,92 @@ void init_window(WindowData *data) {
     init_pair(21, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(22, COLOR_CYAN, COLOR_BLACK);
 
+    app_data->windows = NULL;
+    app_data->windows_qtty = 0;
+    app_data->window_focused = 0;
 
-    data->x = 0;
-    data->y = 0;
+    app_data->menu_win = newwin(3, getmaxx(stdscr), getmaxy(stdscr) - 3, 0);
 
-    get_window_data(data);
-    data->win = newwin(data->height, data->width, data->y, data->x);
-    data->first_instruction = 0;
-    data->command_mode = false;
-    data->command = NULL;
-    data->file_loaded = false;
-    data->last_pc = malloc(19);
-    data->last_pc_index = -1;
-
-    data->last_inst = malloc(64);
-    data->last_inst_index = -1;
-
-    data->search_mode = NONE;
-
-    data->menu_win = newwin(3, data->width, data->height-3, 0);
+    app_data->command = NULL;
+    app_data->command_size = 0;
+    app_data->command_mode = false;
 }
 
-void close_window() {
-    endwin();
+void add_window(ApplicationData *app_data, WindowData *win_data) {
+    app_data->windows_qtty++;
+    app_data->windows = realloc(app_data->windows, app_data->windows_qtty * sizeof(WindowData));
+    app_data->windows[app_data->windows_qtty - 1] = *win_data;
+    app_data->window_focused = app_data->windows_qtty - 1;
+
 }
 
-void main_loop(WindowData *data, InstructionTableArray *tables_array) {
+void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTableArray *tables_array) {
     int ch;
 
-    render(data, tables_array);
+    render(app_data, win_data, tables_array);
     while (1) {
-        get_window_data(data);
+        get_window_data(win_data);
 
         ch = getch();
 
-        if (data->command_mode) {
+        if (app_data->command_mode) {
             if (ch == 27) {
-                data->command_mode = false;
-                free(data->command);
-                data->command = NULL;
-                data->command_size = 0;
+                app_data->command_mode = false;
+                free(app_data->command);
+                app_data->command = NULL;
+                app_data->command_size = 0;
             }
             else if (ch == KEY_BACKSPACE) {
-                if (data->command_size > 1) {
-                    data->command[data->command_size - 1] = '\0';
-                    data->command_size--;
+                if (app_data->command_size > 1) {
+                    app_data->command[app_data->command_size - 1] = '\0';
+                    app_data->command_size--;
                 }
             }
             else if (ch == '\n') {
                 char command[65];
-                sscanf(data->command, "%64s", command);
+                sscanf(app_data->command, "%64s", command);
 
                 if (strcmp(command, ":q") == 0 || strcmp(command, ":quit") == 0) {
                     close_window();
                     exit(0);
                 }
                 else if (strcmp(command, ":open") == 0) {
-                    if (open_file(data->command, command, tables_array)) {
-                        data->file_loaded = true;
+                    if (open_file(app_data->command, command, tables_array)) {
+                        win_data->file_loaded = true;
                     }
                 }
                 else if (strcmp(command, ":fpc") == 0) {
                     char *pc = NULL;
-                    data->first_instruction = find_pc(data->command, tables_array, data->first_instruction + 1, &pc, DOWN);
+                    win_data->first_instruction = find_pc(app_data->command, tables_array, win_data->first_instruction + 1, &pc, DOWN);
 
-                    strcpy(data->last_pc, pc);
+                    strcpy(win_data->last_pc, pc);
 
-                    data->last_pc_index = data->first_instruction;
+                    win_data->last_pc_index = win_data->first_instruction;
 
-                    data->search_mode = PC;
+                    win_data->search_mode = PC;
                 }
                 else if (strcmp(command, ":finst") == 0) {
                     char *inst = NULL;
-                    data->first_instruction = find_inst(data->command, tables_array, data->first_instruction + 1, &inst, DOWN);
+                    win_data->first_instruction = find_inst(app_data->command, tables_array, win_data->first_instruction + 1, &inst, DOWN);
 
-                    strcpy(data->last_inst, inst);
+                    strcpy(win_data->last_inst, inst);
 
-                    data->last_inst_index = data->first_instruction;
+                    win_data->last_inst_index = win_data->first_instruction;
 
-                    data->search_mode = INST;
+                    win_data->search_mode = INST;
                 }
-                data->command_mode = false;
-                free(data->command);
-                data->command = NULL;
-                data->command_size = 0;
+
+                app_data->command_mode = false;
+                free(app_data->command);
+                app_data->command = NULL;
+                app_data->command_size = 0;
 
             }
             else {
-                data->command = realloc(data->command, data->command_size + 2);
-                data->command_size++;
-                data->command[data->command_size - 1] = ch;
-                data->command[data->command_size] = '\0';
+                app_data->command = realloc(app_data->command, app_data->command_size + 2);
+                app_data->command_size++;
+                app_data->command[app_data->command_size - 1] = ch;
+                app_data->command[app_data->command_size] = '\0';
             }
 
         }
@@ -163,12 +179,12 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 break;
             case KEY_DOWN:
             case 'j':
-                data->first_instruction++;
+                win_data->first_instruction++;
                 break;
             case KEY_UP:
             case 'k':
-                if (data->first_instruction > 0) {
-                    data->first_instruction--;
+                if (win_data->first_instruction > 0) {
+                    win_data->first_instruction--;
                 }
                 break;
             case KEY_LEFT:
@@ -178,150 +194,150 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
             case '\n': // Enter
                 break;
             case ':':
-                if (!data->command_mode) {
-                    data->command_mode = true;
+                if (!app_data->command_mode) {
+                    app_data->command_mode = true;
                     char *comm = ":";
-                    data->command_size = 1;
-                    data->command = malloc(data->command_size + 1);
-                    strcpy(data->command, comm);
+                    app_data->command_size = 1;
+                    app_data->command = malloc(app_data->command_size + 1);
+                    strcpy(app_data->command, comm);
                 }
                 break;
             case 'n':
-                if (data->search_mode == PC) {
-                    if (data->last_pc_index != -1) {
+                if (win_data->search_mode == PC) {
+                    if (win_data->last_pc_index != -1) {
                         char dummy_command[24] = ":fpc ";
-                        strcat(dummy_command, data->last_pc);
+                        strcat(dummy_command, win_data->last_pc);
 
-                        data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index + 1, &data->last_pc, DOWN);
-                        data->last_pc_index = data->first_instruction;
+                        win_data->first_instruction = find_pc(dummy_command, tables_array, win_data->last_pc_index + 1, &win_data->last_pc, DOWN);
+                        win_data->last_pc_index = win_data->first_instruction;
                     }
                 }
-                else if (data->search_mode == INST) {
-                    if (data->last_inst_index != -1) {
+                else if (win_data->search_mode == INST) {
+                    if (win_data->last_inst_index != -1) {
                         char dummy_command[128] = ":finst ";
-                        strcat(dummy_command, data->last_inst);
+                        strcat(dummy_command, win_data->last_inst);
 
-                        data->first_instruction = find_inst(dummy_command, tables_array, data->last_inst_index + 1, &data->last_inst, DOWN);
-                        data->last_inst_index = data->first_instruction;
+                        win_data->first_instruction = find_inst(dummy_command, tables_array, win_data->last_inst_index + 1, &win_data->last_inst, DOWN);
+                        win_data->last_inst_index = win_data->first_instruction;
                     }
                 }
                 break;
             case 'N':
-                if (data->search_mode == PC) {
-                    if (data->last_pc_index != -1) {
+                if (win_data->search_mode == PC) {
+                    if (win_data->last_pc_index != -1) {
                         char dummy_command[24] = ":fpc ";
-                        strcat(dummy_command, data->last_pc);
+                        strcat(dummy_command, win_data->last_pc);
 
-                        data->first_instruction = find_pc(dummy_command, tables_array, data->last_pc_index - 1, &data->last_pc, UP);
-                        data->last_pc_index = data->first_instruction;
+                        win_data->first_instruction = find_pc(dummy_command, tables_array, win_data->last_pc_index - 1, &win_data->last_pc, UP);
+                        win_data->last_pc_index = win_data->first_instruction;
                     }
                 }
-                else if (data->search_mode == INST) {
-                    if (data->last_inst_index != -1) {
+                else if (win_data->search_mode == INST) {
+                    if (win_data->last_inst_index != -1) {
                         char dummy_command[128] = ":finst ";
-                        strcat(dummy_command, data->last_inst);
+                        strcat(dummy_command, win_data->last_inst);
 
-                        data->first_instruction = find_inst(dummy_command, tables_array, data->last_inst_index - 1, &data->last_inst, UP);
-                        data->last_inst_index = data->first_instruction;
+                        win_data->first_instruction = find_inst(dummy_command, tables_array, win_data->last_inst_index - 1, &win_data->last_inst, UP);
+                        win_data->last_inst_index = win_data->first_instruction;
                     }
                 }
                 break;
             default:
                 break;
         }
-        render(data, tables_array);
+        render(app_data, win_data, tables_array);
     }
 }
 
-void open_menu(WindowData *data) {
-    werase(data->menu_win);
+void open_menu(ApplicationData *app_data) {
+    werase(app_data->menu_win);
 
-    box(data->menu_win, 0, 0);
+    box(app_data->menu_win, 0, 0);
 
-    //wbkgd(data->menu_win, COLOR_PAIR(16));
+    //wbkgd(win_data->menu_win, COLOR_PAIR(16));
 
-    mvwprintw(data->menu_win, 1, 1, "%s", data->command);
+    mvwprintw(app_data->menu_win, 1, 1, "%s", app_data->command);
 
-    wrefresh(data->menu_win);
+    wrefresh(app_data->menu_win);
 }
 
-void render(WindowData *data, InstructionTableArray *tables_array) {
+void render(ApplicationData *app_data, WindowData *win_data, InstructionTableArray *tables_array) {
     // clear screen
-    werase(data->win);
+    werase(win_data->win);
 
-    box(data->win, 0, 0);
+    box(win_data->win, 0, 0);
 
-    mvwprintw(data->win, 0, 0, "Izumi v%s", VERSION);
+    mvwprintw(win_data->win, 0, 0, "Izumi v%s", VERSION);
 
     // verical bar on 32 px for instruction info
-    mvwvline(data->win, 1, 32, ACS_VLINE, data->height - 2);
+    mvwvline(win_data->win, 1, 32, ACS_VLINE, win_data->height - 2);
 
-    if (data->file_loaded) {
+    if (win_data->file_loaded) {
         // print instructions data
 
         u_int64_t first_cycle = -1;
 
         //build grid
-        for (u_int64_t i = 1; i < data->height - 1; i++) {
-            for (u_int64_t j = 0; j < data->width - 1; j++) {
+        for (u_int64_t i = 1; i < win_data->height - 1; i++) {
+            for (u_int64_t j = 0; j < win_data->width - 1; j++) {
                 if (j >32 && j%3 == 0) {
-                    mvwprintw(data->win, i, j, "|");
+                    mvwprintw(win_data->win, i, j, "|");
                 }
             }
         }
 
         // print instructions
-        for (u_int64_t i = 0; i < data->height/2; i++) {
-            u_int64_t index = data->first_instruction + i;
+        for (u_int64_t i = 0; i < win_data->height/2; i++) {
+            u_int64_t index = win_data->first_instruction + i;
             Instruction instr = tables_array->tables[index/256]->content[index%256];
 
             // memory address and instruction
             if (instr.valid) {
-                if (instr.mem_addr != NULL && (2*i + 1) < data->height - 1) {
-                    mvwprintw(data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
+                if (instr.mem_addr != NULL && (2*i + 1) < win_data->height - 1) {
+                    mvwprintw(win_data->win, 2*i + 1, 1, "%lu\t%s", index, instr.mem_addr);
                 }
-                if (instr.instruction != NULL && (2*i + 2) < data->height - 1) {
-                    mvwprintw(data->win, 2*i + 2, 5, "%s", instr.instruction);
+                if (instr.instruction != NULL && (2*i + 2) < win_data->height - 1) {
+                    mvwprintw(win_data->win, 2*i + 2, 5, "%s", instr.instruction);
                 }
 
                 // stages
-                if ((2*i + 2) < data->height - 1) {
+                if ((2*i + 2) < win_data->height - 1) {
                     for (u_int64_t j = 0; j < instr.qtty_stages; j++) {
                         if (instr.stages[j].cycle < first_cycle) {
                             first_cycle = instr.stages[j].cycle;
                         }
                         Stage *stage = &instr.stages[j];
 
-                        wattron(data->win, A_BOLD);
+                        wattron(win_data->win, A_BOLD);
 
-                        if (33 + 3*(stage->cycle - first_cycle) + 3 < data->width - 1) {
-                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
-                            wattron(data->win, COLOR_PAIR((j%6)+1));
-                            mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
+                        if (33 + 3*(stage->cycle - first_cycle) + 3 < win_data->width - 1) {
+                            mvwprintw(win_data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle), "|");
+                            wattron(win_data->win, COLOR_PAIR((j%6)+1));
+                            mvwprintw(win_data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 1, "%s", stage->name);
 
                             if (strlen(stage->name) == 1) {
-                                mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
+                                mvwprintw(win_data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 2, " ");
                             }
-                            wattroff(data->win, COLOR_PAIR((j%6)+1));
+                            wattroff(win_data->win, COLOR_PAIR((j%6)+1));
                         }
 
                         // extra cycles
                         if (stage->duration > 1) {
                             for (u_int64_t k = 0; k < stage->duration - 1; k++) {
-                                if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < data->width - 4) {
-                                    wattron(data->win, COLOR_PAIR(8+(j%6)+1));
-                                    mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
-                                    wattroff(data->win, COLOR_PAIR(8+(j%6)+1));
+                                if (33 + 3*(stage->cycle - first_cycle) + 3*(k+1) < win_data->width - 4) {
+                                    wattron(win_data->win, COLOR_PAIR(8+(j%6)+1));
+                                    mvwprintw(win_data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1), "|");
+                                    wattroff(win_data->win, COLOR_PAIR(8+(j%6)+1));
 
-                                    wattron(data->win, COLOR_PAIR((j%6)+1));
-                                    mvwprintw(data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
-                                    wattroff(data->win, COLOR_PAIR((j%6)+1));
+                                    wattron(win_data->win, COLOR_PAIR((j%6)+1));
+                                    mvwprintw(win_data->win, 2*i + 2, 33 + 3*(stage->cycle - first_cycle) + 3*(k+1) + 1, "  ");
+                                    wattroff(win_data->win, COLOR_PAIR((j%6)+1));
 
                                 }
                             }
                         }
 
-                        wattroff(data->win, A_BOLD);
+                        wattroff(win_data->win, A_BOLD);
                     }
                 }
 
@@ -329,9 +345,9 @@ void render(WindowData *data, InstructionTableArray *tables_array) {
         }
     }
 
-    wrefresh(data->win);
+    wrefresh(win_data->win);
 
-    if (data->command_mode) {
-        open_menu(data);
+    if (app_data->command_mode) {
+        open_menu(app_data);
     }
 }
