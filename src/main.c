@@ -39,12 +39,8 @@ int main(int argc, char *argv[]) {
     init_window(&data);
 
     if (argc > 1) {
-        fprintf(stderr, "%s\n", argv[1]);
-
         char *path = malloc(PATH_MAX);
         path = realpath(argv[1], NULL);
-
-        fprintf(stderr, "%s\n", path);
 
         FileData file_data = check_file(path);
 
