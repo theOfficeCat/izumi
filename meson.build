@@ -4,7 +4,7 @@ project('Izumi', 'c',
   version: '0.0.1',
   meson_version: '>=1.2.0',
   default_options: [
-    'b_sanitize=address, undefined',
+    'b_sanitize=address,undefined',
     ],
 )
 
