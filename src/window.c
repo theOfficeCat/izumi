@@ -16,27 +16,41 @@
  */
 
 #include <ncurses.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 
 #include "window.h"
-#include "files.h"
-#include "parser.h"
 #include "config.h"
 #include "commands.h"
 
-void get_window_data(WindowData *win_data) {
-    win_data->width = getmaxx(stdscr);
-    win_data->height = getmaxy(stdscr);
+void get_window_data(WindowData *win_data, ApplicationData *app_data, bool first) {
+    uint64_t new_width = getmaxx(stdscr);
+    uint64_t new_height = getmaxy(stdscr)/app_data->windows_qtty;
+
+    if (new_width != win_data->width || new_height != win_data->height) {
+        win_data->width = new_width;
+        win_data->height = new_height;
+
+        // TODO: redo this on a better way
+        if (!first) {
+            wresize(win_data->win, win_data->height, win_data->width);
+        }
+    }
+
+    win_data->x = 0;
+    win_data->y = win_data->height * app_data->window_focused;
 }
 
-void init_window(WindowData *win_data) {
+void init_window(WindowData *win_data, ApplicationData *app_data) {
     win_data->x = 0;
     win_data->y = 0;
 
-    get_window_data(win_data);
+    get_window_data(win_data, app_data, true);
+
     win_data->win = newwin(win_data->height, win_data->width, win_data->y, win_data->x);
     win_data->first_instruction = 0;
     win_data->file_loaded = false;
@@ -108,7 +122,7 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
 
     render(app_data, win_data, tables_array);
     while (1) {
-        get_window_data(win_data);
+        get_window_data(win_data, app_data, false);
 
         ch = getch();
 
@@ -157,6 +171,11 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
                     win_data->last_inst_index = win_data->first_instruction;
 
                     win_data->search_mode = INST;
+                }
+                else if (strcmp(command, ":newpanel") == 0) {
+                    WindowData *win_data = malloc(sizeof(WindowData));
+                    init_window(win_data, app_data);
+                    add_window(app_data, win_data);
                 }
 
                 app_data->command_mode = false;
