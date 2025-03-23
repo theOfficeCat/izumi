@@ -2,3 +2,4 @@
 izumi
 *.out
 output*
+.cache/
