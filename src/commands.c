@@ -24,7 +24,6 @@
 
 #include "commands.h"
 #include "files.h"
-#include "parser.h"
 
 bool open_file(char *user_command, char *command, InstructionTableArray *tables_array) {
     char * path = malloc(PATH_MAX);

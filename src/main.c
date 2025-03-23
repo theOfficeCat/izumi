@@ -23,7 +23,6 @@
 #include <linux/limits.h>
 
 #include "data_structs.h"
-#include "parser.h"
 #include "window.h"
 #include "files.h"
 
@@ -40,7 +39,9 @@ int main(int argc, char *argv[]) {
 
     WindowData win_data;
 
-    init_window(&win_data);
+    add_window(&app_data, &win_data);
+
+    init_window(&win_data, &app_data);
 
     if (argc > 1) {
         char *path = malloc(PATH_MAX);
@@ -56,9 +57,6 @@ int main(int argc, char *argv[]) {
         free(path);
         path = NULL;
     }
-
-
-    add_window(&app_data, &win_data);
 
     main_loop(&app_data, &win_data, &tables_array);
 
