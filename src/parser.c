@@ -1,18 +1,18 @@
 /*
  * This file is part of Izumi.
- * 
+ *
  * Izumi is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
- * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -42,7 +42,7 @@ void cycle_increment(u_int64_t *cycle, char *line) {
         exit(1);
     }
 
-    *cycle += qtty_cycles;    
+    *cycle += qtty_cycles;
 }
 
 void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
@@ -56,7 +56,7 @@ void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char 
     // Create a new instruction
     Instruction instr_new;
     init_Instruction(&instr_new);
-    
+
     // Create table if instruction needs to be in a new one
     if (id_file/256 >= tables_array->qtty_tables) {
         // Resize the tables array if necessary
@@ -82,7 +82,7 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
 
     char mem_addr[19];
 
-    if ((chars_read = sscanf(line, "L\t%lu\t%lu\t%s", &id, &type, mem_addr)) != 3) {
+    if ((chars_read = sscanf(line, "L\t%lu\t%lu\t%18s", &id, &type, mem_addr)) != 3) {
         printf("Error: Could not read data\n");
         exit(1);
     }
@@ -90,7 +90,7 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
     tables_array->tables[id/256]->content[id%256].mem_addr = malloc(19);
     strcpy(tables_array->tables[id/256]->content[id%256].mem_addr, mem_addr);
     tables_array->tables[id/256]->content[id%256].mem_addr[18] = '\0';
-    
+
     // Skip the first part of the line to get only the data
     int init = 24 + integer_length(id) + integer_length(type);
 

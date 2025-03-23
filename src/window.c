@@ -1,18 +1,18 @@
 /*
  * This file is part of Izumi.
- * 
+ *
  * Izumi is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
- * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <ncurses.h>
@@ -111,7 +111,7 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
                 }
             }
             else if (ch == '\n') {
-                char command[64];
+                char command[65];
                 sscanf(data->command, "%64s", command);
 
                 if (strcmp(command, ":q") == 0 || strcmp(command, ":quit") == 0) {
@@ -236,7 +236,7 @@ void main_loop(WindowData *data, InstructionTableArray *tables_array) {
 void open_menu(WindowData *data) {
     werase(data->menu_win);
 
-    box(data->menu_win, 0, 0);  
+    box(data->menu_win, 0, 0);
 
     //wbkgd(data->menu_win, COLOR_PAIR(16));
 

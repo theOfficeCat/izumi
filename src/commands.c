@@ -1,18 +1,18 @@
 /*
  * This file is part of Izumi.
- * 
+ *
  * Izumi is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
- * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <linux/limits.h>
@@ -56,7 +56,7 @@ bool open_file(char *user_command, char *command, InstructionTableArray *tables_
 
 u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **pc, Direction direction) {
     *pc = malloc(19);
-    char command_name[64];
+    char command_name[65];
     sscanf(command, "%64s %18s", command_name, *pc);
 
     if (direction == DOWN) {
@@ -113,7 +113,7 @@ u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t 
 
 u_int64_t find_inst(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **inst, Direction direction) {
     *inst = malloc(64);
-    char command_name[64];
+    char command_name[65];
     sscanf(command, "%64s %63s", command_name, *inst);
 
     if (direction == DOWN) {
