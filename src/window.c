@@ -223,7 +223,7 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
                 break;
             case 'n':
                 if (win_data->search_mode == PC) {
-                    if (win_data->last_pc_index != -1) {
+                    if (win_data->last_pc_index != UINT64_MAX) {
                         char dummy_command[24] = ":fpc ";
                         strcat(dummy_command, win_data->last_pc);
 
@@ -232,7 +232,7 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
                     }
                 }
                 else if (win_data->search_mode == INST) {
-                    if (win_data->last_inst_index != -1) {
+                    if (win_data->last_inst_index != UINT64_MAX) {
                         char dummy_command[128] = ":finst ";
                         strcat(dummy_command, win_data->last_inst);
 
@@ -243,7 +243,7 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
                 break;
             case 'N':
                 if (win_data->search_mode == PC) {
-                    if (win_data->last_pc_index != -1) {
+                    if (win_data->last_pc_index != UINT64_MAX) {
                         char dummy_command[24] = ":fpc ";
                         strcat(dummy_command, win_data->last_pc);
 
@@ -252,7 +252,7 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
                     }
                 }
                 else if (win_data->search_mode == INST) {
-                    if (win_data->last_inst_index != -1) {
+                    if (win_data->last_inst_index != UINT64_MAX) {
                         char dummy_command[128] = ":finst ";
                         strcat(dummy_command, win_data->last_inst);
 

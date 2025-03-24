@@ -15,6 +15,7 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,7 +46,7 @@ void cycle_increment(u_int64_t *cycle, char *line) {
     *cycle += qtty_cycles;
 }
 
-void new_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
+void new_instruction(InstructionTableArray *tables_array, char *line) {
     u_int64_t id_file, id_sim, id_thread;
 
     if (sscanf(line, "I\t%lu\t%lu\t%lu", &id_file, &id_sim, &id_thread) != 3) {
@@ -145,7 +146,7 @@ void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     // Get the stage
     Stage *stage = NULL;
 
-    for (int i = 0; i < instr->qtty_stages; i++) {
+    for (uint64_t i = 0; i < instr->qtty_stages; i++) {
         if (strcmp(instr->stages[i].name, stage_name) == 0) {
             stage = &instr->stages[i];
             break;
@@ -211,7 +212,7 @@ InstructionTableArray parse_file(char *file_name) {
                 cycle_increment(&cycle, line);
                 break;
             case 'I':
-                new_instruction(&tables_array, cycle, line);
+                new_instruction(&tables_array, line);
                 break;
             case 'L':
                 line_of_data(&tables_array, line);
@@ -231,6 +232,9 @@ InstructionTableArray parse_file(char *file_name) {
     }
 
     fclose(file);
+
+    free(line);
+    line = NULL;
 
     return tables_array;
 }

@@ -32,7 +32,7 @@ cd build
 meson compile
 meson install
 ```
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > meson needs to be available as root for `meson install`
 
 But, if the classic `make` sequence is hard-wired in your brain, you can:
@@ -53,6 +53,9 @@ nix run github:theOfficeCat/Izumi
 $ make
 $ ./izumi
 ```
+
+> [!IMPORTANT]
+> In some cases an `AddressSanitizer:DEADLYSIGNAL` error can be raised randomly when starting the program. Just kill the program and try again. If it persists, please report it.
 
 ### Commands
 

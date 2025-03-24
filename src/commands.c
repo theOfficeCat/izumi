@@ -29,25 +29,29 @@ bool open_file(char *user_command, char *command, InstructionTableArray *tables_
     char * path = malloc(PATH_MAX);
     sscanf(user_command, "%64s %s", command, path);
 
-    path = realpath(path, NULL);
+    char *new_path = realpath(path, NULL);
 
-    if (path == NULL) {
+    if (new_path == NULL) {
         printf("Error: Could not open file %s\n", path);
-        return false;}
+        return false;
+    }
     else {
-        FileData file_data = check_file(path);
+        FileData file_data = check_file(new_path);
 
         if (file_data.exists && file_data.is_file) {
-            read_file(path, tables_array);
+            read_file(new_path, tables_array);
         }
         else {
-            printf("Error: Could not open file %s\n", path);
+            printf("Error: Could not open file %s\n", new_path);
             return false;
         }
     }
 
     free(path);
     path = NULL;
+
+    free(new_path);
+    new_path = NULL;
 
     return true;
 }
