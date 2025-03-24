@@ -15,6 +15,7 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "data_structs.h"
@@ -43,7 +44,7 @@ void init_InstructionTable(InstructionTable *table) {
 void increase_InstructionTableArray(InstructionTableArray *array) {
     array->tables = realloc(array->tables, 2 * array->avail_tables * sizeof(InstructionTable*));
 
-    for (int i = array->avail_tables; i < 2 * array->avail_tables; i++) {
+    for (uint64_t i = array->avail_tables; i < 2 * array->avail_tables; i++) {
         array->tables[i] = NULL;
     }
 

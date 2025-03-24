@@ -1,11 +1,14 @@
-project('Izumi', 'c',
+project(
+  'Izumi',
+  'c',
   license: 'GPL-3.0-or-later',
   license_files: ['LICENSE'],
   version: files('.version'),
   meson_version: '>=1.2.0',
   default_options: [
     'b_sanitize=address,undefined',
-    ],
+    'warning_level=3',
+  ],
 )
 
 fs = import('fs')
@@ -50,7 +53,10 @@ endforeach
 
 # Locate ncurses and ensure all required headers are available
 curses = dependency('curses')
-message('Determined the project to require the following curses headers:', curses_headers)
+message(
+  'Determined the project to require the following curses headers:',
+  curses_headers,
+)
 foreach header : curses_headers
   compiler.has_header(header, dependencies: curses, required: true)
 endforeach
