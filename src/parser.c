@@ -108,7 +108,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     char stage_name[4];
     u_int64_t instr_id, stage_id;
 
-    if (sscanf(line, "S\t%lu\t%lu\t%s", &instr_id, &stage_id, stage_name) != 3) {
+    if (sscanf(line, "S\t%lu\t%lu\t%3s", &instr_id, &stage_id, stage_name) != 3) {
         printf("Error: Could not read stage\n");
         exit(1);
     }
