@@ -5,5 +5,8 @@ source_dir="$(dirname "$0")"
 source_dir="$(realpath "${source_dir}")"
 build_dir="${source_dir}/build"
 
+# Cleanup
+rm -rf "${build_dir}"
+
 # Configure
-meson setup --reconfigure "$@" "${build_dir}" "${source_dir}"
+meson setup "$@" "${build_dir}" "${source_dir}"

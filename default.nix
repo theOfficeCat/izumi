@@ -7,7 +7,7 @@
 
 stdenv.mkDerivation {
   pname = "izumi";
-  version = "0.0.1";
+  version = builtins.readFile ./.version;
 
   src = ./.;
 
@@ -19,6 +19,10 @@ stdenv.mkDerivation {
   buildInputs = [
     ncurses
   ];
+
+  mesonBuildType = "release";
+
+  mesonFlags = [ "-Db_sanitize=none" ];
 
   meta = with lib; {
     description = "An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata";
