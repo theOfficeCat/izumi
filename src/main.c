@@ -44,8 +44,7 @@ int main(int argc, char *argv[]) {
     init_window(&win_data, &app_data);
 
     if (argc > 1) {
-        char *path = malloc(PATH_MAX);
-        path = realpath(argv[1], NULL);
+        char *path = realpath(argv[1], NULL);
 
         FileData file_data = check_file(path);
 

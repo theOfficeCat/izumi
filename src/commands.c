@@ -26,13 +26,18 @@
 #include "files.h"
 
 bool open_file(char *user_command, char *command, InstructionTableArray *tables_array) {
-    char * path = malloc(PATH_MAX);
+    char * path = malloc(PATH_MAX+1);
     sscanf(user_command, "%64s %s", command, path);
+
+
 
     char *new_path = realpath(path, NULL);
 
+    free(path);
+    path = NULL;
+
     if (new_path == NULL) {
-        printf("Error: Could not open file %s\n", path);
+        fprintf(stderr, "Error (1): Could not open file %s\n", path);
         return false;
     }
     else {
@@ -42,13 +47,10 @@ bool open_file(char *user_command, char *command, InstructionTableArray *tables_
             read_file(new_path, tables_array);
         }
         else {
-            printf("Error: Could not open file %s\n", new_path);
+            fprintf(stderr, "Error (2): Could not open file %s\n", new_path);
             return false;
         }
     }
-
-    free(path);
-    path = NULL;
 
     free(new_path);
     new_path = NULL;

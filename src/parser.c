@@ -39,7 +39,7 @@ void cycle_increment(u_int64_t *cycle, char *line) {
     u_int64_t qtty_cycles;
 
     if (sscanf(line, "C\t%lu", &qtty_cycles) != 1) {
-        printf("Error: Could not read cycles\n");
+        fprintf(stderr, "Error: Could not read cycles\n");
         exit(1);
     }
 
@@ -50,7 +50,7 @@ void new_instruction(InstructionTableArray *tables_array, char *line) {
     u_int64_t id_file, id_sim, id_thread;
 
     if (sscanf(line, "I\t%lu\t%lu\t%lu", &id_file, &id_sim, &id_thread) != 3) {
-        printf("Error: Could not read instruction\n");
+        fprintf(stderr, "Error: Could not read instruction\n");
         exit(1);
     }
 
@@ -84,7 +84,7 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
     char mem_addr[19];
 
     if ((chars_read = sscanf(line, "L\t%lu\t%lu\t%18s", &id, &type, mem_addr)) != 3) {
-        printf("Error: Could not read data\n");
+        fprintf(stderr, "Error: Could not read data\n");
         exit(1);
     }
 
@@ -110,7 +110,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     u_int64_t instr_id, stage_id;
 
     if (sscanf(line, "S\t%lu\t%lu\t%3s", &instr_id, &stage_id, stage_name) != 3) {
-        printf("Error: Could not read stage\n");
+        fprintf(stderr, "Error: Could not read stage\n");
         exit(1);
     }
 
@@ -136,7 +136,7 @@ void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     char stage_name[4];
 
     if (sscanf(line, "E\t%lu\t%lu\t%s", &instr_id, &stage_id, stage_name) != 3) {
-        printf("Error: Could not read end stage\n");
+        fprintf(stderr, "Error: Could not read end stage\n");
         exit(1);
     }
 
@@ -163,7 +163,7 @@ void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, ch
     u_int64_t instr_id, retire_id, type;
 
     if (sscanf(line, "R\t%lu\t%lu\t%lu", &instr_id, &retire_id, &type) != 3) {
-        printf("Error: Could not read retire\n");
+        fprintf(stderr, "Error: Could not read retire\n");
         exit(1);
     }
 
@@ -183,7 +183,7 @@ InstructionTableArray parse_file(char *file_name) {
     FILE *file = fopen(file_name, "r");
 
     if (file == NULL) {
-        printf("Error: Could not open file %s\n", file_name);
+        fprintf(stderr, "Error: Could not open file %s\n", file_name);
         exit(1);
     }
 
@@ -203,7 +203,7 @@ InstructionTableArray parse_file(char *file_name) {
         char command;
 
         if (sscanf(line, "%c", &command) != 1) {
-            printf("Error: Could not read command\n");
+            fprintf(stderr, "Error: Could not read command\n");
             exit(1);
         }
 
