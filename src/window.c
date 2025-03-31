@@ -36,9 +36,9 @@ void get_window_data(WindowData *win_data, ApplicationData *app_data, bool first
         win_data->height = new_height;
 
         // TODO: redo this on a better way
-        if (!first) {
-            wresize(win_data->win, win_data->height, win_data->width);
-        }
+        //if (!first) {
+        //    wresize(win_data->win, win_data->height, win_data->width);
+        //}
     }
 
     win_data->x = 0;
@@ -111,9 +111,15 @@ void init_application(ApplicationData *app_data) {
 
 void add_window(ApplicationData *app_data, WindowData *win_data) {
     app_data->windows_qtty++;
-    app_data->windows = realloc(app_data->windows, app_data->windows_qtty * sizeof(WindowData));
-    app_data->windows[app_data->windows_qtty - 1] = *win_data;
+    app_data->windows = realloc(app_data->windows, app_data->windows_qtty * sizeof(WindowData*));
+    app_data->windows[app_data->windows_qtty - 1] = win_data;
     app_data->window_focused = app_data->windows_qtty - 1;
+
+    init_window(win_data, app_data);
+
+    for (uint64_t i = 0; i < app_data->windows_qtty; ++i) {
+        wresize(app_data->windows[i]->win, getmaxy(stdscr)/app_data->windows_qtty, getmaxx(stdscr));
+    }
 
 }
 
@@ -264,7 +270,13 @@ void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTable
             default:
                 break;
         }
-        render(app_data, win_data, tables_array);
+        fprintf(stderr, "rendering\n");
+        for (u_int64_t i = 0; i < app_data->windows_qtty; ++i) {
+            fprintf(stderr, "%lu\n", i);
+            fprintf(stderr, "pointers: &app_data->windows[i] = %p; win_data = %p\n", app_data->windows[i], win_data);
+            app_data->window_focused = i;
+            render(app_data, app_data->windows[i], tables_array);
+        }
     }
 }
 

@@ -78,7 +78,7 @@ struct WindowData_s {
 typedef struct WindowData_s WindowData;
 
 struct ApplicationData_s {
-    WindowData *windows;
+    WindowData **windows;
     u_int64_t windows_qtty;
     u_int64_t window_focused;
 
