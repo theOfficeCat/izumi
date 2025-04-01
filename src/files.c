@@ -22,6 +22,7 @@
 #include <libgen.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "files.h"
 #include "data_structs.h"
@@ -47,11 +48,7 @@ char *read_file(char *path, InstructionTableArray *tables_array) {
     FileData file_data = check_file(path);
 
     if (file_data.exists && file_data.is_file) {
-        if (tables_array != NULL) {
-            free_InstructionTableArray(tables_array);
-        }
-
-        tables_array = malloc(sizeof(InstructionTableArray));
+        free_InstructionTableArray(tables_array);
 
         *tables_array = parse_file(path);
 
@@ -60,6 +57,10 @@ char *read_file(char *path, InstructionTableArray *tables_array) {
         char *filename = malloc(sizeof(char) * strlen(filename_basename) + 1);
         strcpy(filename, filename_basename);
 
+        fprintf(stderr, "%s\n", filename);
+
         return filename;
     }
+
+    return NULL;
 }

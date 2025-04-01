@@ -22,11 +22,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <stdint.h>
 
 #include "window.h"
 #include "config.h"
 #include "commands.h"
+#include "src/data_structs.h"
 
 void get_window_data(WindowData *win_data, ApplicationData *app_data) {
     win_data->width = getmaxx(stdscr);
@@ -48,29 +49,39 @@ void new_window(ApplicationData *app_data) {
 
     win_data->win = newwin(win_data->height, win_data->width, win_data->y, win_data->x);
 
-    win_data->tables_array = NULL;
+    win_data->filename = NULL;
+    win_data->first_instruction = 0;
+
+    win_data->tables_array = malloc(sizeof(InstructionTableArray));
+    win_data->tables_array->qtty_tables = 0;
+    win_data->tables_array->avail_tables = 0;
+    win_data->tables_array->tables = NULL;
+}
+
+void close_window(WindowData *win_data) {
+    if (win_data->tables_array != NULL) {
+        free_InstructionTableArray(win_data->tables_array);
+        win_data->tables_array = NULL;
+    }
+
+    if (win_data->win != NULL) {
+        delwin(win_data->win);
+        win_data->win = NULL;
+    }
+
+    if (win_data->filename != NULL) {
+        free(win_data->filename);
+        win_data->filename = NULL;
+    }
+
+    free(win_data);
+    win_data = NULL;
 }
 
 void close_application(ApplicationData *app_data) {
     for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
         if (app_data->windows[i] != NULL) {
-            if (app_data->windows[i]->tables_array != NULL) {
-                free_InstructionTableArray(app_data->windows[i]->tables_array);
-                app_data->windows[i]->tables_array = NULL;
-            }
-
-            if (app_data->windows[i]->win != NULL) {
-                delwin(app_data->windows[i]->win);
-                app_data->windows[i]->win = NULL;
-            }
-
-            if (app_data->windows[i]->filename != NULL) {
-                free(app_data->windows[i]->filename);
-                app_data->windows[i]->filename = NULL;
-            }
-
-            free(app_data->windows[i]);
-            app_data->windows[i] = NULL;
+            close_window(app_data->windows[i]);
         }
     }
 
@@ -114,16 +125,47 @@ void init_application(ApplicationData *app_data) {
 
     app_data->windows = NULL;
     app_data->windows_qtty = 0;
+
+    app_data->config.bar_offset = 32;
 }
 
 void main_loop(ApplicationData *app_data) {
     while (1) {
-
         render(app_data);
+
+        int ch = getch();
     }
 }
 
 void open_menu(ApplicationData *app_data) {
+}
+
+void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle) {
+    if (inst != NULL && inst->valid) {
+        if (inst->mem_addr != NULL) {
+            mvwprintw(win_data->win, y, 1, "%s", inst->mem_addr);
+        }
+        if (inst->instruction != NULL) {
+            mvwprintw(win_data->win, y+1, 1, "\t%s", inst->instruction);
+        }
+    }
+
+    mvwprintw(win_data->win, y,   config->bar_offset, "|");
+    mvwprintw(win_data->win, y+1, config->bar_offset, "|");
+
+    if (inst != NULL && inst->valid && inst->stages != NULL) {
+        for (uint64_t i = 0; i < inst->qtty_stages; ++i) {
+                Stage *stage = &inst->stages[i];
+
+                if (stage->cycle < *first_cycle) {
+                    *first_cycle = stage->cycle;
+                }
+
+                uint64_t stage_offset = config->bar_offset + 2 + 3*(stage->cycle - *first_cycle);
+
+                mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
+        }
+    }
 }
 
 void render_window(ApplicationData *app_data, WindowData *win_data) {
@@ -133,7 +175,32 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
     mvwin(win_data->win, win_data->y, win_data->x);
 
     werase(win_data->win);
+
+    uint64_t cycle = UINT64_MAX;
+
+    if (win_data->tables_array != NULL) {
+        for (uint64_t i = 0; i < (win_data->height-1)/2; ++i) {
+            Instruction *inst = NULL;
+
+            uint64_t index = win_data->first_instruction + i;
+
+            if (index/256 <= win_data->tables_array->qtty_tables) {
+                if (win_data->tables_array->tables[index/256] != NULL) {
+                    fprintf(stderr, "table not null\n");
+                    inst = &win_data->tables_array->tables[index/256]->content[index%256];
+                }
+            }
+
+
+            print_instruction(win_data, &app_data->config, inst, i*2+1, &cycle);
+        }
+    }
+
     box(win_data->win, 0, 0);
+
+    if (win_data->filename != NULL) {
+        mvwprintw(win_data->win, 0, 1, "%s", win_data->filename);
+    }
 
     wrefresh(win_data->win);
 }
