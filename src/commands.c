@@ -26,36 +26,7 @@
 #include "files.h"
 
 bool open_file(char *user_command, char *command, InstructionTableArray *tables_array) {
-    char * path = malloc(PATH_MAX+1);
-    sscanf(user_command, "%64s %s", command, path);
 
-
-
-    char *new_path = realpath(path, NULL);
-
-    free(path);
-    path = NULL;
-
-    if (new_path == NULL) {
-        fprintf(stderr, "Error (1): Could not open file %s\n", path);
-        return false;
-    }
-    else {
-        FileData file_data = check_file(new_path);
-
-        if (file_data.exists && file_data.is_file) {
-            read_file(new_path, tables_array);
-        }
-        else {
-            fprintf(stderr, "Error (2): Could not open file %s\n", new_path);
-            return false;
-        }
-    }
-
-    free(new_path);
-    new_path = NULL;
-
-    return true;
 }
 
 

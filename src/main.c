@@ -31,20 +31,36 @@ int main(int argc, char *argv[]) {
 
     init_application(&app_data);
 
-    new_window(&app_data);
-
     if (argc > 1) {
-        char *path = realpath(argv[1], NULL);
+        for (int i = 0; i < argc - 1; ++i) {
+            new_window(&app_data);
 
-        FileData file_data = check_file(path);
+            char *path = realpath(argv[i+1], NULL);
 
-        if (file_data.exists && file_data.is_file) {
-            app_data.windows[0]->filename = read_file(argv[1], app_data.windows[0]->tables_array);
+            FileData file_data = check_file(path);
+
+            if (file_data.exists && file_data.is_file) {
+                app_data.windows[i]->filename = read_file(argv[i+1], app_data.windows[i]->tables_array);
+            }
+
+            free(path);
+            path = NULL;
         }
-
-        free(path);
-        path = NULL;
     }
+
+    InstructionTableArray *tables_array = app_data.windows[0]->tables_array;
+
+    /*for (uint64_t i = 0; i < tables_array->qtty_tables; ++i) {
+        if (tables_array->tables[i] != NULL) {
+            for (uint64_t j = 0; j < 256; ++j) {
+                if (tables_array->tables[i]->content[j].valid) {
+                    if (tables_array->tables[i]->content[j].instruction != NULL) {
+                        fprintf(stderr, "%s\n", tables_array->tables[i]->content[j].instruction);
+                    }
+                }
+            }
+        }
+        }*/
 
     main_loop(&app_data);
 
