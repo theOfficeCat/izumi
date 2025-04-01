@@ -19,6 +19,9 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <libgen.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "files.h"
 #include "data_structs.h"
@@ -40,11 +43,23 @@ FileData check_file(char *path) {
     return file_data;
 }
 
-void read_file(char *path, InstructionTableArray *tables_array) {
+char *read_file(char *path, InstructionTableArray *tables_array) {
     FileData file_data = check_file(path);
 
     if (file_data.exists && file_data.is_file) {
-        free_InstructionTableArray(tables_array);
+        if (tables_array != NULL) {
+            free_InstructionTableArray(tables_array);
+        }
+
+        tables_array = malloc(sizeof(InstructionTableArray));
+
         *tables_array = parse_file(path);
+
+        char *filename_basename = basename(path);
+
+        char *filename = malloc(sizeof(char) * strlen(filename_basename) + 1);
+        strcpy(filename, filename_basename);
+
+        return filename;
     }
 }
