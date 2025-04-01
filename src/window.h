@@ -19,6 +19,7 @@
 #define WINDOW_H
 
 #include <ncurses.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <sys/types.h>
 
@@ -56,54 +57,34 @@
  * search_mode: The mode of the search.
  */
 struct WindowData_s {
-    u_int64_t x;
-    u_int64_t y;
-    u_int64_t width;
-    u_int64_t height;
-    u_int64_t first_instruction;
+    uint64_t x;
+    uint64_t y;
+    uint64_t width;
+    uint64_t height;
 
     WINDOW *win;
+    uint64_t index;
 
-    bool file_loaded;
+    InstructionTableArray *tables_array;
 
-    char *last_pc;
-    u_int64_t last_pc_index;
-
-    char *last_inst;
-    u_int64_t last_inst_index;
-
-    SearchMode search_mode;
+    char *filename;
 };
 
 typedef struct WindowData_s WindowData;
 
 struct ApplicationData_s {
     WindowData **windows;
-    u_int64_t windows_qtty;
-    u_int64_t window_focused;
-
-    WINDOW *menu_win;
-
-    char *command;
-    u_int64_t command_size;
-
-    bool command_mode;
+    uint64_t windows_qtty;
 };
 
 typedef struct ApplicationData_s ApplicationData;
 
 /*
- * This function initializes the window.
+ * This function creates a new window.
  *
- * win_data: The window data.
  * app_data: The application data.
  */
-void init_window(WindowData *win_data, ApplicationData *app_data);
-
-/*
- * This function closes the window.
- */
-void close_window();
+void new_window(ApplicationData *app_data);
 
 /*
  * This function initializes the application.
@@ -112,38 +93,21 @@ void close_window();
  */
 void init_application(ApplicationData *app_data);
 
-/*
- * This function adds a window to the application.
- *
- * app_data: The application data.
- * win_data: The window data.
- */
-void add_window(ApplicationData *app_data, WindowData *win_data);
+void main_loop(ApplicationData *app_data);
 
-/*
- * This function is the main loop of the program.
- *
- * data: The window data.
- * tables_array: The array of tables.
- */
-void main_loop(ApplicationData *app_data, WindowData *win_data, InstructionTableArray *tables_array);
+void render_status_bar(void);
 
-/*
- * This function renders the window.
- *
- * data: The window data.
- * tables_array: The array of tables.
- */
-void render(ApplicationData *app_data, WindowData *win_data, InstructionTableArray *tables_array);
+void render(ApplicationData *app_data);
+
+void render_window(ApplicationData *app_data, WindowData *win_data);
 
 /*
  * This function gets the window data.
  *
  * win_data: The window data.
  * app_data: The application data.
- * first: If it is the first time the function is called.
  */
-void get_window_data(WindowData *win_data, ApplicationData *app_data, bool first);
+void get_window_data(WindowData *win_data, ApplicationData *app_data);
 
 /*
  * This function moves down the menu.
@@ -152,5 +116,6 @@ void get_window_data(WindowData *win_data, ApplicationData *app_data, bool first
  */
 void open_menu(ApplicationData *app_data);
 
+void close_application(ApplicationData *app_data);
 
 #endif

@@ -27,21 +27,11 @@
 #include "files.h"
 
 int main(int argc, char *argv[]) {
-    // print instructions
-    InstructionTableArray tables_array;
-    tables_array.tables = NULL;
-    tables_array.avail_tables = 0;
-    tables_array.qtty_tables = 0;
-
     ApplicationData app_data;
 
     init_application(&app_data);
 
-    WindowData win_data;
-
-    add_window(&app_data, &win_data);
-
-    init_window(&win_data, &app_data);
+    new_window(&app_data);
 
     if (argc > 1) {
         char *path = realpath(argv[1], NULL);
@@ -49,15 +39,14 @@ int main(int argc, char *argv[]) {
         FileData file_data = check_file(path);
 
         if (file_data.exists && file_data.is_file) {
-            read_file(argv[1], &tables_array);
-            win_data.file_loaded = true;
+            app_data.windows[0]->filename = read_file(argv[1], app_data.windows[0]->tables_array);
         }
 
         free(path);
         path = NULL;
     }
 
-    main_loop(&app_data, &win_data, &tables_array);
+    main_loop(&app_data);
 
-    close_window();
+    close_application(&app_data);
 }
