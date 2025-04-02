@@ -24,10 +24,10 @@
 #include <stdint.h>
 
 #include "data_structs.h"
-#include "commands.h"
 
 struct Configuration_s {
     uint64_t bar_offset;
+    uint64_t stage_width;
 };
 
 enum Mode_e {
@@ -67,6 +67,8 @@ struct ApplicationData_s {
     Mode mode;
 
     char *command;
+
+    bool windows_synced;
 };
 
 typedef struct ApplicationData_s ApplicationData;

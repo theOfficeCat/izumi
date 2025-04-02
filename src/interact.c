@@ -22,16 +22,39 @@
 
 #include "interact.h"
 #include "window.h"
+#include "commands.h"
 
 bool parse_input(ApplicationData *app_data, int ch) {
     if (app_data->mode == NORMAL) {
         switch (ch) {
             case 'j':
-                app_data->windows[app_data->window_focused]->first_instruction++;
+            case KEY_DOWN:
+                if (app_data->windows != NULL) {
+                    if (app_data->windows_synced) {
+                        for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
+                            app_data->windows[i]->first_instruction++;
+                        }
+                    }
+                    else {
+                        app_data->windows[app_data->window_focused]->first_instruction++;
+                    }
+                }
                 break;
             case 'k':
-                if (app_data->windows[app_data->window_focused]->first_instruction > 0) {
-                    app_data->windows[app_data->window_focused]->first_instruction--;
+            case KEY_UP:
+                if (app_data->windows != NULL) {
+                    if (app_data->windows_synced) {
+                        for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
+                            if (app_data->windows[i]->first_instruction > 0) {
+                                app_data->windows[i]->first_instruction--;
+                            }
+                        }
+                    }
+                    else {
+                        if (app_data->windows[app_data->window_focused]->first_instruction > 0) {
+                            app_data->windows[app_data->window_focused]->first_instruction--;
+                        }
+                    }
                 }
                 break;
             case ':':
@@ -55,6 +78,7 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 app_data->mode = NORMAL;
                 break;
             case '\n': // Enter
+                run_command(app_data);
                 app_data->mode = NORMAL;
                 break;
             case KEY_BACKSPACE: // Backspace
