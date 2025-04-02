@@ -1,14 +1,17 @@
 {
   description = "An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        let pkgs = nixpkgs.legacyPackages.${system}; in
-        {
-          packages.default = pkgs.callPackage ./default.nix { };
-        }
-      );
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" ];
+      perSystem = { self', pkgs, ... }: {
+        packages.izumi = pkgs.callPackage ./default.nix { };
+        packages.default = self'.packages.izumi;
+      };
+    };
 }
