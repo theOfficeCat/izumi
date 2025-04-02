@@ -171,11 +171,22 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
                 uint64_t stage_offset = config->bar_offset + 2 + (config->stage_width + 1)*(stage->cycle - *first_cycle);
 
                 wattron(win_data->win, COLOR_PAIR(i%6 + 1));
-                mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
+
+
                 if (strlen(stage->name) < config->stage_width) {
-                    for (uint64_t j = 0; j < config->stage_width - strlen(stage->name); ++j) {
-                        mvwprintw(win_data->win, y+1, stage_offset+j+strlen(stage->name), " ");
+                    mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
+
+                    for (uint64_t j = strlen(stage->name); j < config->stage_width; ++j) {
+                        mvwprintw(win_data->win, y+1, stage_offset+j, " ");
                     }
+                }
+                else {
+                    char *name_short = malloc(sizeof(char) * (config->stage_width + 1));
+
+                    strncpy(name_short, stage->name, config->stage_width);
+                    name_short[config->stage_width] = '\0';
+
+                    mvwprintw(win_data->win, y+1, stage_offset, "%s", name_short);
                 }
 
                 if (stage->duration > 1) {
