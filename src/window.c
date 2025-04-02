@@ -162,42 +162,42 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
 
     if (inst != NULL && inst->valid && inst->stages != NULL) {
         for (uint64_t i = 0; i < inst->qtty_stages; ++i) {
-                Stage *stage = &inst->stages[i];
+            Stage *stage = &inst->stages[i];
 
-                if (stage->cycle < *first_cycle) {
-                    *first_cycle = stage->cycle;
+            if (stage->cycle < *first_cycle) {
+                *first_cycle = stage->cycle;
+            }
+
+            uint64_t stage_offset = config->bar_offset + 2 + (config->stage_width + 1)*(stage->cycle - *first_cycle);
+
+            wattron(win_data->win, COLOR_PAIR(i%6 + 1));
+
+
+            if (strlen(stage->name) < config->stage_width) {
+                mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
+
+                for (uint64_t j = strlen(stage->name); j < config->stage_width; ++j) {
+                    mvwprintw(win_data->win, y+1, stage_offset+j, " ");
                 }
+            }
+            else {
+                char *name_short = malloc(sizeof(char) * (config->stage_width + 1));
 
-                uint64_t stage_offset = config->bar_offset + 2 + (config->stage_width + 1)*(stage->cycle - *first_cycle);
+                strncpy(name_short, stage->name, config->stage_width);
+                name_short[config->stage_width] = '\0';
 
-                wattron(win_data->win, COLOR_PAIR(i%6 + 1));
+                mvwprintw(win_data->win, y+1, stage_offset, "%s", name_short);
+            }
 
-
-                if (strlen(stage->name) < config->stage_width) {
-                    mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
-
-                    for (uint64_t j = strlen(stage->name); j < config->stage_width; ++j) {
-                        mvwprintw(win_data->win, y+1, stage_offset+j, " ");
+            if (stage->duration > 1) {
+                for (uint64_t j = 1; j < stage->duration; ++j) {
+                    for (uint64_t k = 0; k < config->stage_width + 1; ++k) {
+                        mvwprintw(win_data->win, y+1, stage_offset+(config->stage_width+1)*j - 1+k, " ");
                     }
                 }
-                else {
-                    char *name_short = malloc(sizeof(char) * (config->stage_width + 1));
+            }
 
-                    strncpy(name_short, stage->name, config->stage_width);
-                    name_short[config->stage_width] = '\0';
-
-                    mvwprintw(win_data->win, y+1, stage_offset, "%s", name_short);
-                }
-
-                if (stage->duration > 1) {
-                    for (uint64_t j = 1; j < stage->duration; ++j) {
-                        for (uint64_t k = 0; k < config->stage_width + 1; ++k) {
-                            mvwprintw(win_data->win, y+1, stage_offset+(config->stage_width+1)*j - 1+k, " ");
-                        }
-                    }
-                }
-
-                wattroff(win_data->win, COLOR_PAIR(i%6 + 1));
+            wattroff(win_data->win, COLOR_PAIR(i%6 + 1));
         }
     }
 }
