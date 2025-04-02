@@ -1,18 +1,18 @@
 /*
  * This file is part of Izumi.
- * 
+ *
  * Izumi is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Izumi is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
- * Izumi. If not, see <https://www.gnu.org/licenses/>. 
+ * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef DATA_STRUCTS_H
@@ -23,28 +23,28 @@
 
 /*
  * Stage
- * 
+ *
  * This struct is used to store the information of a stage.
- * 
+ *
  * name: The name of the stage.
  */
 struct Stage_s {
     u_int64_t cycle;
     u_int64_t duration;
-    char name[4];
+    char *name;
 };
 
 typedef struct Stage_s Stage;
 
 /*
  * Instruction
- * 
+ *
  * This struct is used to store the information of an instruction.
- * 
+ *
  * init_cycle: The cycle in which the instruction was initialized.
  * qtty_stages: The quantity of stages that the instruction has.
  * stages: The stages that the instruction has.
- * 
+ *
  * The stages are stored in an array of Stage structs, which will be resized
  * by 10 elements each time it is full.
  */
@@ -61,9 +61,9 @@ typedef struct Instruction_s Instruction;
 
 /*
  * InstructionTable
- * 
+ *
  * This struct is used to store the instructions that are read from the file.
- * 
+ *
  * content: An array of 256 instructions.
  */
 struct InstructionTable_s {
@@ -74,9 +74,9 @@ typedef struct InstructionTable_s InstructionTable;
 
 /*
  * InstructionTableArray
- * 
+ *
  * This struct is used to store the tables that are read from the file.
- * 
+ *
  * qtty_tables: The quantity of tables that the array has in usage.
  * avail_tables: The quantity of tables that are available in the array.
  * tables: An array of tables.
