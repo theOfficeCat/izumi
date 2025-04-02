@@ -106,10 +106,10 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
 }
 
 void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line) {
-    char stage_name[4];
+    char *stage_name;
     u_int64_t instr_id, stage_id;
 
-    if (sscanf(line, "S\t%lu\t%lu\t%3s", &instr_id, &stage_id, stage_name) != 3) {
+    if (sscanf(line, "S\t%lu\t%lu\t%ms", &instr_id, &stage_id, &stage_name) != 3) {
         fprintf(stderr, "Error: Could not read stage\n");
         exit(1);
     }
@@ -125,7 +125,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
     Stage *stage = &instr->stages[instr->qtty_stages];
     instr->qtty_stages++;
 
-    strncpy(stage->name, stage_name, 4);
+    stage->name = stage_name;
     stage->cycle = cycle;
     stage ->duration = 0;
 }
