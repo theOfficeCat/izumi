@@ -48,9 +48,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    InstructionTableArray *tables_array = app_data.windows[0]->tables_array;
+    /*InstructionTableArray *tables_array = app_data.windows[0]->tables_array;
 
-    /*for (uint64_t i = 0; i < tables_array->qtty_tables; ++i) {
+    for (uint64_t i = 0; i < tables_array->qtty_tables; ++i) {
         if (tables_array->tables[i] != NULL) {
             for (uint64_t j = 0; j < 256; ++j) {
                 if (tables_array->tables[i]->content[j].valid) {

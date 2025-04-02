@@ -57,8 +57,6 @@ char *read_file(char *path, InstructionTableArray *tables_array) {
         char *filename = malloc(sizeof(char) * strlen(filename_basename) + 1);
         strcpy(filename, filename_basename);
 
-        fprintf(stderr, "%s\n", filename);
-
         return filename;
     }
 

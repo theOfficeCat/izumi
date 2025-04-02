@@ -26,7 +26,7 @@
 
 #include "window.h"
 #include "config.h"
-#include "commands.h"
+#include "interact.h"
 #include "src/data_structs.h"
 
 void get_window_data(WindowData *win_data, ApplicationData *app_data) {
@@ -56,6 +56,8 @@ void new_window(ApplicationData *app_data) {
     win_data->tables_array->qtty_tables = 0;
     win_data->tables_array->avail_tables = 0;
     win_data->tables_array->tables = NULL;
+
+    app_data->window_focused = app_data->windows_qtty - 1;
 }
 
 void close_window(WindowData *win_data) {
@@ -90,6 +92,7 @@ void close_application(ApplicationData *app_data) {
     app_data->windows = NULL;
 
     endwin();
+    exit(0);
 }
 
 void init_application(ApplicationData *app_data) {
@@ -125,15 +128,20 @@ void init_application(ApplicationData *app_data) {
 
     app_data->windows = NULL;
     app_data->windows_qtty = 0;
+    app_data->window_focused = 0;
+
+    app_data->mode = NORMAL;
+    app_data->command = NULL;
 
     app_data->config.bar_offset = 32;
 }
 
 void main_loop(ApplicationData *app_data) {
+    render(app_data);
     while (1) {
-        render(app_data);
 
-        int ch = getch();
+        bool a = parse_input(app_data, getch());
+        render(app_data);
     }
 }
 
@@ -169,12 +177,13 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
 }
 
 void render_window(ApplicationData *app_data, WindowData *win_data) {
+    werase(win_data->win);
+
     get_window_data(win_data, app_data);
 
     wresize(win_data->win, win_data->height, win_data->width);
     mvwin(win_data->win, win_data->y, win_data->x);
 
-    werase(win_data->win);
 
     uint64_t cycle = UINT64_MAX;
 
@@ -184,13 +193,11 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
 
             uint64_t index = win_data->first_instruction + i;
 
-            if (index/256 <= win_data->tables_array->qtty_tables) {
+            if (index/256 < win_data->tables_array->qtty_tables) {
                 if (win_data->tables_array->tables[index/256] != NULL) {
-                    fprintf(stderr, "table not null\n");
                     inst = &win_data->tables_array->tables[index/256]->content[index%256];
                 }
             }
-
 
             print_instruction(win_data, &app_data->config, inst, i*2+1, &cycle);
         }
@@ -199,13 +206,32 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
     box(win_data->win, 0, 0);
 
     if (win_data->filename != NULL) {
+        if (win_data->index == app_data->window_focused) {
+            wattron(win_data->win, A_BOLD);
+        }
+
         mvwprintw(win_data->win, 0, 1, "%s", win_data->filename);
+
+        if (win_data->index == app_data->window_focused) {
+            wattroff(win_data->win, A_BOLD);
+        }
     }
 
     wrefresh(win_data->win);
 }
 
-void render_status_bar(void) {
+void render_status_bar(ApplicationData *app_data) {
+    // TODO: find a better way
+    char clear_status_bar[getmaxx(stdscr) + 1];
+
+    for (int i = 0; i < getmaxx(stdscr); ++i) {
+        clear_status_bar[i] = ' ';
+    }
+
+    clear_status_bar[getmaxx(stdscr)] = '\0';
+
+    mvprintw(getmaxy(stdscr)-1, 0, "%s", clear_status_bar);
+
     char *version = VERSION;
 
     uint64_t length = strlen(version);
@@ -214,7 +240,27 @@ void render_status_bar(void) {
     attron(COLOR_PAIR(16));
     mvprintw(getmaxy(stdscr)-1, getmaxx(stdscr) - 7 - length, "Izumi v%s", version);
     attroff(COLOR_PAIR(16));
+
+    attron(COLOR_PAIR(1));
+    char *mode;
+
+    switch (app_data->mode) {
+        case NORMAL:
+            mode = "NORMAL";
+            break;
+        case COMMAND:
+            mode = "COMMAND";
+            break;
+    }
+
+    mvprintw(getmaxy(stdscr)-1, 0, " %s ", mode);
+    attroff(COLOR_PAIR(1));
     attroff(A_BOLD);
+
+    if (app_data->mode == COMMAND) {
+        mvprintw(getmaxy(stdscr)-1, 11, ":%s", app_data->command);
+    }
+
 }
 
 void render(ApplicationData *app_data) {
@@ -224,7 +270,7 @@ void render(ApplicationData *app_data) {
         }
     }
 
-    render_status_bar();
+    render_status_bar(app_data);
 
     refresh();
 }
