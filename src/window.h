@@ -30,6 +30,13 @@ struct Configuration_s {
     uint64_t bar_offset;
 };
 
+enum Mode_e {
+    NORMAL,
+    COMMAND
+};
+
+typedef enum Mode_e Mode;
+
 typedef struct Configuration_s Configuration;
 
 struct WindowData_s {
@@ -53,8 +60,13 @@ typedef struct WindowData_s WindowData;
 struct ApplicationData_s {
     WindowData **windows;
     uint64_t windows_qtty;
+    uint64_t window_focused;
 
     Configuration config;
+
+    Mode mode;
+
+    char *command;
 };
 
 typedef struct ApplicationData_s ApplicationData;
@@ -65,7 +77,7 @@ void init_application(ApplicationData *app_data);
 
 void main_loop(ApplicationData *app_data);
 
-void render_status_bar(void);
+void render_status_bar(ApplicationData *app_data);
 
 void render(ApplicationData *app_data);
 

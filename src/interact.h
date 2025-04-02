@@ -15,23 +15,12 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <linux/limits.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <string.h>
-#include <stdint.h>
+#ifndef INTERACT_H
+#define INTERACT_H
 
-#include "commands.h"
-#include "files.h"
+#include "window.h"
+#include <stdbool.h>
 
-bool open_file(char *user_command, char *command, InstructionTableArray *tables_array) {
+bool parse_input(ApplicationData *appdata, int ch);
 
-}
-
-
-u_int64_t find_pc(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **pc, Direction direction) {
-}
-
-u_int64_t find_inst(char *command, InstructionTableArray *tables_array, u_int64_t index_to_start, char **inst, Direction direction) {
-}
+#endif
