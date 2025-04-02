@@ -132,8 +132,10 @@ void init_application(ApplicationData *app_data) {
 
     app_data->mode = NORMAL;
     app_data->command = NULL;
+    app_data->windows_synced = false;
 
     app_data->config.bar_offset = 32;
+    app_data->config.stage_width = 3;
 }
 
 void main_loop(ApplicationData *app_data) {
@@ -143,9 +145,6 @@ void main_loop(ApplicationData *app_data) {
         bool a = parse_input(app_data, getch());
         render(app_data);
     }
-}
-
-void open_menu(ApplicationData *app_data) {
 }
 
 void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle) {
@@ -169,9 +168,25 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
                     *first_cycle = stage->cycle;
                 }
 
-                uint64_t stage_offset = config->bar_offset + 2 + 3*(stage->cycle - *first_cycle);
+                uint64_t stage_offset = config->bar_offset + 2 + (config->stage_width + 1)*(stage->cycle - *first_cycle);
 
+                wattron(win_data->win, COLOR_PAIR(i%6 + 1));
                 mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
+                if (strlen(stage->name) < config->stage_width) {
+                    for (uint64_t j = 0; j < config->stage_width - strlen(stage->name); ++j) {
+                        mvwprintw(win_data->win, y+1, stage_offset+j+strlen(stage->name), " ");
+                    }
+                }
+
+                if (stage->duration > 1) {
+                    for (uint64_t j = 1; j < stage->duration; ++j) {
+                        for (uint64_t k = 0; k < config->stage_width + 1; ++k) {
+                            mvwprintw(win_data->win, y+1, stage_offset+(config->stage_width+1)*j - 1+k, " ");
+                        }
+                    }
+                }
+
+                wattroff(win_data->win, COLOR_PAIR(i%6 + 1));
         }
     }
 }
@@ -184,6 +199,11 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
     wresize(win_data->win, win_data->height, win_data->width);
     mvwin(win_data->win, win_data->y, win_data->x);
 
+    for (int i = app_data->config.bar_offset + 1; i < win_data->width; i += app_data->config.stage_width + 1) {
+        for (int j = 0; j < win_data->height; ++j) {
+            mvwprintw(win_data->win, j, i, "|");
+        }
+    }
 
     uint64_t cycle = UINT64_MAX;
 
