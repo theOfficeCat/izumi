@@ -67,6 +67,23 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 app_data->command = malloc(1);
                 app_data->command[0] = '\0';
                 break;
+            case 'n':
+                if (app_data->windows != NULL) {
+                    if (app_data->windows[app_data->window_focused]->last_search != NULL) {
+                        app_data->windows[app_data->window_focused]->first_instruction++;
+                        if (app_data->command != NULL) {
+                            free(app_data->command);
+                        }
+
+                        app_data->command = malloc(strlen(app_data->windows[app_data->window_focused]->last_search) + 1);
+                        strcpy(app_data->command, app_data->windows[app_data->window_focused]->last_search);
+
+                        if (!run_command(app_data)) {
+                            app_data->windows[app_data->window_focused]->first_instruction--;
+                        }
+                    }
+                }
+                break;
             default:
                 break;
         }

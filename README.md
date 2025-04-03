@@ -63,16 +63,21 @@ $ ./izumi
 |---------|-------------|
 | `:q`    | Quit        |
 | `:quit` | Quit        |
-| `:open (path)`    | Open a file |
-| `:fpc 0x(address)` | Search and go to the first appearance of the address |
-| `:finst (instruction)` | Search and go to the first appearance of the instruction |
+| `:open (path)`    | Open a file on the current panel |
+| `:findpc 0x(address)` | Search and go to the first appearance of the address |
+| `:findinst (instruction)` | Search and go to the first appearance of the instruction |
+| `:newpanel` | Create a new panel |
+| `:panelcmd j|k` | Select next/previous panel |
+| `:set bar_offset|stage_width (amount) | Set settings (not persistent) |
+| `:panelsync` | Sync movement of all the panels |
+| `:paneldesync` | Desync movement of all the panels |
+
 
 ### Keybindings
 
 | Key | Description |
 |-----|-------------|
 | `n` | Next appearance of the last search |
-| `N` | Previous appearance of the last search |
 | `j` | Move down |
 | `KEY_DOWN` | Move down |
 | `k` | Move up |
@@ -80,7 +85,7 @@ $ ./izumi
 
 ## Screenshot
 
-![Screenshot](.github/screenshot.jpg)
+![Screenshot](.github/screenshot.png)
 
 I know it's not the best looking tool, but it's a start (now it has colors :D).
 

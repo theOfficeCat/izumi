@@ -53,6 +53,8 @@ struct WindowData_s {
     uint64_t first_instruction;
 
     char *filename;
+
+    char *last_search; // used for next appearance of searched element
 };
 
 typedef struct WindowData_s WindowData;
