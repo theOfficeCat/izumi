@@ -24,14 +24,13 @@
 #include "commands.h"
 #include "files.h"
 #include "window.h"
+#include "finder.h"
 
 bool run_command(ApplicationData *app_data) {
     char *command;
     sscanf(app_data->command, "%ms", &command);
 
     bool valid_command = false;
-
-    fprintf(stderr, "%s", command);
 
     if (strcmp(command, "newpanel") == 0) {
         valid_command = true;
@@ -91,7 +90,7 @@ bool run_command(ApplicationData *app_data) {
         valid_command = true;
     }
     else if (strcmp(command, "panelsync") == 0) {
-        app_data->windows_synced = !app_data->windows_synced;
+        app_data->windows_synced = true;
 
         valid_command = true;
     }
@@ -99,6 +98,50 @@ bool run_command(ApplicationData *app_data) {
         app_data->windows_synced = false;
 
         valid_command = true;
+    }
+    else if (strcmp(command, "findpc") == 0) {
+        if (app_data->windows != NULL) {
+            char *pattern;
+            sscanf(app_data->command, "findpc %ms", &pattern);
+
+            FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, PC, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
+
+            if (result.valid) {
+                app_data->windows[app_data->window_focused]->first_instruction = result.position;
+
+                if (app_data->windows[app_data->window_focused]->last_search != NULL) {
+                    free(app_data->windows[app_data->window_focused]->last_search);
+                }
+
+                app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
+
+                strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
+
+                valid_command = true;
+            }
+        }
+    }
+    else if (strcmp(command, "findinst") == 0) {
+        if (app_data->windows != NULL) {
+            char *pattern;
+            sscanf(app_data->command, "findinst %ms", &pattern);
+
+            FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, INST, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
+
+            if (result.valid) {
+                app_data->windows[app_data->window_focused]->first_instruction = result.position;
+
+                if (app_data->windows[app_data->window_focused]->last_search != NULL) {
+                    free(app_data->windows[app_data->window_focused]->last_search);
+                }
+
+                app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
+
+                strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
+
+                valid_command = true;
+            }
+        }
     }
     else if (strcmp(command, "quit") == 0 || strcmp(command, "q") == 0) {
         free(command);

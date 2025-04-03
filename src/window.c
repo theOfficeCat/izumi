@@ -57,6 +57,8 @@ void new_window(ApplicationData *app_data) {
     win_data->tables_array->avail_tables = 0;
     win_data->tables_array->tables = NULL;
 
+    win_data->last_search = NULL;
+
     app_data->window_focused = app_data->windows_qtty - 1;
 }
 
@@ -142,7 +144,7 @@ void main_loop(ApplicationData *app_data) {
     render(app_data);
     while (1) {
 
-        bool a = parse_input(app_data, getch());
+        parse_input(app_data, getch());
         render(app_data);
     }
 }
