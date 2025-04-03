@@ -75,8 +75,8 @@ FindResult find(InstructionTableArray *tables_array, char *pattern, FindDataKind
         }
     }
     else {
-        for (uint64_t i = init_pos/256; i >= 0; --i) {
-            for (uint64_t j = (i == init_pos/256) ? init_pos%256 : 255; j >= 0; --j) {
+        for (uint64_t i = init_pos/256; i < UINT64_MAX; --i) {
+            for (uint64_t j = (i == init_pos/256) ? init_pos%256 : 255; j < UINT64_MAX; --j) {
                 FindResult inst_result = check_instruction(tables_array, pattern, kind_of_data, i, j);
 
                 if (inst_result.valid) {
@@ -84,6 +84,7 @@ FindResult find(InstructionTableArray *tables_array, char *pattern, FindDataKind
                 }
             }
         }
-
     }
+
+    return return_data;
 }

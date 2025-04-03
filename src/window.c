@@ -212,8 +212,8 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
     wresize(win_data->win, win_data->height, win_data->width);
     mvwin(win_data->win, win_data->y, win_data->x);
 
-    for (int i = app_data->config.bar_offset + 1; i < win_data->width; i += app_data->config.stage_width + 1) {
-        for (int j = 0; j < win_data->height; ++j) {
+    for (uint64_t i = app_data->config.bar_offset + 1; i < win_data->width; i += app_data->config.stage_width + 1) {
+        for (uint64_t j = 0; j < win_data->height; ++j) {
             mvwprintw(win_data->win, j, i, "|");
         }
     }

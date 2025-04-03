@@ -15,6 +15,8 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#define _GNU_SOURCE
+
 #include <linux/limits.h>
 #include <stdlib.h>
 #include <stdio.h>

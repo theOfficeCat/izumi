@@ -7,7 +7,7 @@ project(
   meson_version: '>=1.2.0',
   default_options: [
     'b_sanitize=address,undefined',
-    'warning_level=3',
+    'warning_level=2',
   ],
 )
 
