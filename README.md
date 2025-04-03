@@ -67,8 +67,10 @@ $ ./izumi
 | `:findpc 0x(address)` | Search and go to the first appearance of the address |
 | `:findinst (instruction)` | Search and go to the first appearance of the instruction |
 | `:newpanel` | Create a new panel |
-| `:panelcmd j|k` | Select next/previous panel |
-| `:set bar_offset|stage_width (amount) | Set settings (not persistent) |
+| `:panelcmd j` | Select next panel |
+| `:panelcmd k` | Select previous panel |
+| `:set bar_offset (amount)` | Set offset of the vertical bar (not persistent) |
+| `:set stage_width (amount)` | Set width of the stage on the pipeline visualizer (not persistent) |
 | `:panelsync` | Sync movement of all the panels |
 | `:paneldesync` | Desync movement of all the panels |
 
