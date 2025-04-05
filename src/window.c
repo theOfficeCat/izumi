@@ -65,6 +65,7 @@ void new_window(ApplicationData *app_data) {
 void close_window(WindowData *win_data) {
     if (win_data->tables_array != NULL) {
         free_InstructionTableArray(win_data->tables_array);
+        free(win_data->tables_array);
         win_data->tables_array = NULL;
     }
 
@@ -76,6 +77,11 @@ void close_window(WindowData *win_data) {
     if (win_data->filename != NULL) {
         free(win_data->filename);
         win_data->filename = NULL;
+    }
+    
+    if (win_data->last_search != NULL) {
+        free(win_data->last_search);
+        win_data->last_search = NULL;
     }
 
     free(win_data);

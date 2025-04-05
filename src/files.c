@@ -30,15 +30,14 @@
 
 
 FileData check_file(const char *path) {
-    FileData file_data;
+    FileData file_data = { .exists = false };
+    
+    if (path == NULL) return file_data;
 
     struct stat s;
     if (stat(path, &s) == 0) {
         file_data.exists = true;
         file_data.is_file = S_ISREG(s.st_mode);
-    }
-    else {
-        file_data.exists = false;
     }
 
     return file_data;
