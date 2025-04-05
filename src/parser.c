@@ -179,7 +179,7 @@ void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, ch
 }
 
 
-InstructionTableArray parse_file(char *file_name) {
+InstructionTableArray parse_file(const char *file_name) {
     FILE *file = fopen(file_name, "r");
 
     if (file == NULL) {

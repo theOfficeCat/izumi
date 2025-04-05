@@ -81,6 +81,6 @@ void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, ch
  *
  * file_name: The name of the file.
  */
-InstructionTableArray parse_file(char *file_name);
+InstructionTableArray parse_file(const char *file_name);
 
 #endif
