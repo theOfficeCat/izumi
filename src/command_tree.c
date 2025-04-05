@@ -92,6 +92,7 @@ bool run_command(ApplicationData *app_data) {
     strcpy(command, app_data->command);
 
     int argc = command_arg_count(command);
+    if (argc == -1) return false; // Empty command
 
     char * argv[argc+1]; // Contains the command, we later get rid of it
     split_command_arguments(command, argc, argv);
