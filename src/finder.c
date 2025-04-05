@@ -24,7 +24,7 @@
 #include "finder.h"
 #include "src/data_structs.h"
 
-FindResult check_instruction(InstructionTableArray *tables_array, char* pattern, FindDataKind kind_of_data, uint64_t i, uint64_t j) {
+FindResult check_instruction(InstructionTableArray *tables_array, const char* pattern, FindDataKind kind_of_data, uint64_t i, uint64_t j) {
     FindResult return_data;
     return_data.position = 0;
     return_data.valid = false;
@@ -52,7 +52,7 @@ FindResult check_instruction(InstructionTableArray *tables_array, char* pattern,
     return return_data;
 }
 
-FindResult find(InstructionTableArray *tables_array, char *pattern, FindDataKind kind_of_data, SearchDirection dir, uint64_t init_pos) {
+FindResult find(InstructionTableArray *tables_array, const char *pattern, FindDataKind kind_of_data, SearchDirection dir, uint64_t init_pos) {
     FindResult return_data;
     return_data.valid = false;
     return_data.position = 0;

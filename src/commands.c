@@ -32,7 +32,7 @@ bool newpanel_cb(ApplicationData *app_data) {
     return true;
 }
 
-bool open_cb(ApplicationData *app_data, const char * const argv[]) {
+bool open_cb(ApplicationData *app_data, const char * argv[]) {
     const char *file_name = argv[0];
 
     if (app_data->windows == NULL) {
@@ -66,7 +66,7 @@ bool panelcmd_k_cb(ApplicationData *app_data) {
     return true;
 }
 
-bool set_cb(ApplicationData *app_data, const char * const argv[]) {
+bool set_cb(ApplicationData *app_data, const char * argv[]) {
     const char *option = argv[0];
     const char *value = argv[1];
 
@@ -91,7 +91,7 @@ bool paneldesync_cb(ApplicationData *app_data) {
     return true;
 }
 
-bool findpc_cb(ApplicationData *app_data, const char * const argv[]) {
+bool findpc_cb(ApplicationData *app_data, const char * argv[]) {
     const char *pattern = argv[0];
     
     if (app_data->windows == NULL) return false;
@@ -112,7 +112,7 @@ bool findpc_cb(ApplicationData *app_data, const char * const argv[]) {
     return true;
 }
 
-bool findinst_cb(ApplicationData *app_data, const char * const argv[]) {
+bool findinst_cb(ApplicationData *app_data, const char * argv[]) {
     const char *pattern = argv[0];
     
     if (app_data->windows == NULL) return false;

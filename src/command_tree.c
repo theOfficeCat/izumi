@@ -21,7 +21,7 @@
 #include "command_tree.h"
 #include "commands.h"
 
-int command_arg_count(const char * const command) {
+int command_arg_count(const char * command) {
     int argc = 0;
     bool on_whitespace = true; // This allows us to ignore leading whitespace
 
@@ -39,7 +39,7 @@ int command_arg_count(const char * const command) {
     return argc;
 }
 
-void split_command_arguments(char * const command, int argc, char ** const argv) {
+void split_command_arguments(char * command, int argc, char * argv[]) {
     char * command_iter = command;
 
     for (int i = 0; i < argc+1; ++i) {
@@ -61,7 +61,7 @@ void split_command_arguments(char * const command, int argc, char ** const argv)
     }
 }
 
-bool traverse_command_tree(ApplicationData *app_data, const Command * const commands, size_t commands_length, const char * const command_name, int argc, const char * const * const argv) {
+bool traverse_command_tree(ApplicationData *app_data, const Command commands[], size_t commands_length, const char * command_name, int argc, const char * argv[]) {
     for (unsigned int i = 0; i < commands_length; ++i) {
         if (strcmp(command_name, commands[i].cmd) != 0) continue;
         const Command * const command = commands + i;
@@ -97,7 +97,7 @@ bool run_command(ApplicationData *app_data) {
     split_command_arguments(command, argc, argv);
 
     const char * command_name = argv[0];
-    const char * const * const command_argv = (const char * const * const) argv + 1;
+    const char ** command_argv = (const char **) argv + 1; // argv won't be modified from this point on
     
     return traverse_command_tree(app_data, COMMANDS, sizeof(COMMANDS) / sizeof(COMMANDS[0]), command_name, argc, command_argv);
 }
