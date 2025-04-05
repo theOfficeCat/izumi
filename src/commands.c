@@ -27,9 +27,7 @@
 #include "window.h"
 #include "finder.h"
 
-#define UNUSED __attribute__((unused))
-
-bool newpanel_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+bool newpanel_cb(ApplicationData *app_data) {
     new_window(app_data);
     return true;
 }
@@ -52,7 +50,7 @@ bool open_cb(ApplicationData *app_data, const char * const argv[]) {
     return true;
 }
 
-bool panelcmd_j_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+bool panelcmd_j_cb(ApplicationData *app_data) {
     if (app_data->window_focused < app_data->windows_qtty - 1) {
         app_data->window_focused++;
     }
@@ -60,7 +58,7 @@ bool panelcmd_j_cb(ApplicationData *app_data, UNUSED const char * const argv[]) 
     return true;
 }
 
-bool panelcmd_k_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+bool panelcmd_k_cb(ApplicationData *app_data) {
     if (app_data->window_focused > 0) {
         app_data->window_focused--;
     }
@@ -83,12 +81,12 @@ bool set_cb(ApplicationData *app_data, const char * const argv[]) {
     return true;
 }
 
-bool panelsync_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+bool panelsync_cb(ApplicationData *app_data) {
     app_data->windows_synced = true;
     return true;
 }
 
-bool paneldesync_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+bool paneldesync_cb(ApplicationData *app_data) {
     app_data->windows_synced = false;
     return true;
 }
@@ -135,7 +133,7 @@ bool findinst_cb(ApplicationData *app_data, const char * const argv[]) {
     return true;
 }
 
-bool quit_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+bool quit_cb(ApplicationData *app_data) {
     app_data->quit_requested = true;
     return true;
 }
