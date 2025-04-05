@@ -23,135 +23,119 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "commands.h"
 #include "files.h"
 #include "window.h"
 #include "finder.h"
 
-bool run_command(ApplicationData *app_data) {
-    char *command;
-    sscanf(app_data->command, "%ms", &command);
+#define UNUSED __attribute__((unused))
 
-    bool valid_command = false;
+bool newpanel_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+    new_window(app_data);
+    return true;
+}
 
-    if (strcmp(command, "newpanel") == 0) {
-        valid_command = true;
+bool open_cb(ApplicationData *app_data, const char * const argv[]) {
+    const char *file_name = argv[0];
+
+    if (app_data->windows == NULL) {
         new_window(app_data);
     }
-    else if (strcmp(command, "open") == 0) {
-        char *file_name;
-        sscanf(app_data->command, "open %ms", &file_name);
 
-        if (app_data->windows != NULL) {
-            char *path = realpath(file_name, NULL);
+    char *path = realpath(file_name, NULL);
+    FileData file_data = check_file(path);
+    free(path);
+    path = NULL;
 
-            FileData file_data = check_file(path);
+    if (!file_data.exists || !file_data.is_file) return false;
 
-            if (file_data.exists && file_data.is_file) {
-                app_data->windows[app_data->window_focused]->filename = read_file(file_name, app_data->windows[app_data->window_focused]->tables_array);
-            }
+    app_data->windows[app_data->window_focused]->filename = read_file(file_name, app_data->windows[app_data->window_focused]->tables_array);
+    return true;
+}
 
-            free(path);
-            path = NULL;
-
-            valid_command = true;
-        }
-
-        free(file_name);
+bool panelcmd_j_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+    if (app_data->window_focused < app_data->windows_qtty - 1) {
+        app_data->window_focused++;
     }
-    else if (strcmp(command, "panelcmd") == 0) {
-        char *panel_command;
-        sscanf(app_data->command, "panelcmd %ms", &panel_command);
+    
+    return true;
+}
 
-        if (strcmp(panel_command, "j") == 0) {
-            if (app_data->window_focused < app_data->windows_qtty - 1) {
-                app_data->window_focused++;
-            }
-        }
-        else if (strcmp(panel_command, "k") == 0) {
-            if (app_data->window_focused > 0) {
-                app_data->window_focused--;
-            }
-        }
-    }
-    else if (strcmp(command, "set") == 0) {
-        char *option;
-        char *value;
-        sscanf(app_data->command, "set %ms %ms", &option, &value);
-
-        if (strcmp(option, "bar_offset") == 0) {
-            app_data->config.bar_offset = atoi(value);
-        }
-        else if (strcmp(option, "stage_width") == 0) {
-            app_data->config.stage_width = atoi(value);
-        }
-
-        free(option);
-        free(value);
-
-        valid_command = true;
-    }
-    else if (strcmp(command, "panelsync") == 0) {
-        app_data->windows_synced = true;
-
-        valid_command = true;
-    }
-    else if (strcmp(command, "paneldesync") == 0) {
-        app_data->windows_synced = false;
-
-        valid_command = true;
-    }
-    else if (strcmp(command, "findpc") == 0) {
-        if (app_data->windows != NULL) {
-            char *pattern;
-            sscanf(app_data->command, "findpc %ms", &pattern);
-
-            FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, PC, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
-
-            if (result.valid) {
-                app_data->windows[app_data->window_focused]->first_instruction = result.position;
-
-                if (app_data->windows[app_data->window_focused]->last_search != NULL) {
-                    free(app_data->windows[app_data->window_focused]->last_search);
-                }
-
-                app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
-
-                strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
-
-                valid_command = true;
-            }
-        }
-    }
-    else if (strcmp(command, "findinst") == 0) {
-        if (app_data->windows != NULL) {
-            char *pattern;
-            sscanf(app_data->command, "findinst %ms", &pattern);
-
-            FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, INST, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
-
-            if (result.valid) {
-                app_data->windows[app_data->window_focused]->first_instruction = result.position;
-
-                if (app_data->windows[app_data->window_focused]->last_search != NULL) {
-                    free(app_data->windows[app_data->window_focused]->last_search);
-                }
-
-                app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
-
-                strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
-
-                valid_command = true;
-            }
-        }
-    }
-    else if (strcmp(command, "quit") == 0 || strcmp(command, "q") == 0) {
-        free(command);
-
-        close_application(app_data);
+bool panelcmd_k_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+    if (app_data->window_focused > 0) {
+        app_data->window_focused--;
     }
 
-    free(command);
+    return true;
+}
 
-    return valid_command;
+bool set_cb(ApplicationData *app_data, const char * const argv[]) {
+    const char *option = argv[0];
+    const char *value = argv[1];
+
+    if (strcmp(option, "bar_offset") == 0) {
+        app_data->config.bar_offset = atoi(value);
+    }
+    else if (strcmp(option, "stage_width") == 0) {
+        app_data->config.stage_width = atoi(value);
+    }
+    else return false;
+
+    return true;
+}
+
+bool panelsync_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+    app_data->windows_synced = true;
+    return true;
+}
+
+bool paneldesync_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+    app_data->windows_synced = false;
+    return true;
+}
+
+bool findpc_cb(ApplicationData *app_data, const char * const argv[]) {
+    const char *pattern = argv[0];
+    
+    if (app_data->windows == NULL) return false;
+
+    FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, PC, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
+    if (!result.valid) return false;
+    
+    app_data->windows[app_data->window_focused]->first_instruction = result.position;
+
+    if (app_data->windows[app_data->window_focused]->last_search != NULL) {
+        free(app_data->windows[app_data->window_focused]->last_search);
+    }
+
+    app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
+
+    strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
+
+    return true;
+}
+
+bool findinst_cb(ApplicationData *app_data, const char * const argv[]) {
+    const char *pattern = argv[0];
+    
+    if (app_data->windows == NULL) return false;
+    
+    FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, INST, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
+    if (!result.valid) return false;
+    
+    app_data->windows[app_data->window_focused]->first_instruction = result.position;
+
+    if (app_data->windows[app_data->window_focused]->last_search != NULL) {
+        free(app_data->windows[app_data->window_focused]->last_search);
+    }
+
+    app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
+
+    strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
+
+    return true;
+}
+
+bool quit_cb(ApplicationData *app_data, UNUSED const char * const argv[]) {
+    app_data->quit_requested = true;
+    return true;
 }

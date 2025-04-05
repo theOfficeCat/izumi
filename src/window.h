@@ -71,6 +71,8 @@ struct ApplicationData_s {
     char *command;
 
     bool windows_synced;
+
+    bool quit_requested;
 };
 
 typedef struct ApplicationData_s ApplicationData;
