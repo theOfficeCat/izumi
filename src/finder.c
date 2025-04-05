@@ -24,6 +24,8 @@
 #include "finder.h"
 #include "src/data_structs.h"
 
+const char WHITESPACE[] = " \t\n\r";
+
 FindResult check_instruction(InstructionTableArray *tables_array, const char* pattern, FindDataKind kind_of_data, uint64_t i, uint64_t j) {
     FindResult return_data;
     return_data.position = 0;
@@ -32,19 +34,26 @@ FindResult check_instruction(InstructionTableArray *tables_array, const char* pa
     Instruction inst = tables_array->tables[i]->content[j];
     if (inst.valid) {
         char *to_check = NULL;
+        unsigned int to_check_len = 0;
 
         switch (kind_of_data) {
             case PC:
                 to_check = inst.mem_addr;
+                if (inst.mem_addr == NULL) break;
+                to_check_len = strlen(to_check);
                 break;
             case INST:
                 if (inst.instruction != NULL) {
-                    sscanf(inst.instruction, "%ms", &to_check);
+                    to_check = inst.instruction;
+                    
+                    // Trim whitespace
+                    to_check += strspn(inst.instruction, WHITESPACE);
+                    to_check_len = strcspn(to_check, WHITESPACE);
                 }
                 break;
         }
 
-        if (to_check != NULL && strcmp(to_check, pattern) == 0) {
+        if (to_check != NULL && strncmp(to_check, pattern, to_check_len) == 0) {
             return_data.valid = true;
             return_data.position = i*256+j;
         }
