@@ -72,6 +72,9 @@ bool traverse_command_tree(ApplicationData *app_data, const Command * const comm
         case COMMAND_TYPE_FIXED_ARGLIST:
             if (argc != command->fixed_arglist.argc) return false;
             return command->fixed_arglist.callback(app_data, argv);
+        case COMMAND_TYPE_NO_ARGS:
+            if (argc != 0) return false;
+            return command->no_args.callback(app_data);
         case COMMAND_TYPE_SUBCOMMAND:
             if (argc == 0) return false;
             return traverse_command_tree(app_data, command->subcommand.subcommands, command->subcommand.subcommands_length, argv[0], argc - 1, argv + 1);

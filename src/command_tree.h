@@ -31,6 +31,7 @@ typedef struct Command_s Command;
 enum CommandType_e {
     COMMAND_TYPE_ARGLIST,
     COMMAND_TYPE_FIXED_ARGLIST,
+    COMMAND_TYPE_NO_ARGS,
     COMMAND_TYPE_SUBCOMMAND,
     COMMAND_TYPE_ALIAS,
 };
@@ -54,6 +55,14 @@ struct CommandFixedArglist_s {
 
 typedef struct CommandFixedArglist_s CommandFixedArglist;
 
+typedef bool(CommandNoArgsCallback)(ApplicationData *app_data);
+
+struct CommandNoArgs_s {
+    CommandNoArgsCallback * callback;
+};
+
+typedef struct CommandNoArgs_s CommandNoArgs;
+
 struct CommandSubcommand_s {
     const Command * const subcommands;
     const size_t subcommands_length;
@@ -73,6 +82,7 @@ struct Command_s {
     union {
         CommandArglist arglist;
         CommandFixedArglist fixed_arglist;
+        CommandNoArgs no_args;
         CommandSubcommand subcommand;
         CommandAlias alias;
     };
@@ -80,6 +90,7 @@ struct Command_s {
 
 #define CMD_ARGLIST(cmd, callback)             { cmd, COMMAND_TYPE_ARGLIST, { .arglist = { callback } } }
 #define CMD_FIXED_ARGLIST(cmd, argc, callback) { cmd, COMMAND_TYPE_FIXED_ARGLIST, { .fixed_arglist = { argc, callback } } }
+#define CMD_NO_ARGS(cmd, callback)             { cmd, COMMAND_TYPE_NO_ARGS, { .no_args = { callback } } }
 #define CMD_SUBCOMMAND(cmd, subcommands)       { cmd, COMMAND_TYPE_SUBCOMMAND, { .subcommand = { subcommands, sizeof(subcommands) / sizeof(subcommands[0]) } } }
 #define CMD_ALIAS(cmd, real_cmd)               { cmd, COMMAND_TYPE_ALIAS, { .alias = { real_cmd } } }
 
