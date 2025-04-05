@@ -17,6 +17,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 #include "data_structs.h"
 
@@ -75,10 +76,18 @@ void free_InstructionTable(InstructionTable *table) {
             free_Instruction(&table->content[i]);
         }
     }
+    free(table);
 }
 
 void free_Instruction(Instruction *instruction) {
+    for (u_int64_t i = 0; i < instruction->qtty_stages; ++i) {
+        free_Stage(&instruction->stages[i]);
+    }
     free(instruction->stages);
     free(instruction->mem_addr);
     free(instruction->instruction);
+}
+
+void free_Stage(Stage *stage) {
+    free(stage->name);
 }

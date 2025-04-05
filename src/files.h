@@ -36,7 +36,7 @@ typedef struct FileData_s FileData;
  * path: The path of the file.
  *
  */
-FileData check_file(char *path);
+FileData check_file(const char *path);
 
 /*
  * This function reads a file and stores the data in the tables array.
@@ -44,6 +44,6 @@ FileData check_file(char *path);
  * path: The path of the file.
  * tables_array: The array of tables.
  */
-char *read_file(char *path, InstructionTableArray *tables_array);
+char *read_file(const char *path, InstructionTableArray *tables_array);
 
 #endif

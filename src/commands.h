@@ -18,11 +18,38 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <stdbool.h>
+#include "command_tree.h"
 
-#include "data_structs.h"
-#include "window.h"
+CommandNoArgsCallback panelcmd_j_cb;
+CommandNoArgsCallback panelcmd_k_cb;
 
-bool run_command(ApplicationData *app_data);
+const Command PANEL_COMMANDS[] = {
+    CMD_NO_ARGS("j", panelcmd_j_cb),
+    CMD_NO_ARGS("k", panelcmd_k_cb),
+};
+
+CommandNoArgsCallback newpanel_cb;
+CommandFixedArglistCallback open_cb;
+CommandFixedArglistCallback set_cb;
+CommandNoArgsCallback panelsync_cb;
+CommandNoArgsCallback paneldesync_cb;
+CommandFixedArglistCallback findpc_cb;
+CommandFixedArglistCallback findinst_cb;
+CommandNoArgsCallback quit_cb;
+
+const Command COMMANDS[] = {
+    CMD_ALIAS("n", "newpanel"),
+    CMD_NO_ARGS("newpanel", newpanel_cb),
+    CMD_ALIAS("o", "open"),
+    CMD_FIXED_ARGLIST("open", 1, open_cb),
+    CMD_SUBCOMMAND("panelcmd", PANEL_COMMANDS),
+    CMD_FIXED_ARGLIST("set", 2, set_cb),
+    CMD_NO_ARGS("panelsync", panelsync_cb),
+    CMD_NO_ARGS("paneldesync", paneldesync_cb),
+    CMD_FIXED_ARGLIST("findpc", 1, findpc_cb),
+    CMD_FIXED_ARGLIST("findinst", 1, findinst_cb),
+    CMD_ALIAS("q", "quit"),
+    CMD_NO_ARGS("quit", quit_cb),
+};
 
 #endif

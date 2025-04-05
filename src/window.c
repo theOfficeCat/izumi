@@ -138,11 +138,13 @@ void init_application(ApplicationData *app_data) {
 
     app_data->config.bar_offset = 32;
     app_data->config.stage_width = 3;
+
+    app_data->quit_requested = false;
 }
 
 void main_loop(ApplicationData *app_data) {
     render(app_data);
-    while (1) {
+    while (!app_data->quit_requested) {
 
         parse_input(app_data, getch());
         render(app_data);

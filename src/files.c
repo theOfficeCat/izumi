@@ -29,7 +29,7 @@
 #include "parser.h"
 
 
-FileData check_file(char *path) {
+FileData check_file(const char *path) {
     FileData file_data;
 
     struct stat s;
@@ -44,7 +44,7 @@ FileData check_file(char *path) {
     return file_data;
 }
 
-char *read_file(char *path, InstructionTableArray *tables_array) {
+char *read_file(const char * path, InstructionTableArray *tables_array) {
     FileData file_data = check_file(path);
 
     if (file_data.exists && file_data.is_file) {
@@ -52,10 +52,13 @@ char *read_file(char *path, InstructionTableArray *tables_array) {
 
         *tables_array = parse_file(path);
 
-        char *filename_basename = basename(path);
-
-        char *filename = malloc(sizeof(char) * strlen(filename_basename) + 1);
-        strcpy(filename, filename_basename);
+        // basename() may modify the input string, so we need to make a copy
+        char *scratchpad_path = strdup(path);
+        
+        char *filename_basename = basename(scratchpad_path);
+        char *filename = strdup(filename_basename);
+        
+        free(scratchpad_path);
 
         return filename;
     }

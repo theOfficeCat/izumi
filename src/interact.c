@@ -22,7 +22,7 @@
 
 #include "interact.h"
 #include "window.h"
-#include "commands.h"
+#include "command_tree.h"
 
 bool parse_input(ApplicationData *app_data, int ch) {
     if (app_data->mode == NORMAL) {
