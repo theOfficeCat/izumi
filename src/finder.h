@@ -44,6 +44,6 @@ enum SearchDirection_e {
 
 typedef enum SearchDirection_e SearchDirection;
 
-FindResult find(InstructionTableArray *tables_array, char *pattern, FindDataKind kind_of_data, SearchDirection dir, uint64_t init_pos);
+FindResult find(InstructionTableArray *tables_array, const char *pattern, FindDataKind kind_of_data, SearchDirection dir, uint64_t init_pos);
 
 #endif
