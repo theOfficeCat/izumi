@@ -15,6 +15,8 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <izumi/parser.h>
+
 #include <dirent.h>
 #include <sys/stat.h>
 #include <stdbool.h>
@@ -25,8 +27,6 @@
 #include <stdio.h>
 
 #include "files.h"
-#include "data_structs.h"
-#include "parser.h"
 
 
 FileData check_file(const char *path) {

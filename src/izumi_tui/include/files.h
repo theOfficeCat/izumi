@@ -21,7 +21,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
-#include "data_structs.h"
+#include <izumi/data_structs.h>
 
 struct FileData_s {
     bool exists;

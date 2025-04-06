@@ -27,7 +27,6 @@
 #include "window.h"
 #include "config.h"
 #include "interact.h"
-#include "src/data_structs.h"
 
 void get_window_data(WindowData *win_data, ApplicationData *app_data) {
     win_data->width = getmaxx(stdscr);
