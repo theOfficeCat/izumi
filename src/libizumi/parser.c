@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "parser.h"
+#include <izumi/parser.h>
 
 int integer_length(u_int64_t number) {
     int length = 0;
