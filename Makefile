@@ -12,6 +12,7 @@ endif
 
 # Commands
 meson_compile_cmd = meson compile -C $(build_dir)
+meson_run_cmd     = ninja run     -C $(build_dir) # Running through meson breaks stdin/stdout
 meson_test_cmd    = meson test    -C $(build_dir)
 meson_install_cmd = meson install -C $(build_dir)
 meson_clean_cmd   = meson clean   -C $(build_dir)
@@ -22,6 +23,9 @@ default:
 	$(meson_compile_cmd) $(MAKECMDGOALS)
 
 # Special targets
+run:
+	$(meson_run_cmd)
+
 test:
 	$(meson_test_cmd)
 
