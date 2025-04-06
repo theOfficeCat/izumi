@@ -18,7 +18,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "data_structs.h"
+#include <izumi/data_structs.h>
 
 /*
  * On cycle function on the input, increase the cycle count by the number of

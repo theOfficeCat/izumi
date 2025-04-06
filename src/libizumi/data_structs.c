@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#include "data_structs.h"
+#include <izumi/data_structs.h>
 
 
 void init_InstructionTableArray(InstructionTableArray *array) {
