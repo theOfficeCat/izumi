@@ -21,6 +21,7 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 - `ncurses`
 - `meson` (build only) *[version >=1.2.0]*
 - `ninja` (build only, can be replaced by other meson backends)
+- `python3` (build only)
 
 ## Building (and installing)
 
