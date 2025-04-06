@@ -21,7 +21,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "data_structs.h"
+#include <izumi/data_structs.h>
 
 struct FindResult_s {
     bool valid;

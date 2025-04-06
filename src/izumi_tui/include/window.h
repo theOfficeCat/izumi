@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "data_structs.h"
+#include <izumi/data_structs.h>
 
 struct Configuration_s {
     uint64_t bar_offset;

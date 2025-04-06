@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
-
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +22,6 @@
 #include <sys/types.h>
 #include <linux/limits.h>
 
-#include "data_structs.h"
 #include "window.h"
 #include "files.h"
 

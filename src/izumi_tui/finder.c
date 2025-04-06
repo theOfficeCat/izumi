@@ -22,7 +22,6 @@
 #include <string.h>
 
 #include "finder.h"
-#include "src/data_structs.h"
 
 const char WHITESPACE[] = " \t\n\r";
 
