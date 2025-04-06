@@ -23,9 +23,10 @@
 #include <string.h>
 #include <stdint.h>
 
+#include <izumi/finder.h>
+
 #include "files.h"
 #include "window.h"
-#include "finder.h"
 
 bool newpanel_cb(ApplicationData *app_data) {
     new_window(app_data);

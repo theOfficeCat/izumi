@@ -15,13 +15,12 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <ncurses.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "finder.h"
+#include <izumi/finder.h>
 
 const char WHITESPACE[] = " \t\n\r";
 
