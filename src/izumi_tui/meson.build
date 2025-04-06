@@ -18,9 +18,14 @@ subdir('include')
 include_directories = include_directories('include')
 
 # Define build target
-executable('izumi',
+izumi = executable('izumi',
   sources,
   dependencies: [curses, libizumi],
   include_directories: include_directories,
   install: true
+)
+
+# Run target for easy testing
+run_target('run',
+  command: izumi,
 )

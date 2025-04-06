@@ -50,8 +50,8 @@ nix run github:theOfficeCat/Izumi
 ## Usage
 
 ```bash
-$ make
-$ ./izumi
+$ make run # If you want to test before installing
+$ izumi
 ```
 
 > [!IMPORTANT]
