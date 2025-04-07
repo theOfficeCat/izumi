@@ -11,7 +11,7 @@ message(
   'Determined the project to require the following curses headers:',
   curses_headers,
 )
-curses = compiler.find_library('curses', has_headers: curses_headers)
+curses = compiler.find_library('ncurses', has_headers: curses_headers)
 
 subdir('include')
 
