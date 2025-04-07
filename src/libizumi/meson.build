@@ -7,11 +7,12 @@ include_directories = include_directories('include')
 # Define build target
 libizumi = static_library('libizumi',
   sources,
-  include_directories: include_directories
+  include_directories: include_directories,
+  build_by_default: false,
 )
 
 # Declare a dependency for the frontends
 libizumi = declare_dependency(
-  link_with: libizumi,
+  objects: libizumi.extract_all_objects(),
   include_directories: include_directories,
 )
