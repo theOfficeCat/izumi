@@ -11,8 +11,6 @@ project(
   ],
 )
 
-fs = import('fs')
-
 # Get some required environment programs
 compiler = meson.get_compiler('c')
 
