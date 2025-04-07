@@ -22,6 +22,7 @@ izumi = executable('izumi',
   sources,
   dependencies: [curses, libizumi],
   include_directories: include_directories,
+  implicit_include_directories: false,
   install: true
 )
 
