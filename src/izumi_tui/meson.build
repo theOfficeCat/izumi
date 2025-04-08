@@ -28,5 +28,5 @@ izumi = executable('izumi',
 
 # Run target for easy testing
 run_target('run',
-  command: izumi,
+  command: [run_in_source_root, izumi],
 )
