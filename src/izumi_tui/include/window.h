@@ -18,6 +18,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <izumi/finder.h>
 #include <ncurses.h>
 #include <stdint.h>
 #include <unistd.h>
@@ -30,6 +31,8 @@ struct Configuration_s {
     uint64_t stage_width;
 };
 
+typedef struct Configuration_s Configuration;
+
 enum Mode_e {
     NORMAL,
     COMMAND
@@ -37,7 +40,12 @@ enum Mode_e {
 
 typedef enum Mode_e Mode;
 
-typedef struct Configuration_s Configuration;
+struct SearchData_s {
+    char *pattern;
+    FindDataKind data_kind;
+};
+
+typedef struct SearchData_s SearchData;
 
 struct WindowData_s {
     uint64_t x;
@@ -54,7 +62,7 @@ struct WindowData_s {
 
     char *filename;
 
-    char *last_search; // used for next appearance of searched element
+    SearchData last_search; // used for next appearance of searched element
 };
 
 typedef struct WindowData_s WindowData;
