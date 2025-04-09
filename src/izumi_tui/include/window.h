@@ -97,7 +97,7 @@ void render(ApplicationData *app_data);
 
 void render_window(ApplicationData *app_data, WindowData *win_data);
 
-void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle);
+void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle, uint64_t index);
 
 void get_window_data(WindowData *win_data, ApplicationData *app_data);
 
