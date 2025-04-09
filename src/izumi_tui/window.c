@@ -56,7 +56,8 @@ void new_window(ApplicationData *app_data) {
     win_data->tables_array->avail_tables = 0;
     win_data->tables_array->tables = NULL;
 
-    win_data->last_search = NULL;
+    win_data->last_search.pattern = NULL;
+    win_data->last_search.data_kind = PC;
 
     app_data->window_focused = app_data->windows_qtty - 1;
 }
@@ -77,10 +78,10 @@ void close_window(WindowData *win_data) {
         free(win_data->filename);
         win_data->filename = NULL;
     }
-    
-    if (win_data->last_search != NULL) {
-        free(win_data->last_search);
-        win_data->last_search = NULL;
+
+    if (win_data->last_search.pattern != NULL) {
+        free(win_data->last_search.pattern);
+        win_data->last_search.pattern = NULL;
     }
 
     free(win_data);
@@ -159,7 +160,7 @@ void main_loop(ApplicationData *app_data) {
 void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle) {
     if (inst != NULL && inst->valid) {
         if (inst->mem_addr != NULL) {
-            mvwprintw(win_data->win, y, 1, "%s", inst->mem_addr);
+            mvwprintw(win_data->win, y, 1, "%lu\t%s", *first_cycle, inst->mem_addr);
         }
         if (inst->instruction != NULL) {
             mvwprintw(win_data->win, y+1, 1, "\t%s", inst->instruction);

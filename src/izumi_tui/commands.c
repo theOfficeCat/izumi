@@ -55,7 +55,7 @@ bool panelcmd_j_cb(ApplicationData *app_data) {
     if (app_data->window_focused < app_data->windows_qtty - 1) {
         app_data->window_focused++;
     }
-    
+
     return true;
 }
 
@@ -94,42 +94,78 @@ bool paneldesync_cb(ApplicationData *app_data) {
 
 bool findpc_cb(ApplicationData *app_data, const char * argv[]) {
     const char *pattern = argv[0];
-    
+
     if (app_data->windows == NULL) return false;
 
     FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, PC, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
     if (!result.valid) return false;
-    
+
     app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
-    if (app_data->windows[app_data->window_focused]->last_search != NULL) {
-        free(app_data->windows[app_data->window_focused]->last_search);
+    if (app_data->windows[app_data->window_focused]->last_search.pattern != NULL) {
+        free(app_data->windows[app_data->window_focused]->last_search.pattern);
     }
 
-    app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
+    app_data->windows[app_data->window_focused]->last_search.pattern = malloc(strlen(pattern) + 1);
 
-    strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
+    strcpy(app_data->windows[app_data->window_focused]->last_search.pattern, pattern);
+
+    app_data->windows[app_data->window_focused]->last_search.data_kind = PC;
 
     return true;
 }
 
 bool findinst_cb(ApplicationData *app_data, const char * argv[]) {
     const char *pattern = argv[0];
-    
+
     if (app_data->windows == NULL) return false;
-    
+
     FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, INST, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
     if (!result.valid) return false;
-    
+
     app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
-    if (app_data->windows[app_data->window_focused]->last_search != NULL) {
-        free(app_data->windows[app_data->window_focused]->last_search);
+    if (app_data->windows[app_data->window_focused]->last_search.pattern != NULL) {
+        free(app_data->windows[app_data->window_focused]->last_search.pattern);
     }
 
-    app_data->windows[app_data->window_focused]->last_search = malloc(strlen(app_data->command) + 1);
+    app_data->windows[app_data->window_focused]->last_search.pattern = malloc(strlen(pattern) + 1);
 
-    strcpy(app_data->windows[app_data->window_focused]->last_search, app_data->command);
+    strcpy(app_data->windows[app_data->window_focused]->last_search.pattern, pattern);
+
+    app_data->windows[app_data->window_focused]->last_search.data_kind = INST;
+
+    return true;
+}
+
+bool next_cb(ApplicationData *app_data) {
+    if (app_data->windows == NULL) return false;
+
+    if (app_data->windows[app_data->window_focused]->last_search.pattern == NULL) return false;
+
+    char *pattern = app_data->windows[app_data->window_focused]->last_search.pattern;
+
+    FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, app_data->windows[app_data->window_focused]->last_search.data_kind, DOWN, app_data->windows[app_data->window_focused]->first_instruction + 1);
+    if (!result.valid) return false;
+
+    app_data->windows[app_data->window_focused]->first_instruction = result.position;
+
+    return true;
+}
+
+bool prev_cb(ApplicationData *app_data) {
+    if (app_data->windows == NULL) return false;
+
+    if (app_data->windows[app_data->window_focused]->last_search.pattern == NULL) return false;
+
+    char *pattern = app_data->windows[app_data->window_focused]->last_search.pattern;
+
+    if (app_data->windows[app_data->window_focused]->first_instruction <= 0) return false;
+
+    FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, app_data->windows[app_data->window_focused]->last_search.data_kind, UP, app_data->windows[app_data->window_focused]->first_instruction + 1);
+    if (!result.valid) return false;
+
+    app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
     return true;
 }
