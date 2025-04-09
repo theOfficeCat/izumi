@@ -162,7 +162,7 @@ bool prev_cb(ApplicationData *app_data) {
 
     if (app_data->windows[app_data->window_focused]->first_instruction <= 0) return false;
 
-    FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, app_data->windows[app_data->window_focused]->last_search.data_kind, UP, app_data->windows[app_data->window_focused]->first_instruction + 1);
+    FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, app_data->windows[app_data->window_focused]->last_search.data_kind, UP, app_data->windows[app_data->window_focused]->first_instruction - 1);
     if (!result.valid) return false;
 
     app_data->windows[app_data->window_focused]->first_instruction = result.position;

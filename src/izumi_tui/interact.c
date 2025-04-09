@@ -68,11 +68,17 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 app_data->command[0] = '\0';
                 break;
             case 'n':
+                if (app_data->command != NULL) {
+                    free(app_data->command);
+                }
                 app_data->command = malloc(5*sizeof(char));
                 strcpy(app_data->command, "next");
                 run_command(app_data);
                 break;
             case 'N':
+                if (app_data->command != NULL) {
+                    free(app_data->command);
+                }
                 app_data->command = malloc(5*sizeof(char));
                 strcpy(app_data->command, "prev");
                 run_command(app_data);
