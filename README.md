@@ -67,6 +67,8 @@ $ izumi
 | `:open (path)`    | Open a file on the current panel |
 | `:findpc 0x(address)` | Search and go to the first appearance of the address |
 | `:findinst (instruction)` | Search and go to the first appearance of the instruction |
+| `:next` | Next appearance of the last search |
+| `:prev` | Previous appearance of the last search |
 | `:newpanel` | Create a new panel |
 | `:panelcmd j` | Select next panel |
 | `:panelcmd k` | Select previous panel |
@@ -81,6 +83,7 @@ $ izumi
 | Key | Description |
 |-----|-------------|
 | `n` | Next appearance of the last search |
+| `N` | Previous appearance of the last search |
 | `j` | Move down |
 | `KEY_DOWN` | Move down |
 | `k` | Move up |
