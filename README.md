@@ -52,11 +52,14 @@ nix run github:theOfficeCat/Izumi
 
 ```bash
 $ make run # If you want to test before installing
-$ izumi
+$ izumi (path/to/file)
 ```
 
 > [!IMPORTANT]
 > In some cases an `AddressSanitizer:DEADLYSIGNAL` error can be raised randomly when starting the program. Just kill the program and try again. If it persists, please report it.
+
+> [!NOTE]
+> Some example files supported are on `examples` directory. These are generated on the RISC-V core [Sargantana](https://github.com/bsc-loca/core_tile/).
 
 ### Commands
 
