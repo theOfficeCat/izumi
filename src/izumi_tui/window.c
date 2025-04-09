@@ -157,10 +157,10 @@ void main_loop(ApplicationData *app_data) {
     }
 }
 
-void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle) {
+void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle, uint64_t index) {
     if (inst != NULL && inst->valid) {
         if (inst->mem_addr != NULL) {
-            mvwprintw(win_data->win, y, 1, "%lu\t%s", *first_cycle, inst->mem_addr);
+            mvwprintw(win_data->win, y, 1, "%lu\t%s", index, inst->mem_addr);
         }
         if (inst->instruction != NULL) {
             mvwprintw(win_data->win, y+1, 1, "\t%s", inst->instruction);
@@ -240,7 +240,7 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
                 }
             }
 
-            print_instruction(win_data, &app_data->config, inst, i*2+1, &cycle);
+            print_instruction(win_data, &app_data->config, inst, i*2+1, &cycle, index);
         }
     }
 
