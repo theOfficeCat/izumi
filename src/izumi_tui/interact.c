@@ -32,11 +32,21 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 if (app_data->windows != NULL) {
                     if (app_data->windows_synced) {
                         for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
-                            app_data->windows[i]->first_instruction++;
+                            if (app_data->number == 0) {
+                                app_data->windows[i]->first_instruction++;
+                            }
+                            else {
+                                app_data->windows[i]->first_instruction += app_data->number;
+                            }
                         }
                     }
                     else {
-                        app_data->windows[app_data->window_focused]->first_instruction++;
+                        if (app_data->number == 0) {
+                            app_data->windows[app_data->window_focused]->first_instruction++;
+                        }
+                        else {
+                            app_data->windows[app_data->window_focused]->first_instruction += app_data->number;
+                        }
                     }
                 }
                 break;
@@ -46,13 +56,35 @@ bool parse_input(ApplicationData *app_data, int ch) {
                     if (app_data->windows_synced) {
                         for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
                             if (app_data->windows[i]->first_instruction > 0) {
-                                app_data->windows[i]->first_instruction--;
+                                if (app_data->number == 0) {
+                                    app_data->windows[i]->first_instruction--;
+                                }
+                                else {
+                                    if (app_data->number <= app_data->windows[i]->first_instruction) {
+                                        app_data->windows[i]->first_instruction -= app_data->number;
+                                    }
+                                    else {
+                                        app_data->windows[i]->first_instruction = 0;
+                                    }
+                                }
                             }
                         }
                     }
                     else {
                         if (app_data->windows[app_data->window_focused]->first_instruction > 0) {
                             app_data->windows[app_data->window_focused]->first_instruction--;
+
+                            if (app_data->number == 0) {
+                                app_data->windows[app_data->window_focused]->first_instruction--;
+                            }
+                            else {
+                                if (app_data->number <= app_data->windows[app_data->window_focused]->first_instruction) {
+                                    app_data->windows[app_data->window_focused]->first_instruction -= app_data->number;
+                                }
+                                else {
+                                    app_data->windows[app_data->window_focused]->first_instruction = 0;
+                                }
+                            }
                         }
                     }
                 }
@@ -83,7 +115,28 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 strcpy(app_data->command, "prev");
                 run_command(app_data);
                 break;
+
             default:
+                break;
+        }
+
+        switch (ch) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                app_data->number *= 10;
+                app_data->number += ch - '0';
+                break;
+
+            default:
+                app_data->number = 0;
                 break;
         }
     }

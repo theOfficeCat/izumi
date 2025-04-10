@@ -140,6 +140,7 @@ void init_application(ApplicationData *app_data) {
 
     app_data->mode = NORMAL;
     app_data->command = NULL;
+    app_data->number = 0;
     app_data->windows_synced = false;
 
     app_data->config.bar_offset = 32;
