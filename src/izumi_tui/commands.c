@@ -47,6 +47,11 @@ bool open_cb(ApplicationData *app_data, const char * argv[]) {
 
     if (!file_data.exists || !file_data.is_file) return false;
 
+
+    if (app_data->windows[app_data->window_focused]->filename != NULL) {
+        free(app_data->windows[app_data->window_focused]->filename);
+    }
+
     app_data->windows[app_data->window_focused]->filename = read_file(file_name, app_data->windows[app_data->window_focused]->tables_array);
     return true;
 }
