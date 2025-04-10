@@ -77,6 +77,7 @@ struct ApplicationData_s {
     Mode mode;
 
     char *command;
+    uint64_t number;
 
     bool windows_synced;
 
