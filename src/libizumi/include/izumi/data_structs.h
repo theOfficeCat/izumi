@@ -19,7 +19,6 @@
 #define DATA_STRUCTS_H
 
 #include <stdint.h>
-#include <sys/types.h>
 #include <stdbool.h>
 
 /**
@@ -29,8 +28,8 @@
  * This struct is used to store the information of a stage.
  */
 typedef struct {
-    u_int64_t cycle;
-    u_int64_t duration;
+    uint64_t cycle;
+    uint64_t duration;
     char *name;
 } Stage;
 
@@ -46,7 +45,7 @@ typedef struct {
  * by 10 elements each time it is full.
  */
 typedef struct {
-    u_int64_t qtty_stages;
+    uint64_t qtty_stages;
     char *mem_addr;
     char *instruction;
     Stage *stages;
@@ -73,8 +72,8 @@ typedef struct {
  * This struct is used to store the tables that are read from the file.
  */
 typedef struct {
-    u_int64_t qtty_tables;
-    u_int64_t avail_tables;
+    uint64_t qtty_tables;
+    uint64_t avail_tables;
     InstructionTable* *tables;
 } InstructionTableArray;
 

@@ -15,6 +15,7 @@ if libizumi_docs_option.allowed()
     c_sources: [headers],
     c_include_directories: include_directories,
     build_by_default: true,
+    install: true,
   )
   
   alias_target('libizumi_docs', libizumi_docs)
