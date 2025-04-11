@@ -18,130 +18,126 @@
 #ifndef DATA_STRUCTS_H
 #define DATA_STRUCTS_H
 
-#include <sys/types.h>
+#include <stdint.h>
 #include <stdbool.h>
 
-/*
- * Stage
+/**
+ * Stage:
+ * @name: The name of the stage.
  *
  * This struct is used to store the information of a stage.
- *
- * name: The name of the stage.
  */
-struct Stage_s {
-    u_int64_t cycle;
-    u_int64_t duration;
+typedef struct {
+    uint64_t cycle;
+    uint64_t duration;
     char *name;
-};
+} Stage;
 
-typedef struct Stage_s Stage;
-
-/*
- * Instruction
+/**
+ * Instruction:
+ * @init_cycle: The cycle in which the instruction was initialized.
+ * @qtty_stages: The quantity of stages that the instruction has.
+ * @stages: The stages that the instruction has.
  *
  * This struct is used to store the information of an instruction.
- *
- * init_cycle: The cycle in which the instruction was initialized.
- * qtty_stages: The quantity of stages that the instruction has.
- * stages: The stages that the instruction has.
  *
  * The stages are stored in an array of Stage structs, which will be resized
  * by 10 elements each time it is full.
  */
-struct Instruction_s {
-    u_int64_t qtty_stages;
+typedef struct {
+    uint64_t qtty_stages;
     char *mem_addr;
     char *instruction;
     Stage *stages;
     bool valid;
     bool finished;
-};
+} Instruction;
 
-typedef struct Instruction_s Instruction;
-
-/*
- * InstructionTable
+/**
+ * InstructionTable:
+ * @content: An array of 256 instructions.
  *
  * This struct is used to store the instructions that are read from the file.
- *
- * content: An array of 256 instructions.
  */
-struct InstructionTable_s {
+typedef struct {
     Instruction content[256];
-};
+} InstructionTable;
 
-typedef struct InstructionTable_s InstructionTable;
-
-/*
- * InstructionTableArray
+/**
+ * InstructionTableArray:
+ * @qtty_tables: The quantity of tables that the array has in usage.
+ * @avail_tables: The quantity of tables that are available in the array.
+ * @tables: An array of tables.
  *
  * This struct is used to store the tables that are read from the file.
- *
- * qtty_tables: The quantity of tables that the array has in usage.
- * avail_tables: The quantity of tables that are available in the array.
- * tables: An array of tables.
  */
-struct InstructionTableArray_s {
-    u_int64_t qtty_tables;
-    u_int64_t avail_tables;
+typedef struct {
+    uint64_t qtty_tables;
+    uint64_t avail_tables;
     InstructionTable* *tables;
-};
+} InstructionTableArray;
 
-typedef struct InstructionTableArray_s InstructionTableArray;
-
-/*
- * This function initializes the InstructionTableArray.
+/**
+ * init_InstructionTableArray:
+ * @array: The InstructionTableArray to be initialized.
  *
- * array: The InstructionTableArray to be initialized.
+ * This function initializes the InstructionTableArray.
  */
 void init_InstructionTableArray(InstructionTableArray *array);
 
-/*
- * This function initializes the InstructionTable.
+/**
+ * init_InstructionTable:
+ * @table: The InstructionTable to be initialized.
  *
- * table: The InstructionTable to be initialized.
+ * This function initializes the InstructionTable.
  */
 void init_InstructionTable(InstructionTable *table);
 
-/*
- * This function increases the size of the InstructionTableArray.
+/**
+ * increase_InstructionTableArray:
+ * @array: The InstructionTableArray to be increased.
  *
- * array: The InstructionTableArray to be increased.
+ * This function increases the size of the InstructionTableArray.
  */
 void increase_InstructionTableArray(InstructionTableArray *array);
 
-/*
- * This function initializes the Instruction.
+/**
+ * init_Instruction:
+ * @instruction: The Instruction to be initialized.
  *
- * instruction: The Instruction to be initialized.
+ * This function initializes the Instruction.
  */
 void init_Instruction(Instruction *instruction);
 
-/*
- * This function frees the memory allocated for the InstructionTableArray.
+/**
+ * free_InstructionTableArray:
+ * @array: The InstructionTableArray to be freed.
  *
- * array: The InstructionTableArray to be freed.
+ * This function frees the memory allocated for the InstructionTableArray.
  */
 void free_InstructionTableArray(InstructionTableArray *array);
 
-/*
- * This function frees the memory allocated for the InstructionTable.
+/**
+ * free_InstructionTable:
+ * @table: The InstructionTable to be freed.
  *
- * table: The InstructionTable to be freed.
+ * This function frees the memory allocated for the InstructionTable.
  */
 void free_InstructionTable(InstructionTable *table);
 
-/*
- * This function frees the memory allocated for the Instruction.
+/**
+ * free_Instruction:
+ * @instruction: The Instruction to be freed.
  *
- * instruction: The Instruction to be freed.
+ * This function frees the memory allocated for the Instruction.
  */
 void free_Instruction(Instruction *instruction);
 
-/*
- * This function frees the memory allocated for the Stage.
+/**
+ * free_Stage:
+ * @stage: The Stage to be freed.
  *
- * stage: The Stage to be freed.
+ * This function frees the memory allocated for the Stage.
  */
 void free_Stage(Stage *stage);
 

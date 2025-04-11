@@ -27,7 +27,7 @@
  * cycle: The current cycle count.
  * line: The input line.
  */
-void cycle_increment(u_int64_t *cycle, char *line);
+void cycle_increment(uint64_t *cycle, char *line);
 
 /*
  * On instruction function on the input, create a new instruction and store it
@@ -55,7 +55,7 @@ void line_of_data(InstructionTableArray *tables_array, char *line);
  * cycle: The current cycle count.
  * line: The input line.
  */
-void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line);
+void new_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /*
  * On end stage function on the input, store the end of a stage of an
@@ -65,7 +65,7 @@ void new_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
  * cycle: The current cycle count.
  * line: The input line.
  */
-void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line);
+void end_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /*
  * On retire function on the input, treat the retire of the instruction.
@@ -74,7 +74,7 @@ void end_stage(InstructionTableArray *tables_array, u_int64_t cycle, char *line)
  * cycle: The current cycle count.
  * line: The input line.
  */
-void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, char *line);
+void retire_instruction(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /*
  * Parse the file and return the array of tables.

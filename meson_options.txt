@@ -1,0 +1,5 @@
+option('libizumi_docs',
+    type: 'feature',
+    value: 'auto',
+    description: 'Build libizumi HTML documentation with hotdoc',
+)
