@@ -68,6 +68,7 @@ $ izumi (path/to/file)
 | `:q`    | Quit        |
 | `:quit` | Quit        |
 | `:open (path)`    | Open a file on the current panel |
+| `:o (path)`    | Open a file on the current panel |
 | `:findpc 0x(address)` | Search and go to the first appearance of the address |
 | `:findinst (instruction)` | Search and go to the first appearance of the instruction |
 | `:next` | Next appearance of the last search |
@@ -76,8 +77,11 @@ $ izumi (path/to/file)
 | `:panelcmd j` | Select next panel |
 | `:panelcmd k` | Select previous panel |
 | `:closepanel` | Close focused panel |
+| `:c` | Close focused panel |
 | `:closepanel (index)` | Close selected panel |
+| `:c (index)` | Close selected panel |
 | `:closeallpanels` | Close all panels |
+| `:ca` | Close all panels |
 | `:set bar_offset (amount)` | Set offset of the vertical bar (not persistent) |
 | `:set stage_width (amount)` | Set width of the stage on the pipeline visualizer (not persistent) |
 | `:panelsync` | Sync movement of all the panels |
