@@ -89,6 +89,13 @@ void close_window(WindowData *win_data) {
 }
 
 void close_application(ApplicationData *app_data) {
+    close_all_panels(app_data);
+
+    endwin();
+    exit(0);
+}
+
+void close_all_panels(ApplicationData *app_data) {
     for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
         if (app_data->windows[i] != NULL) {
             close_window(app_data->windows[i]);
@@ -98,9 +105,23 @@ void close_application(ApplicationData *app_data) {
     app_data->windows_qtty = 0;
     free(app_data->windows);
     app_data->windows = NULL;
+}
 
-    endwin();
-    exit(0);
+void close_panel(ApplicationData *app_data, uint64_t panel_id) {
+    if (app_data->windows == NULL) return;
+
+        if (panel_id >= app_data->windows_qtty) return;
+
+        close_window(app_data->windows[panel_id]);
+
+        app_data->windows_qtty--;
+
+        for (uint64_t i = panel_id; i < app_data->windows_qtty; ++i) {
+            app_data->windows[i] = app_data->windows[i+1];
+            app_data->windows[i]->index--;
+        }
+
+        app_data->windows = realloc(app_data->windows, app_data->windows_qtty * sizeof(WindowData *));
 }
 
 void init_application(ApplicationData *app_data) {

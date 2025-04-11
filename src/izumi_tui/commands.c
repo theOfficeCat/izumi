@@ -33,6 +33,27 @@ bool newpanel_cb(ApplicationData *app_data) {
     return true;
 }
 
+bool closepanel_cb(ApplicationData *app_data, const int argc, const char * argv[]) {
+    uint64_t panel_id;
+
+    if (argc == 1) {
+        panel_id = atoi(argv[0]);
+    }
+    else {
+        panel_id = app_data->window_focused;
+    }
+
+    close_panel(app_data, panel_id);
+
+    return true;
+}
+
+bool closeallpanels_cb(ApplicationData *app_data) {
+    close_all_panels(app_data);
+
+    return true;
+}
+
 bool open_cb(ApplicationData *app_data, const char * argv[]) {
     const char *file_name = argv[0];
 

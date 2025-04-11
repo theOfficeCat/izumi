@@ -19,6 +19,7 @@
 #define COMMANDS_H
 
 #include "command_tree.h"
+#include "window.h"
 
 CommandNoArgsCallback panelcmd_j_cb;
 CommandNoArgsCallback panelcmd_k_cb;
@@ -29,6 +30,8 @@ const Command PANEL_COMMANDS[] = {
 };
 
 CommandNoArgsCallback newpanel_cb;
+CommandArglistCallback closepanel_cb;
+CommandNoArgsCallback closeallpanels_cb;
 CommandFixedArglistCallback open_cb;
 CommandFixedArglistCallback set_cb;
 CommandNoArgsCallback panelsync_cb;
@@ -42,6 +45,10 @@ CommandNoArgsCallback quit_cb;
 const Command COMMANDS[] = {
     CMD_ALIAS("n", "newpanel"),
     CMD_NO_ARGS("newpanel", newpanel_cb),
+    CMD_ALIAS("c", "closepanel"),
+    CMD_ARGLIST("closepanel", closepanel_cb),
+    CMD_ALIAS("ca", "closeallpanels"),
+    CMD_NO_ARGS("closeallpanels", closeallpanels_cb),
     CMD_ALIAS("o", "open"),
     CMD_FIXED_ARGLIST("open", 1, open_cb),
     CMD_SUBCOMMAND("panelcmd", PANEL_COMMANDS),
