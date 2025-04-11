@@ -108,4 +108,8 @@ void close_window(WindowData *win_data);
 
 void close_application(ApplicationData *app_data);
 
+void close_panel(ApplicationData *app_data, uint64_t panel_id);
+
+void close_all_panels(ApplicationData *app_data);
+
 #endif
