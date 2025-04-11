@@ -78,8 +78,8 @@ $ izumi (path/to/file)
 | `:panelcmd k` | Select previous panel |
 | `:closepanel` | Close focused panel |
 | `:c` | Close focused panel |
-| `:closepanel (index)` | Close selected panel |
-| `:c (index)` | Close selected panel |
+| `:closepanel (index)` | Close requested panel |
+| `:c (index)` | Close requested panel |
 | `:closeallpanels` | Close all panels |
 | `:ca` | Close all panels |
 | `:set bar_offset (amount)` | Set offset of the vertical bar (not persistent) |
