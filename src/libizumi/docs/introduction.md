@@ -1,0 +1,5 @@
+---
+redirect: index.md
+...
+
+# Home

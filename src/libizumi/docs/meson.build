@@ -11,9 +11,10 @@ if libizumi_docs_option.allowed()
     project_version: meson.project_version(),
     sitemap: 'sitemap.txt',
     index: 'index.md',
-    c_index: 'index.md',
+    c_index: 'api.md',
     c_sources: [headers],
     c_include_directories: include_directories,
+    fatal_warnings: true,
     build_by_default: true,
     install: true,
   )
