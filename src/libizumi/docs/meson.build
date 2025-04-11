@@ -29,4 +29,7 @@ if libizumi_docs_option.allowed()
     command: [xdg_open, libizumi_docs.full_path() / 'html' / 'index.html'],
     depends: libizumi_docs,
   )
+  run_target('libizumi_undocumented',
+    command: list_undocumented_items
+  )
 endif

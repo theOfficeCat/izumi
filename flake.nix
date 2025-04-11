@@ -12,6 +12,8 @@
       perSystem = { self', pkgs, ... }: {
         packages.izumi = pkgs.callPackage ./default.nix { };
         packages.default = self'.packages.izumi;
+        
+        checks = self'.packages.default.tests;
       };
     };
 }
