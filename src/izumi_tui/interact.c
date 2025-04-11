@@ -57,7 +57,9 @@ bool parse_input(ApplicationData *app_data, int ch) {
                         for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
                             if (app_data->windows[i]->first_instruction > 0) {
                                 if (app_data->number == 0) {
-                                    app_data->windows[i]->first_instruction--;
+                                    if (app_data->windows[i]->first_instruction > 0) {
+                                        app_data->windows[i]->first_instruction--;
+                                    }
                                 }
                                 else {
                                     if (app_data->number <= app_data->windows[i]->first_instruction) {
@@ -75,7 +77,9 @@ bool parse_input(ApplicationData *app_data, int ch) {
                             app_data->windows[app_data->window_focused]->first_instruction--;
 
                             if (app_data->number == 0) {
-                                app_data->windows[app_data->window_focused]->first_instruction--;
+                                if (app_data->windows[app_data->window_focused]->first_instruction > 0) {
+                                    app_data->windows[app_data->window_focused]->first_instruction--;
+                                }
                             }
                             else {
                                 if (app_data->number <= app_data->windows[app_data->window_focused]->first_instruction) {

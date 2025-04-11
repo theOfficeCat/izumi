@@ -122,6 +122,10 @@ void close_panel(ApplicationData *app_data, uint64_t panel_id) {
         }
 
         app_data->windows = realloc(app_data->windows, app_data->windows_qtty * sizeof(WindowData *));
+
+        if (app_data->window_focused >= panel_id) {
+            app_data->window_focused--;
+        }
 }
 
 void init_application(ApplicationData *app_data) {
@@ -327,8 +331,6 @@ void render_status_bar(ApplicationData *app_data) {
 }
 
 void render(ApplicationData *app_data) {
-    erase();
-    refresh();
     for (uint64_t i = 0; i < app_data->windows_qtty; i++) {
         if (app_data->windows[i] != NULL && app_data->windows[i]->win != NULL) {
             render_window(app_data, app_data->windows[i]);
