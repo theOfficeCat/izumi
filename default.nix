@@ -4,9 +4,11 @@
 , ninja
 , ncurses
 , hotdoc
+, runCommandCC
+, gtk-doc
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "izumi";
   version = lib.strings.trim (builtins.readFile ./.version);
 
@@ -38,6 +40,26 @@ stdenv.mkDerivation {
     popd
   '';
 
+  passthru.tests = {
+    libizumi_documented = runCommandCC "${pname}-libizumi-documented" {
+        inherit src buildInputs;
+        nativeBuildInputs = [
+            gtk-doc
+        ] ++ nativeBuildInputs;
+    } ''
+        cd $src
+        meson setup $out
+        undocumented=$(ninja -C $out libizumi_undocumented --quiet | tail -n +6)
+        
+        if [[ -n $undocumented ]]; then
+            echo "UNDOCUMENTED ITEMS"
+            echo "------------------"
+            ninja -C $out libizumi_undocumented --quiet | tail -n +6 # Reprint
+            false
+        fi
+    '';
+  };
+  
   meta = with lib; {
     description = "An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata";
     homepage = "https://github.com/theOfficeCat/Izumi/";

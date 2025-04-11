@@ -5,9 +5,10 @@ on:
 
 jobs:
   lints:
-    name: Build
+    name: Build & Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: nix build .
+      - run: nix build . --print-build-logs
+      - run: nix flake check . --print-build-logs
