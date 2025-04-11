@@ -75,6 +75,9 @@ $ izumi (path/to/file)
 | `:newpanel` | Create a new panel |
 | `:panelcmd j` | Select next panel |
 | `:panelcmd k` | Select previous panel |
+| `:closepanel` | Close focused panel |
+| `:closepanel (index)` | Close selected panel |
+| `:closeallpanels` | Close all panels |
 | `:set bar_offset (amount)` | Set offset of the vertical bar (not persistent) |
 | `:set stage_width (amount)` | Set width of the stage on the pipeline visualizer (not persistent) |
 | `:panelsync` | Sync movement of all the panels |
