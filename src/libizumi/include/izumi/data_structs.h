@@ -18,6 +18,13 @@
 #ifndef DATA_STRUCTS_H
 #define DATA_STRUCTS_H
 
+/**
+ * SECTION:data_structs
+ * @title: izumi/data_structs.h
+ *
+ * Data structures used when interacting with libizumi.
+ */
+
 #include <stdint.h>
 #include <stdbool.h>
 

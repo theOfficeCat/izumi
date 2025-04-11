@@ -20,6 +20,13 @@
 
 #include <izumi/data_structs.h>
 
+/**
+ * SECTION:parser
+ * @title: izumi/parser.h
+ *
+ * Dump parsing functions.
+ */
+
 /*
  * On cycle function on the input, increase the cycle count by the number of
  * cycles

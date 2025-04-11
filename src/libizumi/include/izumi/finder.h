@@ -18,31 +18,32 @@
 #ifndef FINDER_H
 #define FINDER_H
 
+/**
+ * SECTION:finder
+ * @title: izumi/finder.h
+ *
+ * Tools for searching and matching the contents of a dump.
+ */
+
 #include <stdbool.h>
 #include <stdint.h>
 
 #include <izumi/data_structs.h>
 
-struct FindResult_s {
+typedef struct FindResult {
     bool valid;
     uint64_t position;
-};
+} FindResult;
 
-typedef struct FindResult_s FindResult;
-
-enum FindDataKind_e {
+typedef enum FindDataKind {
     PC,
     INST
-};
+} FindDataKind;
 
-typedef enum FindDataKind_e FindDataKind;
-
-enum SearchDirection_e {
+typedef enum SearchDirection {
     UP,
     DOWN
-};
-
-typedef enum SearchDirection_e SearchDirection;
+} SearchDirection;
 
 FindResult find(InstructionTableArray *tables_array, const char *pattern, FindDataKind kind_of_data, SearchDirection dir, uint64_t init_pos);
 
