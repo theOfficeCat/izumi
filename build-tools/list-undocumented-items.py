@@ -46,6 +46,7 @@ def main():
             [
                 'gtkdoc-mkdb',
                 '--module', 'izumi',
+                '--source-dir', source_dir.parent,
             ],
             cwd=tmpd,
             stdout=DEVNULL,
