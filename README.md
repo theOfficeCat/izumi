@@ -16,7 +16,7 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 - End of stage (for multiple cycle stages/stalling the pipeline)
 - End of instruction
 
-## Requierments
+## Requirements
 
 - `ncurses`
 - `meson` (build only) *[version >=1.2.0]*
