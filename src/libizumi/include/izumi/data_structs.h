@@ -21,6 +21,7 @@
 /**
  * SECTION:data_structs
  * @title: izumi/data_structs.h
+ * @short_description: Data structures used when interacting with libizumi.
  *
  * Data structures used when interacting with libizumi.
  */

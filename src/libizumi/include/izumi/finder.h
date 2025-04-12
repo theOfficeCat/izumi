@@ -21,6 +21,7 @@
 /**
  * SECTION:finder
  * @title: izumi/finder.h
+ * @short_description: Tools for searching and matching the contents of a dump.
  *
  * Tools for searching and matching the contents of a dump.
  */
