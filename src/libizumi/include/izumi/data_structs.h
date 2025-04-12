@@ -30,6 +30,8 @@
 
 /**
  * Stage:
+ * @cycle: Cycle where the stage starts.
+ * @duration: Duration of the stage in cycles.
  * @name: The name of the stage.
  *
  * This struct is used to store the information of a stage.
@@ -42,14 +44,14 @@ typedef struct {
 
 /**
  * Instruction:
- * @init_cycle: The cycle in which the instruction was initialized.
  * @qtty_stages: The quantity of stages that the instruction has.
+ * @mem_addr: Memory address of the instruction.
+ * @instruction: Instruction in assembly.
  * @stages: The stages that the instruction has.
+ * @valid: True if the instruction is valid.
+ * @finished: True if the instruction has finished.
  *
  * This struct is used to store the information of an instruction.
- *
- * The stages are stored in an array of Stage structs, which will be resized
- * by 10 elements each time it is full.
  */
 typedef struct {
     uint64_t qtty_stages;
