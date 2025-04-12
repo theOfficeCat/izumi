@@ -27,66 +27,70 @@
  * Dump parsing functions.
  */
 
-/*
- * On cycle function on the input, increase the cycle count by the number of
- * cycles
+/**
+ * cycle_increment:
+ * @cycle: The current cycle count.
+ * @line: The input line.
  *
- * cycle: The current cycle count.
- * line: The input line.
+ * Increment the cycle count based on the input line.
  */
 void cycle_increment(uint64_t *cycle, char *line);
 
-/*
- * On instruction function on the input, create a new instruction and store it
- * in the tables array.
+/**
+ * new_instruction:
+ * @tables_array: The array of tables.
+ * @line: The input line.
  *
- * tables_array: The array of tables.
- * line: The input line.
+ * Add an instruction to the tables array.
  */
 void new_instruction(InstructionTableArray *tables_array, char *line);
 
-/*
- * On line function on the input, store the data of an instruction in
- * the tables array.
+/**
+ * line_of_data:
+ * @tables_array: The array of tables.
+ * @line: The input line.
  *
- * tables_array: The array of tables.
- * line: The input line.
+ * Set the data of the instruction in the tables array.
  */
 void line_of_data(InstructionTableArray *tables_array, char *line);
 
-/*
- * On stage function on the input, store a new stage of an instruction in
- * the tables array.
+/**
+ * new_stage:
+ * @tables_array: The array of tables.
+ * @cycle: The current cycle count.
+ * @line: The input line.
  *
- * tables_array: The array of tables.
- * cycle: The current cycle count.
- * line: The input line.
+ * Add a new stage to the instruction in the tables array.
  */
 void new_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
-/*
- * On end stage function on the input, store the end of a stage of an
- * instruction in the tables array.
+/**
+ * end_stage:
+ * @tables_array: The array of tables.
+ * @cycle: The current cycle count.
+ * @line: The input line.
  *
- * tables_array: The array of tables.
- * cycle: The current cycle count.
- * line: The input line.
+ * End the stage of the instruction in the tables array.
  */
 void end_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
-/*
- * On retire function on the input, treat the retire of the instruction.
+/**
+ * retire_instruction:
+ * @tables_array: The array of tables.
+ * @cycle: The current cycle count.
+ * @line: The input line.
  *
- * tables_array: The array of tables.
- * cycle: The current cycle count.
- * line: The input line.
+ * Retire the instruction in the tables array.
  */
 void retire_instruction(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /*
- * Parse the file and return the array of tables.
+ * parse_file:
+ * @file_name: The name of the file.
  *
- * file_name: The name of the file.
+ * Parse the file and fill an InstructionTableArray with the data.
+ *
+ * Returns: An InstructionTableArray with the parsed data.
  */
 InstructionTableArray parse_file(const char *file_name);
 
