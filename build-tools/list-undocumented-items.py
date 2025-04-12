@@ -12,8 +12,8 @@ from tempfile import TemporaryDirectory
 from subprocess import DEVNULL, check_call
 
 def main():
-    if len(sys.argv) != 1:
-        print(f"Usage: {sys.argv[0]}")
+    if len(sys.argv) > 2 or (len(sys.argv) == 2 and sys.argv[1] != '--test'):
+        print(f"Usage: {sys.argv[0]} [--test]")
         sys.exit(1)
 
     source_root = os.getenv("MESON_SOURCE_ROOT")
@@ -52,8 +52,21 @@ def main():
             stderr=DEVNULL,
         )
         
+        undocumented = 0
+        
         with open(tmpd / 'izumi-undocumented.txt') as f:
-            print(f.read())
+            undocumented = []
+            for line in f.readlines()[4:]:
+                line = line.strip()
+                if line:
+                    undocumented.append(line)
+        
+        if undocumented:
+            print(f'Found {len(undocumented)} undocumented items:')
+            for line in undocumented:
+                print(f'- {line}')
+            if len(sys.argv) == 2 and sys.argv[1] == '--test':
+                exit(1)
 
 if __name__ == "__main__":
     main()
