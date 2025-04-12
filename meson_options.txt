@@ -3,3 +3,9 @@ option('libizumi_docs',
     value: 'auto',
     description: 'Build libizumi HTML documentation with hotdoc',
 )
+
+option('doc_tests',
+    type: 'feature',
+    value: 'auto',
+    description: 'Add documentation tests',
+)

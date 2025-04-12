@@ -27,7 +27,7 @@ run:
 	$(meson_run_cmd)
 
 test:
-	$(meson_test_cmd)
+	$(meson_test_cmd) --print-errorlogs
 
 install:
 	$(meson_install_cmd)

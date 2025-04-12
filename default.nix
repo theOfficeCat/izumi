@@ -30,6 +30,7 @@ stdenv.mkDerivation rec {
 
   mesonFlags = [
     (lib.strings.mesonOption "b_sanitize" "none")
+    (lib.strings.mesonEnable "doc_tests" false)
   ];
   
   mesonInstallTags = [ "runtime" ];
@@ -49,14 +50,7 @@ stdenv.mkDerivation rec {
     } ''
         cd $src
         meson setup $out
-        undocumented=$(ninja -C $out libizumi_undocumented --quiet | tail -n +6)
-        
-        if [[ -n $undocumented ]]; then
-            echo "UNDOCUMENTED ITEMS"
-            echo "------------------"
-            ninja -C $out libizumi_undocumented --quiet | tail -n +6 # Reprint
-            false
-        fi
+        meson test -C $out libizumi_undocumented --print-errorlogs
     '';
   };
   
