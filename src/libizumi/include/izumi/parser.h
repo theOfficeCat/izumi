@@ -23,6 +23,7 @@
 /**
  * SECTION:parser
  * @title: izumi/parser.h
+ * @short_description: Dump parsing functions.
  *
  * Dump parsing functions.
  */
@@ -84,7 +85,7 @@ void end_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
  */
 void retire_instruction(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
-/*
+/**
  * parse_file:
  * @file_name: The name of the file.
  *
