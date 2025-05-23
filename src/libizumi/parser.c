@@ -88,16 +88,16 @@ void line_of_data(InstructionTableArray *tables_array, char *line) {
         exit(1);
     }
 
-    tables_array->tables[id/256]->content[id%256].mem_addr = malloc(19);
-    strcpy(tables_array->tables[id/256]->content[id%256].mem_addr, mem_addr);
-    tables_array->tables[id/256]->content[id%256].mem_addr[18] = '\0';
+    Instruction *instruct = &tables_array->tables[id/256]->content[id%256];
+
+    instruct->mem_addr = malloc(19);
+    strcpy(instruct->mem_addr, mem_addr);
+    instruct->mem_addr[18] = '\0';
 
     // Skip the first part of the line to get only the data
     int init = 24 + integer_length(id) + integer_length(type);
 
     strcpy(data, line + init);
-
-    Instruction *instruct = &tables_array->tables[id/256]->content[id%256];
 
     data[strlen(data) - 1] = '\0';
 
