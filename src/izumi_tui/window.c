@@ -284,6 +284,13 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
         }
     }
 
+    // Show first cycle of the window
+    if (cycle != UINT64_MAX) {
+        wattron(win_data->win, A_BOLD);
+        mvwprintw(win_data->win, 3, app_data->config.bar_offset + 2, "^ cycle: %lu", cycle);
+        wattroff(win_data->win, A_BOLD);
+    }
+
     wrefresh(win_data->win);
 }
 
