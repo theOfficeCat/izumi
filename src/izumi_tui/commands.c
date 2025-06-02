@@ -28,13 +28,14 @@
 
 #include "files.h"
 #include "window.h"
+#include "errors.h"
 
-bool newpanel_cb(ApplicationData *app_data) {
+errors newpanel_cb(ApplicationData *app_data) {
     new_window(app_data);
-    return true;
+    return CORRECT;
 }
 
-bool closepanel_cb(ApplicationData *app_data, const int argc, const char * argv[]) {
+errors closepanel_cb(ApplicationData *app_data, const int argc, const char * argv[]) {
     uint64_t panel_id;
 
     if (argc == 1) {
@@ -46,20 +47,23 @@ bool closepanel_cb(ApplicationData *app_data, const int argc, const char * argv[
 
     close_panel(app_data, panel_id);
 
-    return true;
+    return CORRECT;
 }
 
-bool closeallpanels_cb(ApplicationData *app_data) {
+errors closeallpanels_cb(ApplicationData *app_data) {
     close_all_panels(app_data);
 
-    return true;
+    return CORRECT;
 }
 
-bool open_cb(ApplicationData *app_data, const char * argv[]) {
+errors open_cb(ApplicationData *app_data, const char * argv[]) {
     const char *file_name = argv[0];
+
+    bool window_created = false;
 
     if (app_data->windows == NULL) {
         new_window(app_data);
+        window_created = true;
     }
 
     char *path = realpath(file_name, NULL);
@@ -67,7 +71,22 @@ bool open_cb(ApplicationData *app_data, const char * argv[]) {
     free(path);
     path = NULL;
 
-    if (!file_data.exists || !file_data.is_file) return false;
+    if (!file_data.exists) {
+        if (window_created) {
+            app_data->windows_qtty--;
+            close_window(app_data->windows[0]);
+            app_data->windows = NULL;
+        }
+        return ERR_FILE_NOT_FOUND;
+    }
+    if (!file_data.is_file) {
+        if (window_created) {
+            app_data->windows_qtty--;
+            close_window(app_data->windows[0]);
+            app_data->windows = NULL;
+        }
+        return ERR_FILE_NOT_A_FILE;
+    }
 
 
     if (app_data->windows[app_data->window_focused]->filename != NULL) {
@@ -75,40 +94,40 @@ bool open_cb(ApplicationData *app_data, const char * argv[]) {
     }
 
     app_data->windows[app_data->window_focused]->filename = read_file(file_name, app_data->windows[app_data->window_focused]->tables_array);
-    return true;
+    return CORRECT;
 }
 
-bool panelcmd_j_cb(ApplicationData *app_data) {
+errors panelcmd_j_cb(ApplicationData *app_data) {
     if (app_data->window_focused < app_data->windows_qtty - 1) {
         app_data->window_focused++;
     }
 
-    return true;
+    return CORRECT;
 }
 
-bool panelcmd_k_cb(ApplicationData *app_data) {
+errors panelcmd_k_cb(ApplicationData *app_data) {
     if (app_data->window_focused > 0) {
         app_data->window_focused--;
     }
 
-    return true;
+    return CORRECT;
 }
 
-bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
+errors set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
     const char *config = argv[0];
 
     if (strcmp(config, "bar_offset") == 0) { // :set bar_offset (number)
-        if (argc != 2) return false;
+        if (argc != 2) return ERR_INCORRECT_ARGS;
         const char *value = argv[1];
         app_data->config.bar_offset = atoi(value);
     }
     else if (strcmp(config, "stage_width") == 0) { // :set stage_width (number)
-        if (argc != 2) return false;
+        if (argc != 2) return ERR_INCORRECT_ARGS;
         const char* value = argv[1];
         app_data->config.stage_width = atoi(value);
     }
     else if (strcmp(config, "color") == 0) { // :set color (element) blue|red|yellow|green|white|black|cyan|magenta blue|red|yellow|green|white|black|cyan|magenta <bold>
-        if (argc != 4 && argc != 5) return false;
+        if (argc != 4 && argc != 5) return ERR_INCORRECT_ARGS;
 
         const char* element = argv[1];
         const char* fg = argv[2];
@@ -122,7 +141,7 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
             if (strcmp(bold, "bold") == 0) {
                 set_bold = true;
             }
-            else return false;
+            else return ERR_WRONG_ARG_VALUE;
         }
 
         int color_idx = 0;
@@ -137,7 +156,7 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
         else if (strcmp(element, "stage4")   == 0) color_idx = COLOR_STAGES + 3;
         else if (strcmp(element, "stage5")   == 0) color_idx = COLOR_STAGES + 4;
         else if (strcmp(element, "stage6")   == 0) color_idx = COLOR_STAGES + 5;
-        else return false;
+        else return ERR_WRONG_ARG_VALUE;
 
         short set_fg = COLOR_BLACK;
 
@@ -149,7 +168,7 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
         else if (strcmp(fg, "blue")    == 0) set_fg = COLOR_BLUE;
         else if (strcmp(fg, "cyan")    == 0) set_fg = COLOR_CYAN;
         else if (strcmp(fg, "magenta") == 0) set_fg = COLOR_MAGENTA;
-        else return false;
+        else return ERR_WRONG_ARG_VALUE;
 
         short set_bg = COLOR_BLACK;
 
@@ -168,28 +187,28 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
 
         fprintf(stderr, "%s %s %s %d\n", element, fg, bg, set_bold);
     }
+    else return ERR_CONFIG_NOT_FOUND;
 
-
-    return true;
+    return CORRECT;
 }
 
-bool panelsync_cb(ApplicationData *app_data) {
-    app_data->windows_synced = true;
-    return true;
+errors panelsync_cb(ApplicationData *app_data) {
+    app_data->windows_synced = CORRECT;
+    return CORRECT;
 }
 
-bool paneldesync_cb(ApplicationData *app_data) {
+errors paneldesync_cb(ApplicationData *app_data) {
     app_data->windows_synced = false;
-    return true;
+    return CORRECT;
 }
 
-bool findpc_cb(ApplicationData *app_data, const char * argv[]) {
+errors findpc_cb(ApplicationData *app_data, const char * argv[]) {
     const char *pattern = argv[0];
 
-    if (app_data->windows == NULL) return false;
+    if (app_data->windows == NULL) return ERR_NO_PANELS;
 
     FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, PC, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
-    if (!result.valid) return false;
+    if (!result.valid) return ERR_FIND_NOT_FOUND;
 
     app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
@@ -203,16 +222,16 @@ bool findpc_cb(ApplicationData *app_data, const char * argv[]) {
 
     app_data->windows[app_data->window_focused]->last_search.data_kind = PC;
 
-    return true;
+    return CORRECT;
 }
 
-bool findinst_cb(ApplicationData *app_data, const char * argv[]) {
+errors findinst_cb(ApplicationData *app_data, const char * argv[]) {
     const char *pattern = argv[0];
 
-    if (app_data->windows == NULL) return false;
+    if (app_data->windows == NULL) return ERR_NO_PANELS;
 
     FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, INST, DOWN, app_data->windows[app_data->window_focused]->first_instruction);
-    if (!result.valid) return false;
+    if (!result.valid) return ERR_FIND_NOT_FOUND;
 
     app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
@@ -226,42 +245,42 @@ bool findinst_cb(ApplicationData *app_data, const char * argv[]) {
 
     app_data->windows[app_data->window_focused]->last_search.data_kind = INST;
 
-    return true;
+    return CORRECT;
 }
 
-bool next_cb(ApplicationData *app_data) {
-    if (app_data->windows == NULL) return false;
+errors next_cb(ApplicationData *app_data) {
+    if (app_data->windows == NULL) return ERR_NO_PANELS;
 
-    if (app_data->windows[app_data->window_focused]->last_search.pattern == NULL) return false;
+    if (app_data->windows[app_data->window_focused]->last_search.pattern == NULL) return ERR_NEXT_NOT_FOUND;
 
     char *pattern = app_data->windows[app_data->window_focused]->last_search.pattern;
 
     FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, app_data->windows[app_data->window_focused]->last_search.data_kind, DOWN, app_data->windows[app_data->window_focused]->first_instruction + 1);
-    if (!result.valid) return false;
+    if (!result.valid) return ERR_NEXT_NOT_FOUND;
 
     app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
-    return true;
+    return CORRECT;
 }
 
-bool prev_cb(ApplicationData *app_data) {
-    if (app_data->windows == NULL) return false;
+errors prev_cb(ApplicationData *app_data) {
+    if (app_data->windows == NULL) return ERR_NO_PANELS;
 
-    if (app_data->windows[app_data->window_focused]->last_search.pattern == NULL) return false;
+    if (app_data->windows[app_data->window_focused]->last_search.pattern == NULL) return ERR_PREV_NOT_FOUND;
 
     char *pattern = app_data->windows[app_data->window_focused]->last_search.pattern;
 
-    if (app_data->windows[app_data->window_focused]->first_instruction <= 0) return false;
+    if (app_data->windows[app_data->window_focused]->first_instruction <= 0) return ERR_PREV_NOT_FOUND;
 
     FindResult result = find(app_data->windows[app_data->window_focused]->tables_array, pattern, app_data->windows[app_data->window_focused]->last_search.data_kind, UP, app_data->windows[app_data->window_focused]->first_instruction - 1);
-    if (!result.valid) return false;
+    if (!result.valid) return ERR_PREV_NOT_FOUND;
 
     app_data->windows[app_data->window_focused]->first_instruction = result.position;
 
-    return true;
+    return CORRECT;
 }
 
-bool quit_cb(ApplicationData *app_data) {
-    app_data->quit_requested = true;
-    return true;
+errors quit_cb(ApplicationData *app_data) {
+    app_data->quit_requested = CORRECT;
+    return CORRECT;
 }

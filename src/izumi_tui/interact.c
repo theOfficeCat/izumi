@@ -24,7 +24,9 @@
 #include "window.h"
 #include "command_tree.h"
 
-bool parse_input(ApplicationData *app_data, int ch) {
+errors parse_input(ApplicationData *app_data, int ch) {
+    errors status = CORRECT;
+
     if (app_data->mode == NORMAL) {
         switch (ch) {
             case 'j':
@@ -109,7 +111,7 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 }
                 app_data->command = malloc(5*sizeof(char));
                 strcpy(app_data->command, "next");
-                run_command(app_data);
+                status = run_command(app_data);
                 break;
             case 'N':
                 if (app_data->command != NULL) {
@@ -117,7 +119,7 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 }
                 app_data->command = malloc(5*sizeof(char));
                 strcpy(app_data->command, "prev");
-                run_command(app_data);
+                status = run_command(app_data);
                 break;
 
             default:
@@ -151,7 +153,7 @@ bool parse_input(ApplicationData *app_data, int ch) {
                 app_data->mode = NORMAL;
                 break;
             case '\n': // Enter
-                run_command(app_data);
+                status = run_command(app_data);
                 app_data->mode = NORMAL;
                 break;
             case KEY_BACKSPACE: // Backspace
@@ -172,5 +174,5 @@ bool parse_input(ApplicationData *app_data, int ch) {
         }
     }
 
-    return true;
+    return status;
 }

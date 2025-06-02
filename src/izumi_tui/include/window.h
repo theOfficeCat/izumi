@@ -100,6 +100,8 @@ struct ApplicationData_s {
     bool windows_synced;
 
     bool quit_requested;
+
+    const char *current_error;
 };
 
 typedef struct ApplicationData_s ApplicationData;

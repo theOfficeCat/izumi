@@ -27,6 +27,7 @@
 #include "window.h"
 #include "config.h"
 #include "interact.h"
+#include "errors.h"
 
 void get_window_data(WindowData *win_data, ApplicationData *app_data) {
     win_data->width = getmaxx(stdscr);
@@ -163,13 +164,18 @@ void init_application(ApplicationData *app_data) {
     app_data->config.stage_width = 3;
 
     app_data->quit_requested = false;
+
+    app_data->current_error = NULL;
 }
 
 void main_loop(ApplicationData *app_data) {
     render(app_data);
     while (!app_data->quit_requested) {
 
-        parse_input(app_data, getch());
+        errors status = parse_input(app_data, getch());
+
+        app_data->current_error = error_messages[status];
+
         render(app_data);
     }
 }
@@ -326,7 +332,20 @@ void render_status_bar(ApplicationData *app_data) {
 
     enable_colors_app(app_data, COLOR_STATUS);
     mvprintw(getmaxy(stdscr)-1, 0, " %s ", mode);
+<<<<<<< HEAD
     disable_colors_app(app_data, COLOR_STATUS);
+=======
+    attroff(COLOR_PAIR(1));
+
+    if (app_data->current_error != NULL) {
+
+        attron(COLOR_PAIR(2));
+        mvprintw(getmaxy(stdscr)-1, 3 + strlen(mode), " %s ", app_data->current_error);
+        attroff(COLOR_PAIR(2));
+    }
+
+    attroff(A_BOLD);
+>>>>>>> 47e8478 (added errors support on the UI)
 
     if (app_data->mode == COMMAND) {
         enable_colors_app(app_data, COLOR_COMMANDS);

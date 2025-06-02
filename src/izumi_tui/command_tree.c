@@ -61,44 +61,44 @@ void split_command_arguments(char * command, int argc, char * argv[]) {
     }
 }
 
-bool traverse_command_tree(ApplicationData *app_data, const Command commands[], size_t commands_length, const char * command_name, int argc, const char * argv[]) {
+errors traverse_command_tree(ApplicationData *app_data, const Command commands[], size_t commands_length, const char * command_name, int argc, const char * argv[]) {
     for (unsigned int i = 0; i < commands_length; ++i) {
         if (strcmp(command_name, commands[i].cmd) != 0) continue;
         const Command * const command = commands + i;
-        
+
         switch (command->type) {
         case COMMAND_TYPE_ARGLIST:
             return command->arglist.callback(app_data, argc, argv);
         case COMMAND_TYPE_FIXED_ARGLIST:
-            if (argc != command->fixed_arglist.argc) return false;
+            if (argc != command->fixed_arglist.argc) return ERR_INCORRECT_ARGS;
             return command->fixed_arglist.callback(app_data, argv);
         case COMMAND_TYPE_NO_ARGS:
-            if (argc != 0) return false;
+            if (argc != 0) return ERR_INCORRECT_ARGS;
             return command->no_args.callback(app_data);
         case COMMAND_TYPE_SUBCOMMAND:
-            if (argc == 0) return false;
+            if (argc == 0) return ERR_INCORRECT_ARGS;
             return traverse_command_tree(app_data, command->subcommand.subcommands, command->subcommand.subcommands_length, argv[0], argc - 1, argv + 1);
         case COMMAND_TYPE_ALIAS:
             return traverse_command_tree(app_data, command + 1, commands_length - i - 1, command->alias.real_cmd, argc, argv);
         }
     }
-    
+
     // If we arrive here, nothing has matched
-    return false;
+    return ERR_WRONG_COMMAND;
 }
 
-bool run_command(ApplicationData *app_data) {
+errors run_command(ApplicationData *app_data) {
     char command[strlen(app_data->command) + 1];
     strcpy(command, app_data->command);
 
     int argc = command_arg_count(command);
-    if (argc == -1) return false; // Empty command
+    if (argc == -1) return ERR_WRONG_COMMAND; // Empty command
 
     char * argv[argc+1]; // Contains the command, we later get rid of it
     split_command_arguments(command, argc, argv);
 
     const char * command_name = argv[0];
     const char ** command_argv = (const char **) argv + 1; // argv won't be modified from this point on
-    
+
     return traverse_command_tree(app_data, COMMANDS, sizeof(COMMANDS) / sizeof(COMMANDS[0]), command_name, argc, command_argv);
 }

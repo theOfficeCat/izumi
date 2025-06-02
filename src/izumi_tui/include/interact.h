@@ -21,6 +21,8 @@
 #include "window.h"
 #include <stdbool.h>
 
-bool parse_input(ApplicationData *appdata, int ch);
+#include "errors.h"
+
+errors parse_input(ApplicationData *appdata, int ch);
 
 #endif
