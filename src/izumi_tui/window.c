@@ -201,7 +201,6 @@ void print_instruction(ApplicationData *app_data, WindowData *win_data, Configur
 
     mvwprintw(win_data->win, y,   config->bar_offset, "|");
     mvwprintw(win_data->win, y+1, config->bar_offset, "|");
-    //wattroff(win_data->win, COLOR_PAIR(2));
     disable_colors_win(app_data, win_data, COLOR_TEXT);
 
     if (inst != NULL && inst->valid && inst->stages != NULL) {
@@ -214,11 +213,6 @@ void print_instruction(ApplicationData *app_data, WindowData *win_data, Configur
 
             uint64_t stage_offset = config->bar_offset + 2 + (config->stage_width + 1)*(stage->cycle - *first_cycle);
 
-            //wattron(win_data->win, COLOR_PAIR(i%6 + 4));
-
-
-            //wattron(win_data->win, A_BOLD);
-
             enable_colors_win(app_data, win_data, COLOR_STAGES + i%6);
 
 
@@ -230,14 +224,13 @@ void print_instruction(ApplicationData *app_data, WindowData *win_data, Configur
                 }
             }
             else {
-                char *name_short = malloc(sizeof(char) * (config->stage_width + 1));
+                char name_short[config->stage_width + 1];
 
                 strncpy(name_short, stage->name, config->stage_width);
                 name_short[config->stage_width] = '\0';
 
                 mvwprintw(win_data->win, y+1, stage_offset, "%s", name_short);
             }
-            //wattroff(win_data->win, A_BOLD);
 
             if (stage->duration > 1) {
                 for (uint64_t j = 1; j < stage->duration; ++j) {
@@ -247,7 +240,6 @@ void print_instruction(ApplicationData *app_data, WindowData *win_data, Configur
                 }
             }
 
-            //wattroff(win_data->win, COLOR_PAIR(i%6 + 4));
             disable_colors_win(app_data, win_data, COLOR_STAGES + i%6);
         }
     }
@@ -279,7 +271,6 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
         }
     }
 
-    //wattron(win_data->win, COLOR_PAIR(1));
     enable_colors_win(app_data, win_data, COLOR_BOX);
     box(win_data->win, 0, 0);
 
@@ -294,7 +285,7 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
             wattroff(win_data->win, A_BOLD);
         }
     }
-    //wattroff(win_data->win, COLOR_PAIR(1));
+
     disable_colors_win(app_data, win_data, COLOR_BOX);
 
     wrefresh(win_data->win);
@@ -310,24 +301,18 @@ void render_status_bar(ApplicationData *app_data) {
 
     clear_status_bar[getmaxx(stdscr)] = '\0';
 
-    //attron(COLOR_PAIR(2));
     enable_colors_app(app_data, COLOR_TEXT);
     mvprintw(getmaxy(stdscr)-1, 0, "%s", clear_status_bar);
-    //attroff(COLOR_PAIR(2));
     disable_colors_app(app_data, COLOR_TEXT);
 
     char *version = VERSION;
 
     uint64_t length = strlen(version);
 
-    //attron(A_BOLD);
-    //attron(COLOR_PAIR(1));
     enable_colors_app(app_data, COLOR_BOX);
     mvprintw(getmaxy(stdscr)-1, getmaxx(stdscr) - 7 - length, "Izumi v%s", version);
     disable_colors_app(app_data, COLOR_BOX);
-    //attroff(COLOR_PAIR(1));
 
-    //attron(COLOR_PAIR(3));
     char *mode;
 
     switch (app_data->mode) {
@@ -342,15 +327,11 @@ void render_status_bar(ApplicationData *app_data) {
     enable_colors_app(app_data, COLOR_STATUS);
     mvprintw(getmaxy(stdscr)-1, 0, " %s ", mode);
     disable_colors_app(app_data, COLOR_STATUS);
-    //attroff(COLOR_PAIR(3));
-    //attroff(A_BOLD);
 
     if (app_data->mode == COMMAND) {
-        //attron(COLOR_PAIR(0));
         enable_colors_app(app_data, COLOR_COMMANDS);
         mvprintw(getmaxy(stdscr)-1, 11, ":%s", app_data->command);
         disable_colors_app(app_data, COLOR_COMMANDS);
-        //attroff(COLOR_PAIR(0));
     }
 
 }
