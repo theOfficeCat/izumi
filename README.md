@@ -84,9 +84,39 @@ $ izumi (path/to/file)
 | `:ca` | Close all panels |
 | `:set bar_offset (amount)` | Set offset of the vertical bar (not persistent) |
 | `:set stage_width (amount)` | Set width of the stage on the pipeline visualizer (not persistent) |
+| `:set color (element) (foreground color) (background color) <bold>` | Set color of the element (not persistent) |
 | `:panelsync` | Sync movement of all the panels |
 | `:paneldesync` | Desync movement of all the panels |
 
+> [!NOTE]
+> The `:set` commands are not persistent, so you will need to set them again on the next run.
+
+> [!IMPORTANT]
+> Information for the `:set color` command
+>
+> The `<element>` option can be one of the following:
+> - `text` Sets the color of the text shown on the screen
+> - `commands` Sets the color of the commands shown on the bottom of the screen when typing one
+> - `box` Sets the color of the box around the window
+> - `status` Sets the color of the status of the application at the bar on the bottom of the screen
+> - `stage1` Sets the color of the first stage of the pipeline
+> - `stage2` Sets the color of the second stage of the pipeline
+> - `stage3` Sets the color of the third stage of the pipeline
+> - `stage4` Sets the color of the fourth stage of the pipeline
+> - `stage5` Sets the color of the fifth stage of the pipeline
+> - `stage6` Sets the color of the sixth stage of the pipeline
+> If there are more than six stages, the color of the seventh and following stages will return to the color of the first stage and repeat the cycle.
+>
+> It requires the color to be one of the list:
+> - `black`
+> - `white`
+> - `red`
+> - `green`
+> - `yellow`
+> - `blue`
+> - `magenta`
+> - `cyan`
+> The `<bold>` option is optional. If you want to set a color to bold, just add `bold` at the end of the command.
 
 ### Keybindings
 
