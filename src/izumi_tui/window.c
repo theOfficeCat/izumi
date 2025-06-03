@@ -137,35 +137,18 @@ void init_application(ApplicationData *app_data) {
     curs_set(0);
     start_color();
 
-    init_pair(1, COLOR_BLACK, COLOR_BLUE);
-    init_pair(2, COLOR_BLACK, COLOR_RED);
-    init_pair(3, COLOR_BLACK, COLOR_GREEN);
-    init_pair(4, COLOR_BLACK, COLOR_YELLOW);
-    init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
-    init_pair(6, COLOR_BLACK, COLOR_CYAN);
+    set_color(app_data, COLOR_COMMANDS, COLOR_BLACK, COLOR_WHITE, false);
+    set_color(app_data, COLOR_BOX, COLOR_BLACK, COLOR_WHITE, false);
+    set_color(app_data, COLOR_TEXT, COLOR_BLACK, COLOR_WHITE, false);
+    set_color(app_data, COLOR_STATUS, COLOR_BLUE, COLOR_BLACK, true);
+    set_color(app_data, COLOR_STAGES + 0, COLOR_BLUE, COLOR_BLACK, true);
+    set_color(app_data, COLOR_STAGES + 1, COLOR_RED, COLOR_BLACK, true);
+    set_color(app_data, COLOR_STAGES + 2, COLOR_GREEN, COLOR_BLACK, true);
+    set_color(app_data, COLOR_STAGES + 3, COLOR_YELLOW, COLOR_BLACK, true);
+    set_color(app_data, COLOR_STAGES + 4, COLOR_MAGENTA, COLOR_BLACK, true);
+    set_color(app_data, COLOR_STAGES + 5, COLOR_CYAN, COLOR_BLACK, true);
 
-    init_pair(9,  COLOR_WHITE, COLOR_BLUE);
-    init_pair(10, COLOR_WHITE, COLOR_RED);
-    init_pair(11, COLOR_WHITE, COLOR_GREEN);
-    init_pair(12, COLOR_WHITE, COLOR_YELLOW);
-    init_pair(13, COLOR_WHITE, COLOR_MAGENTA);
-    init_pair(14, COLOR_WHITE, COLOR_CYAN);
-
-    init_pair(16, COLOR_WHITE, COLOR_BLACK);
-    init_pair(17, COLOR_BLUE, COLOR_BLACK);
-    init_pair(18, COLOR_RED, COLOR_BLACK);
-    init_pair(19, COLOR_GREEN, COLOR_BLACK);
-    init_pair(20, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(21, COLOR_MAGENTA, COLOR_BLACK);
-    init_pair(22, COLOR_CYAN, COLOR_BLACK);
-
-    init_pair(24, COLOR_BLACK, COLOR_WHITE);
-    init_pair(25, COLOR_BLUE, COLOR_WHITE);
-    init_pair(26, COLOR_RED, COLOR_WHITE);
-    init_pair(27, COLOR_GREEN, COLOR_WHITE);
-    init_pair(28, COLOR_YELLOW, COLOR_WHITE);
-    init_pair(29, COLOR_MAGENTA, COLOR_WHITE);
-    init_pair(30, COLOR_CYAN, COLOR_WHITE);
+    apply_colors(app_data);
 
     app_data->windows = NULL;
     app_data->windows_qtty = 0;
@@ -191,8 +174,8 @@ void main_loop(ApplicationData *app_data) {
     }
 }
 
-void print_instruction(WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle, uint64_t index) {
-    wattron(win_data->win, COLOR_PAIR(24));
+void print_instruction(ApplicationData *app_data, WindowData *win_data, Configuration *config, Instruction *inst, uint64_t y, uint64_t *first_cycle, uint64_t index) {
+    enable_colors_win(app_data, win_data, COLOR_TEXT);
 
     for (uint64_t i = 0; i < win_data->width; ++i) {
         mvwprintw(win_data->win, y, i, " ");
@@ -218,7 +201,8 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
 
     mvwprintw(win_data->win, y,   config->bar_offset, "|");
     mvwprintw(win_data->win, y+1, config->bar_offset, "|");
-    wattroff(win_data->win, COLOR_PAIR(24));
+    //wattroff(win_data->win, COLOR_PAIR(2));
+    disable_colors_win(app_data, win_data, COLOR_TEXT);
 
     if (inst != NULL && inst->valid && inst->stages != NULL) {
         for (uint64_t i = 0; i < inst->qtty_stages; ++i) {
@@ -230,10 +214,14 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
 
             uint64_t stage_offset = config->bar_offset + 2 + (config->stage_width + 1)*(stage->cycle - *first_cycle);
 
-            wattron(win_data->win, COLOR_PAIR(i%6 + 9));
+            //wattron(win_data->win, COLOR_PAIR(i%6 + 4));
 
 
-            wattron(win_data->win, A_BOLD);
+            //wattron(win_data->win, A_BOLD);
+
+            enable_colors_win(app_data, win_data, COLOR_STAGES + i%6);
+
+
             if (strlen(stage->name) < config->stage_width) {
                 mvwprintw(win_data->win, y+1, stage_offset, "%s", stage->name);
 
@@ -249,7 +237,7 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
 
                 mvwprintw(win_data->win, y+1, stage_offset, "%s", name_short);
             }
-            wattroff(win_data->win, A_BOLD);
+            //wattroff(win_data->win, A_BOLD);
 
             if (stage->duration > 1) {
                 for (uint64_t j = 1; j < stage->duration; ++j) {
@@ -259,7 +247,8 @@ void print_instruction(WindowData *win_data, Configuration *config, Instruction 
                 }
             }
 
-            wattroff(win_data->win, COLOR_PAIR(i%6 + 9));
+            //wattroff(win_data->win, COLOR_PAIR(i%6 + 4));
+            disable_colors_win(app_data, win_data, COLOR_STAGES + i%6);
         }
     }
 }
@@ -286,11 +275,12 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
                 }
             }
 
-            print_instruction(win_data, &app_data->config, inst, i*2+1, &cycle, index);
+            print_instruction(app_data, win_data, &app_data->config, inst, i*2+1, &cycle, index);
         }
     }
 
-    wattron(win_data->win, COLOR_PAIR(24));
+    //wattron(win_data->win, COLOR_PAIR(1));
+    enable_colors_win(app_data, win_data, COLOR_BOX);
     box(win_data->win, 0, 0);
 
     if (win_data->filename != NULL) {
@@ -304,7 +294,8 @@ void render_window(ApplicationData *app_data, WindowData *win_data) {
             wattroff(win_data->win, A_BOLD);
         }
     }
-    wattroff(win_data->win, COLOR_PAIR(24));
+    //wattroff(win_data->win, COLOR_PAIR(1));
+    disable_colors_win(app_data, win_data, COLOR_BOX);
 
     wrefresh(win_data->win);
 }
@@ -319,20 +310,24 @@ void render_status_bar(ApplicationData *app_data) {
 
     clear_status_bar[getmaxx(stdscr)] = '\0';
 
-    attron(COLOR_PAIR(24));
+    //attron(COLOR_PAIR(2));
+    enable_colors_app(app_data, COLOR_TEXT);
     mvprintw(getmaxy(stdscr)-1, 0, "%s", clear_status_bar);
-    attroff(COLOR_PAIR(24));
+    //attroff(COLOR_PAIR(2));
+    disable_colors_app(app_data, COLOR_TEXT);
 
     char *version = VERSION;
 
     uint64_t length = strlen(version);
 
-    attron(A_BOLD);
-    attron(COLOR_PAIR(24));
+    //attron(A_BOLD);
+    //attron(COLOR_PAIR(1));
+    enable_colors_app(app_data, COLOR_BOX);
     mvprintw(getmaxy(stdscr)-1, getmaxx(stdscr) - 7 - length, "Izumi v%s", version);
-    attroff(COLOR_PAIR(24));
+    disable_colors_app(app_data, COLOR_BOX);
+    //attroff(COLOR_PAIR(1));
 
-    attron(COLOR_PAIR(9));
+    //attron(COLOR_PAIR(3));
     char *mode;
 
     switch (app_data->mode) {
@@ -344,14 +339,18 @@ void render_status_bar(ApplicationData *app_data) {
             break;
     }
 
+    enable_colors_app(app_data, COLOR_STATUS);
     mvprintw(getmaxy(stdscr)-1, 0, " %s ", mode);
-    attroff(COLOR_PAIR(9));
-    attroff(A_BOLD);
+    disable_colors_app(app_data, COLOR_STATUS);
+    //attroff(COLOR_PAIR(3));
+    //attroff(A_BOLD);
 
     if (app_data->mode == COMMAND) {
-        attron(COLOR_PAIR(24));
+        //attron(COLOR_PAIR(0));
+        enable_colors_app(app_data, COLOR_COMMANDS);
         mvprintw(getmaxy(stdscr)-1, 11, ":%s", app_data->command);
-        attroff(COLOR_PAIR(24));
+        disable_colors_app(app_data, COLOR_COMMANDS);
+        //attroff(COLOR_PAIR(0));
     }
 
 }
@@ -366,4 +365,60 @@ void render(ApplicationData *app_data) {
     render_status_bar(app_data);
 
     refresh();
+}
+
+void set_color(ApplicationData *app_data, uint64_t index, short fg, short bg, bool bold) {
+    ColorData *colors = app_data->config.colors;
+
+    colors[index].fg = fg;
+    colors[index].bg = bg;
+    colors[index].bold = bold;
+}
+
+void apply_colors(ApplicationData *app_data) {
+    ColorData *colors = app_data->config.colors;
+
+    for (uint64_t i = 0; i < COLORS_AMOUNT; ++i) {
+        init_pair(i, colors[i].bg, colors[i].fg);
+    }
+}
+
+void enable_colors_app(ApplicationData *app_data, uint64_t index) {
+    attron(COLOR_PAIR(index));
+
+    ColorData *colors = app_data->config.colors;
+
+    if (colors[index].bold) {
+        attron(A_BOLD);
+    }
+}
+
+void disable_colors_app(ApplicationData *app_data, uint64_t index) {
+    attroff(COLOR_PAIR(index));
+
+    ColorData *colors = app_data->config.colors;
+
+    if (colors[index].bold) {
+        attroff(A_BOLD);
+    }
+}
+
+void enable_colors_win(ApplicationData *app_data, WindowData *win_data, uint64_t index) {
+    wattron(win_data->win, COLOR_PAIR(index));
+
+    ColorData *colors = app_data->config.colors;
+
+    if (colors[index].bold) {
+        wattron(win_data->win, A_BOLD);
+    }
+}
+
+void disable_colors_win(ApplicationData *app_data, WindowData *win_data, uint64_t index) {
+    wattroff(win_data->win, COLOR_PAIR(index));
+
+    ColorData *colors = app_data->config.colors;
+
+    if (colors[index].bold) {
+        wattroff(win_data->win, A_BOLD);
+    }
 }
