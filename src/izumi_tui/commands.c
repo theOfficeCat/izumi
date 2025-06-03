@@ -94,22 +94,6 @@ bool panelcmd_k_cb(ApplicationData *app_data) {
     return true;
 }
 
-/*
-bool set_cb(ApplicationData *app_data, const int argc, const char * argv[]) {
-    const char *option = argv[0];
-    const char *value = argv[1];
-
-    if (strcmp(option, "bar_offset") == 0) {
-        app_data->config.bar_offset = atoi(value);
-    }
-    else if (strcmp(option, "stage_width") == 0) {
-        app_data->config.stage_width = atoi(value);
-    }
-    else return false;
-
-    return true;
-    }*/
-
 bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
     const char *config = argv[0];
 
@@ -143,16 +127,16 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
 
         int color_idx = 0;
 
-        if (strcmp(element, "commands")    == 0) color_idx = 0;
-        else if (strcmp(element, "box")    == 0) color_idx = 1;
-        else if (strcmp(element, "text")   == 0) color_idx = 2;
-        else if (strcmp(element, "status") == 0) color_idx = 3;
-        else if (strcmp(element, "stage1") == 0) color_idx = 4;
-        else if (strcmp(element, "stage2") == 0) color_idx = 5;
-        else if (strcmp(element, "stage3") == 0) color_idx = 6;
-        else if (strcmp(element, "stage4") == 0) color_idx = 7;
-        else if (strcmp(element, "stage5") == 0) color_idx = 8;
-        else if (strcmp(element, "stage6") == 0) color_idx = 9;
+        if (strcmp(element, "commands")      == 0) color_idx = COLOR_COMMANDS;
+        else if (strcmp(element, "box")      == 0) color_idx = COLOR_BOX;
+        else if (strcmp(element, "text")     == 0) color_idx = COLOR_TEXT;
+        else if (strcmp(element, "status")   == 0) color_idx = COLOR_STATUS;
+        else if (strcmp(element, "stage1")   == 0) color_idx = COLOR_STAGES + 0;
+        else if (strcmp(element, "stage2")   == 0) color_idx = COLOR_STAGES + 1;
+        else if (strcmp(element, "stage3")   == 0) color_idx = COLOR_STAGES + 2;
+        else if (strcmp(element, "stage4")   == 0) color_idx = COLOR_STAGES + 3;
+        else if (strcmp(element, "stage5")   == 0) color_idx = COLOR_STAGES + 4;
+        else if (strcmp(element, "stage6")   == 0) color_idx = COLOR_STAGES + 5;
         else return false;
 
         short set_fg = COLOR_BLACK;
