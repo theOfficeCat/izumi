@@ -116,6 +116,7 @@ $ izumi (path/to/file)
 > - `blue`
 > - `magenta`
 > - `cyan`
+>
 > The `<bold>` option is optional. If you want to set a color to bold, just add `bold` at the end of the command.
 
 ### Keybindings
