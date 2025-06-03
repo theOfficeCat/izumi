@@ -143,7 +143,7 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
 
         int color_idx = 0;
 
-        if (strcmp(element, "background")  == 0) color_idx = 0;
+        if (strcmp(element, "commands")    == 0) color_idx = 0;
         else if (strcmp(element, "box")    == 0) color_idx = 1;
         else if (strcmp(element, "text")   == 0) color_idx = 2;
         else if (strcmp(element, "status") == 0) color_idx = 3;
