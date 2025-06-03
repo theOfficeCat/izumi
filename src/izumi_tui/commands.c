@@ -179,9 +179,8 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
         else if (strcmp(bg, "magenta") == 0) set_bg = COLOR_MAGENTA;
         else return false;
 
-        app_data->config.colors[color_idx].fg = set_fg;
-        app_data->config.colors[color_idx].bg = set_bg;
-        app_data->config.colors[color_idx].bold = set_bold;
+        set_color(app_data, color_idx, set_bg, set_fg, set_bold);
+        apply_colors(app_data);
     }
 
 
