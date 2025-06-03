@@ -26,9 +26,20 @@
 
 #include <izumi/data_structs.h>
 
+struct ColorData_s {
+    short fg;
+    short bg;
+    bool bold;
+};
+
+typedef struct ColorData_s ColorData;
+
 struct Configuration_s {
     uint64_t bar_offset;
     uint64_t stage_width;
+
+    // 0: background, 1: box, 2: text, 3: status, 4-9: stages
+    ColorData colors[10];
 };
 
 typedef struct Configuration_s Configuration;
@@ -111,5 +122,7 @@ void close_application(ApplicationData *app_data);
 void close_panel(ApplicationData *app_data, uint64_t panel_id);
 
 void close_all_panels(ApplicationData *app_data);
+
+void apply_colors(ApplicationData *app_data);
 
 #endif

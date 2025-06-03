@@ -33,7 +33,7 @@ CommandNoArgsCallback newpanel_cb;
 CommandArglistCallback closepanel_cb;
 CommandNoArgsCallback closeallpanels_cb;
 CommandFixedArglistCallback open_cb;
-CommandFixedArglistCallback set_cb;
+CommandArglistCallback set_cb;
 CommandNoArgsCallback panelsync_cb;
 CommandNoArgsCallback paneldesync_cb;
 CommandFixedArglistCallback findpc_cb;
@@ -52,7 +52,7 @@ const Command COMMANDS[] = {
     CMD_ALIAS("o", "open"),
     CMD_FIXED_ARGLIST("open", 1, open_cb),
     CMD_SUBCOMMAND("panelcmd", PANEL_COMMANDS),
-    CMD_FIXED_ARGLIST("set", 2, set_cb),
+    CMD_ARGLIST("set", set_cb),
     CMD_NO_ARGS("panelsync", panelsync_cb),
     CMD_NO_ARGS("paneldesync", paneldesync_cb),
     CMD_FIXED_ARGLIST("findpc", 1, findpc_cb),

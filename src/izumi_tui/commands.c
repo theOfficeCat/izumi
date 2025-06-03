@@ -15,6 +15,7 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <ncurses.h>
 #define _GNU_SOURCE
 
 #include <linux/limits.h>
@@ -93,7 +94,8 @@ bool panelcmd_k_cb(ApplicationData *app_data) {
     return true;
 }
 
-bool set_cb(ApplicationData *app_data, const char * argv[]) {
+/*
+bool set_cb(ApplicationData *app_data, const int argc, const char * argv[]) {
     const char *option = argv[0];
     const char *value = argv[1];
 
@@ -104,6 +106,84 @@ bool set_cb(ApplicationData *app_data, const char * argv[]) {
         app_data->config.stage_width = atoi(value);
     }
     else return false;
+
+    return true;
+    }*/
+
+bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
+    const char *config = argv[0];
+
+    if (strcmp(config, "bar_offset") == 0) { // :set bar_offset (number)
+        if (argc != 2) return false;
+        const char *value = argv[1];
+        app_data->config.bar_offset = atoi(value);
+    }
+    else if (strcmp(config, "stage_width") == 0) { // :set stage_width (number)
+        if (argc != 2) return false;
+        const char* value = argv[1];
+        app_data->config.stage_width = atoi(value);
+    }
+    else if (strcmp(config, "color") == 0) { // :set color (element) blue|red|yellow|green|white|black|cyan|magenta blue|red|yellow|green|white|black|cyan|magenta <bold>
+        if (argc != 4 && argc != 5) return false;
+
+        const char* element = argv[1];
+        const char* fg = argv[2];
+        const char* bg = argv[3];
+
+        bool set_bold = false;
+
+        if (argc == 5) {
+            const char* bold = argv[4];
+
+            if (strcmp(bold, "bold") == 0) {
+                set_bold = true;
+            }
+            else return false;
+        }
+
+        int color_idx = 0;
+
+        if (strcmp(element, "background")  == 0) color_idx = 0;
+        else if (strcmp(element, "box")    == 0) color_idx = 1;
+        else if (strcmp(element, "text")   == 0) color_idx = 2;
+        else if (strcmp(element, "status") == 0) color_idx = 3;
+        else if (strcmp(element, "stage1") == 0) color_idx = 4;
+        else if (strcmp(element, "stage2") == 0) color_idx = 5;
+        else if (strcmp(element, "stage3") == 0) color_idx = 6;
+        else if (strcmp(element, "stage4") == 0) color_idx = 7;
+        else if (strcmp(element, "stage5") == 0) color_idx = 8;
+        else if (strcmp(element, "stage6") == 0) color_idx = 9;
+        else return false;
+
+        short set_fg = COLOR_BLACK;
+
+        if (strcmp(fg, "black")        == 0) set_fg = COLOR_BLACK;
+        else if (strcmp(fg, "white")   == 0) set_fg = COLOR_WHITE;
+        else if (strcmp(fg, "red")     == 0) set_fg = COLOR_RED;
+        else if (strcmp(fg, "green")   == 0) set_fg = COLOR_GREEN;
+        else if (strcmp(fg, "yellow")  == 0) set_fg = COLOR_YELLOW;
+        else if (strcmp(fg, "blue")    == 0) set_fg = COLOR_BLUE;
+        else if (strcmp(fg, "cyan")    == 0) set_fg = COLOR_CYAN;
+        else if (strcmp(fg, "magenta") == 0) set_fg = COLOR_MAGENTA;
+        else return false;
+
+        short set_bg = COLOR_BLACK;
+
+        if (strcmp(bg, "black")        == 0) set_bg = COLOR_BLACK;
+        else if (strcmp(bg, "white")   == 0) set_bg = COLOR_WHITE;
+        else if (strcmp(bg, "red")     == 0) set_bg = COLOR_RED;
+        else if (strcmp(bg, "green")   == 0) set_bg = COLOR_GREEN;
+        else if (strcmp(bg, "yellow")  == 0) set_bg = COLOR_YELLOW;
+        else if (strcmp(bg, "blue")    == 0) set_bg = COLOR_BLUE;
+        else if (strcmp(bg, "cyan")    == 0) set_bg = COLOR_CYAN;
+        else if (strcmp(bg, "magenta") == 0) set_bg = COLOR_MAGENTA;
+        else return false;
+
+        app_data->config.colors[color_idx].fg = set_fg;
+        app_data->config.colors[color_idx].bg = set_bg;
+        app_data->config.colors[color_idx].bold = set_bold;
+    }
+
 
     return true;
 }
