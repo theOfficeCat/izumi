@@ -360,12 +360,12 @@ void apply_colors(ApplicationData *app_data) {
     ColorData *colors = app_data->config.colors;
 
     for (uint64_t i = 0; i < COLORS_AMOUNT; ++i) {
-        init_pair(i, colors[i].bg, colors[i].fg);
+        init_pair(i+1, colors[i].bg, colors[i].fg);
     }
 }
 
 void enable_colors_app(ApplicationData *app_data, uint64_t index) {
-    attron(COLOR_PAIR(index));
+    attron(COLOR_PAIR(index+1));
 
     ColorData *colors = app_data->config.colors;
 
@@ -375,7 +375,7 @@ void enable_colors_app(ApplicationData *app_data, uint64_t index) {
 }
 
 void disable_colors_app(ApplicationData *app_data, uint64_t index) {
-    attroff(COLOR_PAIR(index));
+    attroff(COLOR_PAIR(index+1));
 
     ColorData *colors = app_data->config.colors;
 
@@ -385,7 +385,7 @@ void disable_colors_app(ApplicationData *app_data, uint64_t index) {
 }
 
 void enable_colors_win(ApplicationData *app_data, WindowData *win_data, uint64_t index) {
-    wattron(win_data->win, COLOR_PAIR(index));
+    wattron(win_data->win, COLOR_PAIR(index+1));
 
     ColorData *colors = app_data->config.colors;
 
@@ -395,7 +395,7 @@ void enable_colors_win(ApplicationData *app_data, WindowData *win_data, uint64_t
 }
 
 void disable_colors_win(ApplicationData *app_data, WindowData *win_data, uint64_t index) {
-    wattroff(win_data->win, COLOR_PAIR(index));
+    wattroff(win_data->win, COLOR_PAIR(index+1));
 
     ColorData *colors = app_data->config.colors;
 
