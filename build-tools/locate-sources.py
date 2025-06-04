@@ -29,7 +29,8 @@ def main():
     
     source_dir = Path(source_root) / subdir
     
-    for file in glob.iglob(pattern, root_dir=source_dir):
+    os.chdir(source_dir)
+    for file in glob.iglob(pattern):
         print(file)
 
 if __name__ == "__main__":
