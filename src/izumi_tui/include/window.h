@@ -34,12 +34,13 @@ struct ColorData_s {
 
 typedef struct ColorData_s ColorData;
 
-#define COLORS_AMOUNT 10
+#define COLORS_AMOUNT 11
 #define COLOR_COMMANDS 0
 #define COLOR_BOX 1
 #define COLOR_TEXT 2
 #define COLOR_STATUS 3
-#define COLOR_STAGES 4
+#define COLOR_ERROR 4
+#define COLOR_STAGES 5
 
 struct Configuration_s {
     uint64_t bar_offset;

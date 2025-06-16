@@ -54,7 +54,8 @@ static const char *error_messages[] = {
     "Next pattern not found",
     "Previous pattern not found",
     "Wrong command",
-    "Incorrect arguments",
+    "Incorrect amount of arguments",
+    "Wrong arg value",
     NULL
 };
 

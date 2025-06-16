@@ -150,6 +150,7 @@ errors set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
         else if (strcmp(element, "box")      == 0) color_idx = COLOR_BOX;
         else if (strcmp(element, "text")     == 0) color_idx = COLOR_TEXT;
         else if (strcmp(element, "status")   == 0) color_idx = COLOR_STATUS;
+        else if (strcmp(element, "error")    == 0) color_idx = COLOR_ERROR;
         else if (strcmp(element, "stage1")   == 0) color_idx = COLOR_STAGES + 0;
         else if (strcmp(element, "stage2")   == 0) color_idx = COLOR_STAGES + 1;
         else if (strcmp(element, "stage3")   == 0) color_idx = COLOR_STAGES + 2;
@@ -180,7 +181,7 @@ errors set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
         else if (strcmp(bg, "blue")    == 0) set_bg = COLOR_BLUE;
         else if (strcmp(bg, "cyan")    == 0) set_bg = COLOR_CYAN;
         else if (strcmp(bg, "magenta") == 0) set_bg = COLOR_MAGENTA;
-        else return false;
+        else return ERR_WRONG_ARG_VALUE;
 
         set_color(app_data, color_idx, set_bg, set_fg, set_bold);
         apply_colors(app_data);

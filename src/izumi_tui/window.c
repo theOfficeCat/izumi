@@ -142,6 +142,7 @@ void init_application(ApplicationData *app_data) {
     set_color(app_data, COLOR_BOX, COLOR_BLACK, COLOR_WHITE, false);
     set_color(app_data, COLOR_TEXT, COLOR_BLACK, COLOR_WHITE, false);
     set_color(app_data, COLOR_STATUS, COLOR_BLUE, COLOR_BLACK, true);
+    set_color(app_data, COLOR_ERROR, COLOR_RED, COLOR_WHITE, true);
     set_color(app_data, COLOR_STAGES + 0, COLOR_BLUE, COLOR_BLACK, true);
     set_color(app_data, COLOR_STAGES + 1, COLOR_RED, COLOR_BLACK, true);
     set_color(app_data, COLOR_STAGES + 2, COLOR_GREEN, COLOR_BLACK, true);
@@ -332,20 +333,15 @@ void render_status_bar(ApplicationData *app_data) {
 
     enable_colors_app(app_data, COLOR_STATUS);
     mvprintw(getmaxy(stdscr)-1, 0, " %s ", mode);
-<<<<<<< HEAD
     disable_colors_app(app_data, COLOR_STATUS);
-=======
-    attroff(COLOR_PAIR(1));
 
     if (app_data->current_error != NULL) {
-
-        attron(COLOR_PAIR(2));
+        //attron(COLOR_PAIR(2));
+        enable_colors_app(app_data, COLOR_ERROR);
         mvprintw(getmaxy(stdscr)-1, 3 + strlen(mode), " %s ", app_data->current_error);
-        attroff(COLOR_PAIR(2));
+        disable_colors_app(app_data, COLOR_ERROR);
+        //attroff(COLOR_PAIR(2));
     }
-
-    attroff(A_BOLD);
->>>>>>> 47e8478 (added errors support on the UI)
 
     if (app_data->mode == COMMAND) {
         enable_colors_app(app_data, COLOR_COMMANDS);
