@@ -165,8 +165,6 @@ bool set_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
 
         set_color(app_data, color_idx, set_bg, set_fg, set_bold);
         apply_colors(app_data);
-
-        fprintf(stderr, "%s %s %s %d\n", element, fg, bg, set_bold);
     }
 
 

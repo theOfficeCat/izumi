@@ -27,6 +27,7 @@
 #include "window.h"
 #include "config.h"
 #include "interact.h"
+#include "configure.h"
 
 void get_window_data(WindowData *win_data, ApplicationData *app_data) {
     win_data->width = getmaxx(stdscr);
@@ -163,6 +164,8 @@ void init_application(ApplicationData *app_data) {
     app_data->config.stage_width = 3;
 
     app_data->quit_requested = false;
+
+    execute_config_commands(app_data, read_config_file(get_config_path()));
 }
 
 void main_loop(ApplicationData *app_data) {
