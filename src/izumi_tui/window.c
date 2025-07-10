@@ -50,6 +50,7 @@ void new_window(ApplicationData *app_data) {
     win_data->win = newwin(win_data->height, win_data->width, win_data->y, win_data->x);
 
     win_data->filename = NULL;
+    win_data->filepath = NULL;
     win_data->first_instruction = 0;
 
     win_data->tables_array = malloc(sizeof(InstructionTableArray));
@@ -78,6 +79,11 @@ void close_window(WindowData *win_data) {
     if (win_data->filename != NULL) {
         free(win_data->filename);
         win_data->filename = NULL;
+    }
+
+    if (win_data->filepath != NULL) {
+        free(win_data->filepath);
+        win_data->filepath = NULL;
     }
 
     if (win_data->last_search.pattern != NULL) {

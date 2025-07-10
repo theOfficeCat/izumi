@@ -31,7 +31,7 @@
 
 FileData check_file(const char *path) {
     FileData file_data = { .exists = false };
-    
+
     if (path == NULL) return file_data;
 
     struct stat s;
@@ -53,10 +53,10 @@ char *read_file(const char * path, InstructionTableArray *tables_array) {
 
         // basename() may modify the input string, so we need to make a copy
         char *scratchpad_path = strdup(path);
-        
+
         char *filename_basename = basename(scratchpad_path);
         char *filename = strdup(filename_basename);
-        
+
         free(scratchpad_path);
 
         return filename;

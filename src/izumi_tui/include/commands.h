@@ -40,6 +40,7 @@ CommandFixedArglistCallback findpc_cb;
 CommandFixedArglistCallback findinst_cb;
 CommandNoArgsCallback next_cb;
 CommandNoArgsCallback prev_cb;
+CommandArglistCallback reload_cb;
 CommandNoArgsCallback quit_cb;
 
 const Command COMMANDS[] = {
@@ -59,6 +60,8 @@ const Command COMMANDS[] = {
     CMD_FIXED_ARGLIST("findinst", 1, findinst_cb),
     CMD_NO_ARGS("next", next_cb),
     CMD_NO_ARGS("prev", prev_cb),
+    CMD_ALIAS("r", "reload"),
+    CMD_ARGLIST("reload", reload_cb),
     CMD_ALIAS("q", "quit"),
     CMD_NO_ARGS("quit", quit_cb),
 };

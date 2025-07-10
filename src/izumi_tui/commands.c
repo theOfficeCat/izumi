@@ -62,7 +62,17 @@ bool open_cb(ApplicationData *app_data, const char * argv[]) {
         new_window(app_data);
     }
 
+    WindowData *current_window = app_data->windows[app_data->window_focused];
+
     char *path = realpath(file_name, NULL);
+
+    if (current_window->filepath != NULL) {
+        free(current_window->filepath);
+    }
+
+    current_window->filepath = malloc(strlen(path) + 1);
+    strcpy(current_window->filepath, path);
+
     FileData file_data = check_file(path);
     free(path);
     path = NULL;
@@ -70,11 +80,12 @@ bool open_cb(ApplicationData *app_data, const char * argv[]) {
     if (!file_data.exists || !file_data.is_file) return false;
 
 
-    if (app_data->windows[app_data->window_focused]->filename != NULL) {
-        free(app_data->windows[app_data->window_focused]->filename);
+    if (current_window->filename != NULL) {
+        free(current_window->filename);
     }
 
-    app_data->windows[app_data->window_focused]->filename = read_file(file_name, app_data->windows[app_data->window_focused]->tables_array);
+    current_window->filename = read_file(file_name, current_window->tables_array);
+
     return true;
 }
 
@@ -262,4 +273,34 @@ bool prev_cb(ApplicationData *app_data) {
 bool quit_cb(ApplicationData *app_data) {
     app_data->quit_requested = true;
     return true;
+}
+
+bool reload_cb(ApplicationData *app_data, const int argc, const char *argv[]) {
+    if (argc > 1) {
+        return false;
+    }
+
+    uint64_t panel_id = app_data->window_focused;
+
+    if (argc == 1) {
+        panel_id = atoi(argv[0]);
+    }
+
+    if (panel_id >= app_data->windows_qtty) {
+        return false;
+    }
+
+    WindowData *window = app_data->windows[panel_id];
+    if (window == NULL || window->filepath == NULL) {
+        return false;
+    }
+
+    const char *file_path = malloc(strlen(window->filepath) + 1);
+    strcpy((char *)file_path, window->filepath);
+
+    bool result = open_cb(app_data, &file_path);
+
+    free((char *)file_path);
+
+    return result;
 }

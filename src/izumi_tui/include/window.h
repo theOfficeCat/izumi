@@ -79,6 +79,7 @@ struct WindowData_s {
     uint64_t first_instruction;
 
     char *filename;
+    char *filepath;
 
     SearchData last_search; // used for next appearance of searched element
 };
