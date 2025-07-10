@@ -59,6 +59,7 @@ void init_Instruction(Instruction *instruction) {
     instruction->stages = malloc(10 * sizeof(Stage));
     instruction->valid = true;
     instruction->finished = false;
+    instruction->flushed = false;
 }
 
 void free_InstructionTableArray(InstructionTableArray *array) {

@@ -175,6 +175,7 @@ void retire_instruction(InstructionTableArray *tables_array, u_int64_t cycle, ch
         Stage *stage = &instr->stages[instr->qtty_stages - 1];
         stage->duration = cycle - stage->cycle;
         instr->finished = true;
+        instr->flushed = (type == 1);
     }
 }
 

@@ -51,6 +51,7 @@ typedef struct {
  * @stages: The stages that the instruction has.
  * @valid: True if the instruction is valid.
  * @finished: True if the instruction has finished.
+ * @flushed: True if the instruction has been flushed.
  *
  * This struct is used to store the information of an instruction.
  */
@@ -61,6 +62,7 @@ typedef struct {
     Stage *stages;
     bool valid;
     bool finished;
+    bool flushed;
 } Instruction;
 
 /**
