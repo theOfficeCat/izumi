@@ -240,6 +240,12 @@ void print_instruction(ApplicationData *app_data, WindowData *win_data, Configur
                 }
             }
 
+            if (i == inst->qtty_stages - 1) {
+                if (inst->flushed) {
+                    mvwprintw(win_data->win, y+1, stage_offset + ((config->stage_width+1)*stage->duration) - 2, "X");
+                }
+            }
+
             disable_colors_win(app_data, win_data, COLOR_STAGES + i%6);
         }
     }
