@@ -25,7 +25,6 @@
 #include <stdint.h>
 
 #include "window.h"
-#include "config.h"
 #include "interact.h"
 #include "configure.h"
 
