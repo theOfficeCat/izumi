@@ -1,5 +1,5 @@
 ---
-render-subpages: false
+render-subpages: true
 ...
 
 # libizumi Documentation
