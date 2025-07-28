@@ -1,0 +1,17 @@
+OUTPUT_DIRECTORY        = @CMAKE_CURRENT_BINARY_DIR@/docs/
+INPUT                   = @CMAKE_CURRENT_SOURCE_DIR@/ @CMAKE_CURRENT_SOURCE_DIR@/include/izumi/ @CMAKE_CURRENT_SOURCE_DIR@/docs/
+
+PROJECT_NAME            = izumi
+PROJECT_BRIEF           = An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata. 
+
+USE_MDFILE_AS_MAINPAGE  = index.md
+
+FULL_SIDEBAR            = YES
+GENERATE_TREEVIEW       = YES
+HTML_COLORSTYLE         = DARK
+
+PDF_HYPERLINKS          = YES
+USE_PDFLATEX            = YES
+
+GENERATE_MAN            = YES
+

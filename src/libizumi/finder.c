@@ -95,3 +95,4 @@ FindResult find(InstructionTableArray *tables_array, const char *pattern, FindDa
 
     return return_data;
 }
+

@@ -19,9 +19,7 @@
 #define DATA_STRUCTS_H
 
 /**
- * SECTION:data_structs
- * @title: izumi/data_structs.h
- * @short_description: Data structures used when interacting with libizumi.
+ * @file data_structs.h
  *
  * Data structures used when interacting with libizumi.
  */
@@ -30,127 +28,109 @@
 #include <stdbool.h>
 
 /**
- * Stage:
- * @cycle: Cycle where the stage starts.
- * @duration: Duration of the stage in cycles.
- * @name: The name of the stage.
+ * @struct Stage
  *
  * This struct is used to store the information of a stage.
  */
 typedef struct {
-    uint64_t cycle;
-    uint64_t duration;
-    char *name;
+    uint64_t cycle;     /**< Cycle where the stage starts. */
+    uint64_t duration;  /**< Duration of the stage in cycles. */
+    char *name;         /**< The name of the stage. */
 } Stage;
 
 /**
- * Instruction:
- * @qtty_stages: The quantity of stages that the instruction has.
- * @mem_addr: Memory address of the instruction.
- * @instruction: Instruction in assembly.
- * @stages: The stages that the instruction has.
- * @valid: True if the instruction is valid.
- * @finished: True if the instruction has finished.
- * @flushed: True if the instruction has been flushed.
+ * @struct Instruction
  *
  * This struct is used to store the information of an instruction.
  */
 typedef struct {
-    uint64_t qtty_stages;
-    char *mem_addr;
-    char *instruction;
-    Stage *stages;
-    bool valid;
-    bool finished;
-    bool flushed;
+    uint64_t qtty_stages;   /**< The quantity of stages that the instruction
+                              has. */
+    char *mem_addr;         /**< Memory address of the instruction. */
+    char *instruction;      /**< Instruction in assembly. */
+    Stage *stages;          /**< The stages that the instruction has. */
+    bool valid;             /**< True if the instruction is valid. */
+    bool finished;          /**< True if the instruction has finished. */
+    bool flushed;           /**< True if the instruction has been flushed. */
 } Instruction;
 
 /**
- * InstructionTable:
- * @content: An array of 256 instructions.
+ * @struct InstructionTable
  *
  * This struct is used to store the instructions that are read from the file.
  */
 typedef struct {
-    Instruction content[256];
+    Instruction content[256];   /**< An array of 256 instructions. */
 } InstructionTable;
 
 /**
- * InstructionTableArray:
- * @qtty_tables: The quantity of tables that the array has in usage.
- * @avail_tables: The quantity of tables that are available in the array.
- * @tables: An array of tables.
+ * @struct InstructionTableArray
  *
  * This struct is used to store the tables that are read from the file.
  */
 typedef struct {
-    uint64_t qtty_tables;
-    uint64_t avail_tables;
-    InstructionTable* *tables;
+    uint64_t qtty_tables;      /**< The quantity of tables that the array has
+                                 in usage. */
+    uint64_t avail_tables;     /**< The quantity of tables that are available
+                                 in the array. */
+    InstructionTable* *tables; /**< An array of tables. */
 } InstructionTableArray;
 
 /**
- * init_InstructionTableArray:
- * @array: The InstructionTableArray to be initialized.
+ * @param array The InstructionTableArray to be initialized.
  *
  * This function initializes the InstructionTableArray.
  */
 void init_InstructionTableArray(InstructionTableArray *array);
 
 /**
- * init_InstructionTable:
- * @table: The InstructionTable to be initialized.
+ * @param table The InstructionTable to be initialized.
  *
  * This function initializes the InstructionTable.
  */
 void init_InstructionTable(InstructionTable *table);
 
 /**
- * increase_InstructionTableArray:
- * @array: The InstructionTableArray to be increased.
+ * @param array The InstructionTableArray to be increased.
  *
  * This function increases the size of the InstructionTableArray.
  */
 void increase_InstructionTableArray(InstructionTableArray *array);
 
 /**
- * init_Instruction:
- * @instruction: The Instruction to be initialized.
+ * @param instruction The Instruction to be initialized.
  *
  * This function initializes the Instruction.
  */
 void init_Instruction(Instruction *instruction);
 
 /**
- * free_InstructionTableArray:
- * @array: The InstructionTableArray to be freed.
+ * @param array The InstructionTableArray to be freed.
  *
  * This function frees the memory allocated for the InstructionTableArray.
  */
 void free_InstructionTableArray(InstructionTableArray *array);
 
 /**
- * free_InstructionTable:
- * @table: The InstructionTable to be freed.
+ * @param table The InstructionTable to be freed.
  *
  * This function frees the memory allocated for the InstructionTable.
  */
 void free_InstructionTable(InstructionTable *table);
 
 /**
- * free_Instruction:
- * @instruction: The Instruction to be freed.
+ * @param instruction The Instruction to be freed.
  *
  * This function frees the memory allocated for the Instruction.
  */
 void free_Instruction(Instruction *instruction);
 
 /**
- * free_Stage:
- * @stage: The Stage to be freed.
+ * @param stage The Stage to be freed.
  *
  * This function frees the memory allocated for the Stage.
  */
 void free_Stage(Stage *stage);
 
 #endif
+

@@ -92,3 +92,4 @@ void free_Instruction(Instruction *instruction) {
 void free_Stage(Stage *stage) {
     free(stage->name);
 }
+

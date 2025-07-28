@@ -239,3 +239,4 @@ InstructionTableArray parse_file(const char *file_name) {
 
     return tables_array;
 }
+
