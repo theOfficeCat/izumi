@@ -19,7 +19,7 @@
 #define WINDOW_H
 
 #include <izumi/finder.h>
-#include <ncurses.h>
+#include "system_curses.h"
 #include <stdint.h>
 #include <unistd.h>
 #include <stdint.h>

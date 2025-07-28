@@ -15,7 +15,7 @@
  * Izumi. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <ncurses.h>
+#include "system_curses.h"
 #define _GNU_SOURCE
 
 #include <linux/limits.h>
