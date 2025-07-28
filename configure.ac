@@ -14,10 +14,7 @@ if test "x$ax_cv_curses" != xyes || test "x$ax_cv_curses_color" != xyes; then
     AC_MSG_ERROR([requires an X/Open-compatible Curses library with color])
 fi
 
-AC_CONFIG_HEADERS([
-    config.h
-    src/izumi_tui/include/system_curses.h
-])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
     Makefile
     src/Makefile
