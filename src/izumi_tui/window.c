@@ -16,7 +16,7 @@
  */
 
 #include <complex.h>
-#include <ncurses.h>
+#include "system_curses.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
