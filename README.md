@@ -25,23 +25,12 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 
 ## Building (and installing)
 
-Building with `meson` is recommended:
+Building with `cmake` is recommended:
 
 ```bash
-meson setup build
-cd build
-meson compile
-meson install
-```
-> [!IMPORTANT]
-> meson needs to be available as root for `meson install`
-
-But, if the classic `make` sequence is hard-wired in your brain, you can:
-
-```bash
-./configure
+mkdir build && cd build
+cmake ..
 make
-make install
 ```
 
 You can also use `nix` (flakes recommended):

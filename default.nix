@@ -1,7 +1,6 @@
 { lib
 , stdenv
 , cmake
-, make
 , ncurses
 , doxygen
 , runCommandCC
@@ -17,7 +16,6 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     cmake
-    make
     doxygen
   ];
 
