@@ -1,0 +1,9 @@
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: Izumi library
+Version: @VERSION@
+Libs: -L${libdir} -lizumi @IZUMI_LINK_LIBRARIES@
+Cflags: -I${includedir} @IZUMI_LINK_LIBRARIES@
+

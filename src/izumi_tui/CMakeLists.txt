@@ -20,6 +20,8 @@ target_link_libraries(izumi-tui PRIVATE izumi Curses::Curses)
 
 set_target_properties(izumi-tui PROPERTIES OUTPUT_NAME izumi)
 
+install(TARGETS izumi-tui DESTINATION bin COMPONENT izumi)
+
 add_custom_target(run
     COMMAND ./izumi
     DEPENDS docs

@@ -4,6 +4,14 @@ include_directories("include/")
 
 add_library(izumi STATIC ${LIBIZUMI_SRC})
 
+configure_file(izumi.pc.in ${CMAKE_CURRENT_BINARY_DIR}/izumi.pc)
+
+install(TARGETS izumi ARCHIVE DESTINATION lib/libizumi COMPONENT libizumi)
+install(DIRECTORY include/izumi/ DESTINATION include/izumi COMPONENT libizumi)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/izumi.pc DESTINATION lib/pkgconfig
+    COMPONENT libizumi)
+
+
 # documentation
 if (NOT NODOC)
     find_package(Doxygen)
@@ -23,6 +31,18 @@ if (NOT NODOC)
                 COMMAND xdg-open index.html
                 DEPENDS docs
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs/html/
+            )
+
+            install(
+                DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs/html/
+                DESTINATION share/doc/libizumi
+                COMPONENT libizumi-doc
+            )
+
+            install(
+                DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs/man/man3/
+                DESTINATION man/man3
+                COMPONENT libizumi-doc
             )
     else()
         message(WARNING Doxygen not found)
