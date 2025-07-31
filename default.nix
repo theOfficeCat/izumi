@@ -6,10 +6,9 @@
 , ncurses
 , perl
 , doxygen
-, runCommandCC
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "izumi";
   version = lib.strings.trim (builtins.readFile ./.version);
   
