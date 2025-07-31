@@ -1,3 +1,0 @@
-index.md
-	introduction.md
-	c-index

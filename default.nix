@@ -4,15 +4,14 @@
 , pkgconf
 , gnumake
 , ncurses
-# FIXME: documentation tool
+, perl
+, doxygen
 , runCommandCC
 }:
 
 stdenv.mkDerivation rec {
   pname = "izumi";
   version = lib.strings.trim (builtins.readFile ./.version);
-
-  #outputs = [ "bin" "doc" "out" ];
   
   src = ./.;
 
@@ -20,7 +19,8 @@ stdenv.mkDerivation rec {
     autoreconfHook
     gnumake
     pkgconf
-    # FIXME: documentation tool
+    perl
+    doxygen
   ];
 
   buildInputs = [
@@ -28,16 +28,7 @@ stdenv.mkDerivation rec {
   ];
 
   passthru.tests = {
-    libizumi_documented = runCommandCC "${pname}-libizumi-documented" {
-        inherit src buildInputs;
-        nativeBuildInputs = [
-            # FIXME: additional packages?
-        ] ++ nativeBuildInputs;
-    } ''
-        cd $src
-        # TODO: Test if everything is documented
-        touch $out
-    '';
+    # TODO: does the build step run 'make check'?
   };
   
   meta = with lib; {

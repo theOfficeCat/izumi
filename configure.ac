@@ -14,12 +14,19 @@ if test "x$ax_cv_curses" != xyes || test "x$ax_cv_curses_color" != xyes; then
     AC_MSG_ERROR([requires an X/Open-compatible Curses library with color])
 fi
 
+DX_DOT_FEATURE(ON)
+DX_MAN_FEATURE(ON)
+DX_INIT_DOXYGEN([izumi],
+    [$(builddir)/src/libizumi/docs/Doxyfile], [$(builddir)/src/libizumi/docs/out]
+)
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
     Makefile
     src/Makefile
     src/izumi_tui/Makefile
     src/libizumi/Makefile
+    src/libizumi/docs/Doxyfile
 ])
 
 AC_OUTPUT
