@@ -28,6 +28,7 @@ DX_PS_FEATURE(OFF)
 DX_INIT_DOXYGEN([izumi],
     [$(builddir)/src/libizumi/docs/Doxyfile], [$(builddir)/src/libizumi/docs/out]
 )
+AM_CONDITIONAL([WANT_MANPAGES], [[test $DX_FLAG_man -eq 1]])
 
 AX_CONFIG_FEATURE_VERBOSE
 AX_CONFIG_FEATURE_DEFAULT_DISABLED
