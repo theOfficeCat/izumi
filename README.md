@@ -19,47 +19,55 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 ## Requirements
 
 - `ncurses`
-- `meson` (build only) *[version >=1.2.0]*
-- `ninja` (build only, can be replaced by other meson backends)
-- `python3` (build only)
+- `make` (build only)
+- `autotools` (build from source only, not needed in distribution packages)
 
 ## Building (and installing)
 
-Building with `meson` is recommended:
+If you cloned the repository instead of downloading a distribution package,
+start by generating the build system:
 
-```bash
-meson setup build
-cd build
-meson compile
-meson install
+```sh
+autoreconf --install
 ```
-> [!IMPORTANT]
-> meson needs to be available as root for `meson install`
 
-But, if the classic `make` sequence is hard-wired in your brain, you can:
+With the `configure` script available, you can follow the traditional mantra:
 
-```bash
-./configure
+```sh
+mkdir && cd build       # Any path supported!
+../configure
 make
-make install
+(sudo) make install
 ```
+
+Some intersting `configure` flags:
+- `--disable-doxygen-doc` to avoid generating documentation
+- `--enable-sanitizers` to enable ASAN (not recommended if you aren't actively developing Izumi!)
+- `--help` to see more options!
+
+### Nix derivation
 
 You can also use `nix` (flakes recommended):
 ```bash
-nix run github:theOfficeCat/Izumi
+nix run github:Izumi-visualizer/Izumi
 ```
+
 ## Usage
 
-```bash
-$ make run # If you want to test before installing
-$ izumi (path/to/file)
+Use the installed `izumi` binary...
+```sh
+izumi path/to/file
+```
+... or use the `make` wrapper:
+```sh
+make run ARGS=path/to/file
 ```
 
 > [!IMPORTANT]
-> In some cases an `AddressSanitizer:DEADLYSIGNAL` error can be raised randomly when starting the program. Just kill the program and try again. If it persists, please report it.
+> If sanitizers are enabled, an `AddressSanitizer:DEADLYSIGNAL` error can be raised randomly when starting the program. Just kill the program and try again. If it persists, please report it.
 
 > [!NOTE]
-> Some example files supported are on `examples` directory. These are generated on the RISC-V core [Sargantana](https://github.com/bsc-loca/core_tile/).
+> Some example files supported are on the `examples` directory. These are generated on the RISC-V core [Sargantana](https://github.com/bsc-loca/core_tile/).
 
 ### Commands
 

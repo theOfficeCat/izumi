@@ -8,7 +8,7 @@
 , doxygen
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "izumi";
   version = lib.strings.trim (builtins.readFile ./.version);
   
@@ -25,9 +25,26 @@ stdenv.mkDerivation {
   buildInputs = [
     ncurses
   ];
+  
+  doCheck = true;
 
   passthru.tests = {
-    # TODO: does the build step run 'make check'?
+    distcheck = stdenv.mkDerivation {
+      name = "izumi-distcheck";
+      inherit src nativeBuildInputs buildInputs;
+      
+      doCheck = true;
+      checkTarget = "distcheck";
+    };
+    
+    distcheck-nodocs = stdenv.mkDerivation {
+      name = "izumi-distcheck-nodocs";
+      inherit src nativeBuildInputs buildInputs;
+      
+      configureFlags = [ "--disable-doxygen-doc" ];
+      doCheck = true;
+      checkTarget = "distcheck";
+    };
   };
   
   meta = with lib; {
