@@ -20,6 +20,15 @@ DX_INIT_DOXYGEN([izumi],
     [$(builddir)/src/libizumi/docs/Doxyfile], [$(builddir)/src/libizumi/docs/out]
 )
 
+AX_CONFIG_FEATURE_DEFAULT_DISABLED
+AX_CONFIG_FEATURE(
+    [sanitizers], [turns on/off ASAN flags (only intended for development)],
+    HAVE_SANITIZERS, [Define if ASAN is desired (unused)],
+    [
+        AX_APPEND_COMPILE_FLAGS([-fsanitize=address,leak,undefined])
+    ]
+)
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
     Makefile
