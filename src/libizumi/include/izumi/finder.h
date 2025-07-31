@@ -31,8 +31,6 @@
 
 
 /**
- * @struct FindResult
- *
  * This struct is used to store the result of a search.
  */
 typedef struct FindResult {
@@ -41,8 +39,6 @@ typedef struct FindResult {
 } FindResult;
 
 /**
- * @struct FindDataKind
- *
  * This enum is used to specify the type of data to be searched.
  */
 typedef enum FindDataKind {
@@ -51,8 +47,6 @@ typedef enum FindDataKind {
 } FindDataKind;
 
 /**
- * @struct SearchDirection
- *
  * This enum is used to specify the direction of the search.
  */
 typedef enum SearchDirection {

@@ -28,8 +28,6 @@
 #include <stdbool.h>
 
 /**
- * @struct Stage
- *
  * This struct is used to store the information of a stage.
  */
 typedef struct {
@@ -39,8 +37,6 @@ typedef struct {
 } Stage;
 
 /**
- * @struct Instruction
- *
  * This struct is used to store the information of an instruction.
  */
 typedef struct {
@@ -55,8 +51,6 @@ typedef struct {
 } Instruction;
 
 /**
- * @struct InstructionTable
- *
  * This struct is used to store the instructions that are read from the file.
  */
 typedef struct {
@@ -64,8 +58,6 @@ typedef struct {
 } InstructionTable;
 
 /**
- * @struct InstructionTableArray
- *
  * This struct is used to store the tables that are read from the file.
  */
 typedef struct {
