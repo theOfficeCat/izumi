@@ -18,10 +18,7 @@
 #ifndef FINDER_H
 #define FINDER_H
 
-/**
- * SECTION:finder
- * @title: izumi/finder.h
- * @short_description: Tools for searching and matching the contents of a dump.
+/** @file finder.h
  *
  * Tools for searching and matching the contents of a dump.
  */
@@ -32,54 +29,36 @@
 #include <izumi/data_structs.h>
 
 
-/**
- * FindResult
- * @valid: True if the result is valid.
- * @position: Position of the found element.
- *
- * This struct is used to store the result of a search.
+/** This struct is used to store the result of a search.
  */
 typedef struct FindResult {
-    bool valid;
-    uint64_t position;
+    bool valid;         /**< True if the result is valid. */
+    uint64_t position;  /**< Position of the found element. */
 } FindResult;
 
-/**
- * FindDataKind
- * @PC: Program Counter.
- * @INST: Instruction.
- *
- * This enum is used to specify the type of data to be searched.
+/** This enum is used to specify the type of data to be searched.
  */
 typedef enum FindDataKind {
-    PC,
-    INST
+    PC,     /**< Program Counter. */
+    INST    /**< Instruction. */
 } FindDataKind;
 
-/**
- * SearchDirection
- * @UP: Search upwards.
- * @DOWN: Search downwards.
- *
- * This enum is used to specify the direction of the search.
+/** This enum is used to specify the direction of the search.
  */
 typedef enum SearchDirection {
-    UP,
-    DOWN
+    UP,     /**< Search upwards. */
+    DOWN    /**< Search downwards. */
 } SearchDirection;
 
-/**
- * find:
- * @tables_array: The array of tables.
- * @pattern: The pattern to be searched.
- * @kind_of_data: The type of data to be searched.
- * @dir: The direction of the search.
- * @init_pos: The initial position of the search.
- *
- * This function searches for a pattern in the tables array and returns the
+/** This function searches for a pattern in the tables array and returns the
  * result.
  *
- * Returns: A FindResult struct with the result of the search.
+ * @param tables_array The array of tables.
+ * @param pattern The pattern to be searched.
+ * @param kind_of_data The type of data to be searched.
+ * @param dir The direction of the search.
+ * @param init_pos The initial position of the search.
+ * @return A FindResult struct with the result of the search.
  */
 FindResult find(InstructionTableArray *tables_array, const char *pattern, FindDataKind kind_of_data, SearchDirection dir, uint64_t init_pos);
 
