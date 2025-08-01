@@ -1,5 +1,8 @@
+RECURSIVE               = YES
+FILE_PATTERNS           = *.c *.h *.md
+
 OUTPUT_DIRECTORY        = @CMAKE_CURRENT_BINARY_DIR@/docs/
-INPUT                   = @CMAKE_CURRENT_SOURCE_DIR@/ @CMAKE_CURRENT_SOURCE_DIR@/include/izumi/ @CMAKE_CURRENT_SOURCE_DIR@/docs/
+INPUT                   = @CMAKE_CURRENT_SOURCE_DIR@/
 
 PROJECT_NAME            = izumi
 PROJECT_BRIEF           = An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata. 
@@ -10,7 +13,7 @@ WARN_IF_DOC_ERROR       = YES
 WARN_NO_PARAMDOC        = YES
 WARN_AS_ERROR           = YES
 
-USE_MDFILE_AS_MAINPAGE  = index.md
+USE_MDFILE_AS_MAINPAGE  = @CMAKE_CURRENT_SOURCE_DIR@/docs/index.md
 
 FULL_SIDEBAR            = YES
 GENERATE_TREEVIEW       = YES

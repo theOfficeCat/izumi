@@ -45,7 +45,7 @@ if (NOT NODOC)
                 COMPONENT libizumi-doc
             )
     else()
-        message(WARNING Doxygen not found)
+        message(WARNING "Doxygen not found, not building documentation")
     endif()
 endif()
 
