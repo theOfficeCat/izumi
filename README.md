@@ -19,29 +19,17 @@ Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on 
 ## Requirements
 
 - `ncurses`
-- `meson` (build only) *[version >=1.2.0]*
-- `ninja` (build only, can be replaced by other meson backends)
-- `python3` (build only)
+- `cmake` (build only) \*[version >=3.10*
+- `make` (build only, can be replaced by other cmake backends)
 
 ## Building (and installing)
 
-Building with `meson` is recommended:
+Building with `cmake` is recommended:
 
 ```bash
-meson setup build
-cd build
-meson compile
-meson install
-```
-> [!IMPORTANT]
-> meson needs to be available as root for `meson install`
-
-But, if the classic `make` sequence is hard-wired in your brain, you can:
-
-```bash
-./configure
+mkdir build && cd build
+cmake ..
 make
-make install
 ```
 
 You can also use `nix` (flakes recommended):
@@ -139,3 +127,4 @@ I know it's not the best looking tool, but it's a start (now it has colors :D).
 ---
 
 ![Izumi Konata](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.zerochan.net%2FIzumi.Konata.full.955876.jpg&f=1&nofb=1&ipt=11ebd39eb2229bec63db528410089c03d01dd9a541df01063ee5c809b6c69f58&ipo=images)
+

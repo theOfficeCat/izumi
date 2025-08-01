@@ -3,7 +3,7 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -17,3 +17,4 @@
       };
     };
 }
+

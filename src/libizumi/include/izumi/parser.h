@@ -21,78 +21,69 @@
 #include <izumi/data_structs.h>
 
 /**
- * SECTION:parser
- * @title: izumi/parser.h
- * @short_description: Dump parsing functions.
+ * @file parser.h
  *
  * Dump parsing functions.
  */
 
 /**
- * cycle_increment:
- * @cycle: The current cycle count.
- * @line: The input line.
+ * @param cycle The current cycle count.
+ * @param line The input line.
  *
  * Increment the cycle count based on the input line.
  */
 void cycle_increment(uint64_t *cycle, char *line);
 
 /**
- * new_instruction:
- * @tables_array: The array of tables.
- * @line: The input line.
+ * @param tables_array The array of tables.
+ * @param line The input line.
  *
  * Add an instruction to the tables array.
  */
 void new_instruction(InstructionTableArray *tables_array, char *line);
 
 /**
- * line_of_data:
- * @tables_array: The array of tables.
- * @line: The input line.
+ * @param tables_array The array of tables.
+ * @param line The input line.
  *
  * Set the data of the instruction in the tables array.
  */
 void line_of_data(InstructionTableArray *tables_array, char *line);
 
 /**
- * new_stage:
- * @tables_array: The array of tables.
- * @cycle: The current cycle count.
- * @line: The input line.
+ * @param tables_array The array of tables.
+ * @param cycle The current cycle count.
+ * @param line The input line.
  *
  * Add a new stage to the instruction in the tables array.
  */
 void new_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /**
- * end_stage:
- * @tables_array: The array of tables.
- * @cycle: The current cycle count.
- * @line: The input line.
+ * @param tables_array The array of tables.
+ * @param cycle The current cycle count.
+ * @param line The input line.
  *
  * End the stage of the instruction in the tables array.
  */
 void end_stage(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /**
- * retire_instruction:
- * @tables_array: The array of tables.
- * @cycle: The current cycle count.
- * @line: The input line.
+ * @param tables_array The array of tables.
+ * @param cycle The current cycle count.
+ * @param line The input line.
  *
  * Retire the instruction in the tables array.
  */
 void retire_instruction(InstructionTableArray *tables_array, uint64_t cycle, char *line);
 
 /**
- * parse_file:
- * @file_name: The name of the file.
+ * @param file_name The name of the file.
+ * @return An InstructionTableArray with the parsed data.
  *
  * Parse the file and fill an InstructionTableArray with the data.
- *
- * Returns: An InstructionTableArray with the parsed data.
  */
 InstructionTableArray parse_file(const char *file_name);
 
 #endif
+
