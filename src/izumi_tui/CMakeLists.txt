@@ -24,7 +24,7 @@ install(TARGETS izumi-tui DESTINATION bin COMPONENT izumi)
 
 add_custom_target(run
     COMMAND ./izumi
-    DEPENDS docs
+    DEPENDS izumi-tui
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 

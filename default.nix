@@ -23,6 +23,10 @@ stdenv.mkDerivation rec {
     ncurses
   ];
 
+  preBuild = ''
+    du /build
+  '';
+
   meta = with lib; {
     description = "An instruction pipeline visualizer for Onikiri2-Kanata format based on Konata";
     homepage = "https://github.com/theOfficeCat/Izumi/";
