@@ -34,7 +34,7 @@ autoreconf --install
 With the `configure` script available, you can follow the traditional mantra:
 
 ```sh
-mkdir && cd build       # Any path supported!
+mkdir build && cd build       # Any path supported!
 ../configure
 make
 (sudo) make install
@@ -137,6 +137,10 @@ make run ARGS=path/to/file
 | `KEY_DOWN` | Move down |
 | `k` | Move up |
 | `KEY_UP` | Move up |
+
+### `libizumi` documentation
+
+After running `make`, you will find the HTML docs and man pages in the `src/libizumi/docs/out` subdirectory of the build tree. `make install` will also install the man pages to your system.
 
 ## Screenshot
 
