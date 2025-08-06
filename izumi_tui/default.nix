@@ -3,13 +3,12 @@
 , autoreconfHook
 , pkgconf
 , gnumake
+, libizumi
 , ncurses
-, perl
-, doxygen
 }:
 
 stdenv.mkDerivation rec {
-  pname = "izumi";
+  pname = "izumi_tui";
   version = lib.strings.trim (builtins.readFile ./.version);
   
   src = ./.;
@@ -18,24 +17,28 @@ stdenv.mkDerivation rec {
     autoreconfHook
     gnumake
     pkgconf
-    perl
-    doxygen
   ];
 
   buildInputs = [
+    libizumi
     ncurses
   ];
   
-  postPatch = ''
-    autoreconf --install libizumi
-    autoreconf --install izumi_tui
-  '';
-  
-  buildTarget = "distcheck";
+  doCheck = true;
+
+  passthru.tests = {
+    distcheck = stdenv.mkDerivation {
+      name = "libizumi-distcheck";
+      inherit src nativeBuildInputs buildInputs;
+      
+      doCheck = true;
+      checkTarget = "distcheck";
+    };
+  };
   
   meta = with lib; {
     description = "A multi-format instruction pipeline dump visualizer based on Konata";
-    homepage = "https://github.com/Izumi-visualizer/Izumi/";
+    homepage = "https://github.com/Izumi-visualizer/izumi_tui/";
     license = licenses.gpl3Plus;
     platforms = platforms.all;
   };

@@ -5,25 +5,19 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     
-    libizumi.url = "path:./libizumi";
-    izumi_tui.url = "path:./izumi_tui";
-    izumi_tui.inputs.libizumi.follows = "libizumi";
+    libizumi.url = "path:../libizumi";
   };
 
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
       perSystem = { self', pkgs, inputs', ... }: {
-        packages.libizumi = inputs'.libizumi.packages.default;
-        packages.izumi_tui = inputs'.izumi_tui.packages.default;
-        
+        packages.izumi_tui = pkgs.callPackage ./default.nix {
+          libizumi = inputs'.libizumi.packages.default;
+        };
         packages.default = self'.packages.izumi_tui;
         
-        checks = {
-          distcheck_fullbuild = pkgs.callPackage ./default.nix { };
-        }
-            // self'.packages.libizumi.tests
-            // self'.packages.izumi_tui.tests;
+        checks = self'.packages.default.tests;
       };
     };
 }
