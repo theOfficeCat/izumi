@@ -1,1 +1,0 @@
-SUBDIRS = libizumi izumi_tui
