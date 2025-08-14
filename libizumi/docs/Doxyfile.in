@@ -1,8 +1,8 @@
 OUTPUT_DIRECTORY        = @abs_builddir@/out
 
-INPUT                   = @abs_srcdir@/..
-STRIP_FROM_PATH         = @abs_srcdir@/../include
-STRIP_FROM_INC_PATH     = @abs_srcdir@/../include
+INPUT                   = @abs_srcdir@/../src
+STRIP_FROM_PATH         = @abs_srcdir@/../src/include
+STRIP_FROM_INC_PATH     = @abs_srcdir@/../src/include
 RECURSIVE               = YES
 
 PROJECT_NAME            = libizumi
