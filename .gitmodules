@@ -1,0 +1,3 @@
+[submodule "libizumi"]
+	path = libizumi
+	url = https://github.com/Izumi-visualizer/libizumi
