@@ -2,6 +2,8 @@
   description = "A multi-format instruction pipeline dump visualizer based on Konata";
 
   inputs = {
+    self.submodules = true;
+    
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     
