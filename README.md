@@ -1,26 +1,23 @@
-# Izumi
+# Izumi project
 
-Izumi is an instruction pipeline visualizer for Onikiri2-Kanata format based on [shioyadan/Konata](https://github.com/shioyadan/Konata).
+The izumi project englobes the `izumi_tui` instruction pipeline dump visualizer and its support library, `libizumi`.
+
+This repository serves as a central hub for all the project components, providing a unified build system for them. Clone this repository if you want to easily setup a development environment or build all the components at once.
 
 > [!Note]
-> The tool is still under development and may not work properly with full
-> features of the format.
+> The library and the visualizer are still under development and things may break, specially if you are not careful when choosing the right versions for each one. If you are not actively developing Izumi, please use the `main` branch of this repository and its referenced submodule commits to ensure stability.
 
-## Supported features
+## Components
+- [libizumi](https://github.com/Izumi-visualizer/libizumi):  a multi-format instruction pipeline dump parser library.
+- [izumi_tui](https://github.com/Izumi-visualizer/izumi_tui):  a multi-format instruction pipeline dump TUI visualizer.
 
-- Instruction
-
-    Only support for file identificator
-- Stage
-- Line on left
-- End of stage (for multiple cycle stages/stalling the pipeline)
-- End of instruction
 
 ## Requirements
 
 - `ncurses`
 - `make` (build only)
 - `autotools` (build from source only, not needed in distribution packages)
+- `doxygen` (optional, for generating documentation)
 
 ## Building (and installing)
 
@@ -40,10 +37,7 @@ make
 (sudo) make install
 ```
 
-Some intersting `configure` flags:
-- `--disable-doxygen-doc` to avoid generating documentation
-- `--enable-sanitizers` to enable ASAN (not recommended if you aren't actively developing Izumi!)
-- `--help` to see more options!
+The `configure` script options are pretty limited in this repository, so you may want to individually build the different components if you need more control over the build process.
 
 ### Nix derivation
 
@@ -52,7 +46,7 @@ You can also use `nix` (flakes recommended):
 nix run github:Izumi-visualizer/Izumi
 ```
 
-## Usage
+## Visualizer usage
 
 Use the installed `izumi` binary...
 ```sh
@@ -67,80 +61,13 @@ make run ARGS=path/to/file
 > If sanitizers are enabled, an `AddressSanitizer:DEADLYSIGNAL` error can be raised randomly when starting the program. Just kill the program and try again. If it persists, please report it.
 
 > [!NOTE]
-> Some example files supported are on the `examples` directory. These are generated on the RISC-V core [Sargantana](https://github.com/bsc-loca/core_tile/).
+> Some supported example files are on the `examples` directory. These are generated on the RISC-V core [Sargantana](https://github.com/bsc-loca/core_tile/).
 
-### Commands
+See the [izumi_tui README](https://github.com/Izumi-visualizer/izumi_tui) for more information about the available commands and other features.
 
-| Command | Description |
-|---------|-------------|
-| `:q`    | Quit        |
-| `:quit` | Quit        |
-| `:open (path)`    | Open a file on the current panel |
-| `:o (path)`    | Open a file on the current panel |
-| `:findpc 0x(address)` | Search and go to the first appearance of the address |
-| `:findinst (instruction)` | Search and go to the first appearance of the instruction |
-| `:next` | Next appearance of the last search |
-| `:prev` | Previous appearance of the last search |
-| `:newpanel` | Create a new panel |
-| `:panelcmd j` | Select next panel |
-| `:panelcmd k` | Select previous panel |
-| `:closepanel` | Close focused panel |
-| `:c` | Close focused panel |
-| `:closepanel (index)` | Close requested panel |
-| `:c (index)` | Close requested panel |
-| `:closeallpanels` | Close all panels |
-| `:ca` | Close all panels |
-| `:set bar_offset (amount)` | Set offset of the vertical bar (not persistent) |
-| `:set stage_width (amount)` | Set width of the stage on the pipeline visualizer (not persistent) |
-| `:set color (element) (foreground color) (background color) <bold>` | Set color of the element (not persistent) |
-| `:panelsync` | Sync movement of all the panels |
-| `:paneldesync` | Desync movement of all the panels |
+## Library usage
 
-> [!NOTE]
-> The `:set` commands are not persistent, so you will need to set them again on the next run.
-
-> [!IMPORTANT]
-> Information for the `:set color` command
->
-> The `<element>` option can be one of the following:
-> - `text` Sets the color of the text shown on the screen
-> - `commands` Sets the color of the commands shown on the bottom of the screen when typing one
-> - `box` Sets the color of the box around the window
-> - `status` Sets the color of the status of the application at the bar on the bottom of the screen
-> - `stage1` Sets the color of the first stage of the pipeline
-> - `stage2` Sets the color of the second stage of the pipeline
-> - `stage3` Sets the color of the third stage of the pipeline
-> - `stage4` Sets the color of the fourth stage of the pipeline
-> - `stage5` Sets the color of the fifth stage of the pipeline
-> - `stage6` Sets the color of the sixth stage of the pipeline
-> If there are more than six stages, the color of the seventh and following stages will return to the color of the first stage and repeat the cycle.
->
-> It requires the color to be one of the list:
-> - `black`
-> - `white`
-> - `red`
-> - `green`
-> - `yellow`
-> - `blue`
-> - `magenta`
-> - `cyan`
->
-> The `<bold>` option is optional. If you want to set a color to bold, just add `bold` at the end of the command.
-
-### Keybindings
-
-| Key | Description |
-|-----|-------------|
-| `n` | Next appearance of the last search |
-| `N` | Previous appearance of the last search |
-| `j` | Move down |
-| `KEY_DOWN` | Move down |
-| `k` | Move up |
-| `KEY_UP` | Move up |
-
-### `libizumi` documentation
-
-After running `make`, you will find the HTML docs and man pages in the `src/libizumi/docs/out` subdirectory of the build tree. `make install` will also install the man pages to your system.
+See the [libizumi README](https://github.com/Izumi-visualizer/libizumi).
 
 ## Screenshot
 
