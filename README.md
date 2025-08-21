@@ -22,10 +22,18 @@ This repository serves as a central hub for all the project components, providin
 ## Building (and installing)
 
 If you cloned the repository instead of downloading a distribution package,
-start by generating the build system:
+start by cloning the submodules:
+
+```
+git submodule update --init
+```
+
+Then, you will need to generate the build system:
 
 ```sh
 autoreconf --install
+autoreconf --install libizumi
+autoreconf --install izumi_tui
 ```
 
 With the `configure` script available, you can follow the traditional mantra:
